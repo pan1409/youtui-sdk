@@ -26,7 +26,7 @@ import android.webkit.WebViewClient;
 
 /** 
  * @author steven 
- * http://yt.bidaround.cn
+ * http://www.youtui.mobi
  * 技术支持QQ: 1030311324  
  */  
 public class YouTui extends Activity {
@@ -43,31 +43,14 @@ public class YouTui extends Activity {
 		setContentView(R.layout.webview_activity);
 		/* 初始化内嵌浏览器 */
 		initWebView();
-		
-		ApplicationInfo info;
-        try{
-            info = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-            int msg = info.metaData.getInt("YOUTUI_APPKEY");
-            msg = msg + 0;
-            appId = String.valueOf(msg);
-        }catch(Exception e){
-        	e.printStackTrace();
-		}
-        String urlString = "http://yt.bidaround.cn";
-		String urlStr = "";
-		if (appId==null || appId.length() == 0) {
-			urlStr = urlString + "/activity/noappId/";
-		}else{
-			urlStr = urlString + "/activity/shared/get?appId=" + appId;
-		}
-		webView.loadUrl(urlStr);
-		
+		/* 装载数据内容*/
+		loadContent();
 	}
 	
 	/* 初始化内嵌浏览器 */
 	@SuppressWarnings("deprecation")
 	@SuppressLint({ "SetJavaScriptEnabled", "JavascriptInterface" })
-	public void initWebView(){
+	private void initWebView(){
 		webView = (WebView) findViewById(R.id.webview);
 		webView.setWebViewClient(new WebViewClient());
 		//WebSettings 几乎浏览器的所有设置都在该类中进行  
@@ -77,12 +60,37 @@ public class YouTui extends Activity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setSavePassword(true);
         webSettings.setSaveFormData(false);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 		webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 		webSettings.setDatabaseEnabled(true);
 		//重新弹出框
 		webView.setWebChromeClient(new MyWebChromeClient());
 		//接收web端 js 方法
 		webView.addJavascriptInterface(new YouTuiJavaScriptInterface(), "android"); 
+	}
+	
+
+	
+	/* 装载数据内容*/
+	private void loadContent(){
+		ApplicationInfo info;
+        try{
+            info = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+            int msg = info.metaData.getInt("YOUTUI_APPKEY");
+            msg = msg + 0;
+            appId = String.valueOf(msg);
+        }catch(Exception e){
+        	e.printStackTrace();
+		}
+        //String urlString = "http://yt.bidaround.cn";
+        String urlString = "http://192.168.2.109";
+		String urlStr = "";
+		if (appId==null || appId.length() == 0) {
+			urlStr = urlString + "/activity/noappId/";
+		}else{
+			urlStr = urlString + "/activity/shared/get?appId=" + appId;
+		}
+		webView.loadUrl(urlStr);
 	}
 	
 	@SuppressLint("NewApi")
@@ -198,16 +206,14 @@ public class YouTui extends Activity {
             mHandler.post(new Runnable() {
 				@SuppressLint("NewApi")
 				public void run() {
+					Log.d(message,"JS");
                 	ClipboardManager clip = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
-                	//cmb.setText(content.trim());
-                	Log.d(message,"JS");
-                	//clip.getText(); // 粘贴
                 	clip.setPrimaryClip(ClipData.newPlainText("link", "m" +message)); // 复制 
                 	AlertDialog.Builder b2 = new AlertDialog.Builder(YouTui.this);
                 	
                 	if(clip.hasPrimaryClip()){
-                		b2.setMessage("复制成功2" + clip.getPrimaryClip().getItemAt(0).getText());
-                		clip.getPrimaryClip().getItemAt(0).getText();  
+                		b2.setMessage("复制成功");
+                		//clip.getPrimaryClip().getItemAt(0).getText();  
                 	}else{
                 		b2.setMessage("复制失败，请手动复制");
                 	} 
