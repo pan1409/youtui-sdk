@@ -241,6 +241,91 @@ public class YouTui extends Activity {
              
                 }  
             });
-        } 
+        }
+        
+        /** 
+         * 该方法被浏览器端调用,腾讯微博授权 
+         */  
+        public void clickOnAndroidTencentWeibo() {  
+            mHandler.post(new Runnable() {  
+                @SuppressLint("NewApi")
+				public void run() {
+             
+                }  
+            });
+        }
+        
+        /** 
+         * 该方法被浏览器端调用,QQ空间授权 
+         */  
+        public void clickOnAndroidQZone() {  
+            mHandler.post(new Runnable() {  
+                @SuppressLint("NewApi")
+				public void run() {
+             
+                }  
+            });
+        }
+        
+        /** 
+         * 该方法被浏览器端调用,人人网授权 
+         */  
+        public void clickOnAndroidRenRen() {  
+            mHandler.post(new Runnable() {  
+                @SuppressLint("NewApi")
+				public void run() {
+             
+                }  
+            });
+        }
+        
+        /** 
+         * 该方法被浏览器端调用,QQ好友单独邀请 
+         */  
+        public void clickOnAndroidQQ() {  
+            mHandler.post(new Runnable() {  
+                @SuppressLint("NewApi")
+				public void run() {
+             
+                }  
+            });
+        }
+        
+        /** 
+         * 该方法被浏览器端调用,微信好友单独邀请 
+         */  
+        public void clickOnAndroidWeiXin() {  
+            mHandler.post(new Runnable() {  
+                @SuppressLint("NewApi")
+				public void run() {
+             
+                }  
+            });
+        }
+        
+        /** 
+         * 该方法被浏览器端调用,短信单独邀请 
+         */  
+        public void clickOnAndroidMessage() {  
+            mHandler.post(new Runnable() {  
+                @SuppressLint("NewApi")
+				public void run() {
+             
+                }  
+            });
+        }
+        
+        /** 
+         * 该方法被浏览器端调用,邮件单独邀请 
+         */  
+        public void clickOnAndroidEmail() {  
+            mHandler.post(new Runnable() {  
+                @SuppressLint("NewApi")
+				public void run() {
+             
+                }  
+            });
+        }
+        
     }  
 }
