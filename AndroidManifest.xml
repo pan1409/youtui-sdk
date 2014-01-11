@@ -16,7 +16,7 @@
         
         <meta-data
             android:name="YOUTUI_APPKEY"
-            android:value="10000" >
+            android:value="1" >
         </meta-data>
        	<meta-data
            	android:name="channel"
@@ -37,6 +37,42 @@
             android:name="cn.bidaround.youtui.YouTuiAcceptor"
             android:label="@string/app_name" >
         </activity>
+        <activity android:name=".social.activity.EmailActivity"
+            android:theme="@android:style/Theme.Translucent"/>
+        <activity android:name=".social.activity.RenrenSSOActivity"
+            android:theme="@android:style/Theme.Translucent"/>
+        <activity android:name=".social.activity.SinaWeiboSSOActivity"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity android:name=".social.activity.SMSActivity"
+            android:theme="@android:style/Theme.Translucent"/>
+        <activity android:name=".social.activity.WeiXinShareActivity"
+            android:theme="@android:style/Theme.Translucent"/>
+        <activity android:name=".social.activity.TencentDirectionalShareActivity"
+            android:theme="@android:style/Theme.Translucent"/>
+        <activity android:name=".social.activity.TencentWeiboSSOActivity"
+            android:theme="@android:style/Theme.Translucent"/>
+        <activity android:name=".social.activity.TencentQZoneShareActivity"
+            android:theme="@android:style/Theme.Translucent"/>
+        
+        <!-- ################需要引用的外部社交jar的Activity################### -->
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tencent100566655" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name="com.tencent.plus.ImageActivity" />
     </application>
 
 	<!-- ###################声明SDK使用的相关权限###################### -->
@@ -47,4 +83,12 @@
     <uses-permission android:name="android.permission.INTERNET" />              <!-- 允许应用程序联网，以便向我们的服务器端发送数据。 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />  <!-- 用于评论时分享位置信息 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /><!-- 用于评论时分享位置信息 -->
+    
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 </manifest>
