@@ -16,14 +16,14 @@
         
         <meta-data
             android:name="YOUTUI_APPKEY"
-            android:value="1" >
+            android:value="10000" >
         </meta-data>
        	<meta-data
            	android:name="channel"
            	android:value="eben" />
             	
         <activity
-            android:name="cn.bidaround.youtui.YouTui"
+            android:name="cn.bidaround.youtui.YouTuiWebview"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,25 +33,21 @@
            
         </activity>
         
-        <activity
-            android:name="cn.bidaround.youtui.YouTuiAcceptor"
-            android:label="@string/app_name" >
-        </activity>
-        <activity android:name=".social.activity.EmailActivity"
+        <activity android:name="cn.bidaround.youtui.social.EmailActivity"
             android:theme="@android:style/Theme.Translucent"/>
-        <activity android:name=".social.activity.RenrenSSOActivity"
+        <activity android:name="cn.bidaround.youtui.social.RenrenSSOActivity"
             android:theme="@android:style/Theme.Translucent"/>
-        <activity android:name=".social.activity.SinaWeiboSSOActivity"
+        <activity android:name="cn.bidaround.youtui.social.SinaWeiboSSOActivity"
             android:theme="@android:style/Theme.Translucent" />
-        <activity android:name=".social.activity.SMSActivity"
+        <activity android:name="cn.bidaround.youtui.social.SMSActivity"
             android:theme="@android:style/Theme.Translucent"/>
-        <activity android:name=".social.activity.WeiXinShareActivity"
+        <activity android:name="cn.bidaround.youtui.social.WeiXinShareActivity"
             android:theme="@android:style/Theme.Translucent"/>
-        <activity android:name=".social.activity.TencentDirectionalShareActivity"
+        <activity android:name="cn.bidaround.youtui.social.TencentDirectionalShareActivity"
             android:theme="@android:style/Theme.Translucent"/>
-        <activity android:name=".social.activity.TencentWeiboSSOActivity"
+        <activity android:name="cn.bidaround.youtui.social.TencentWeiboSSOActivity"
             android:theme="@android:style/Theme.Translucent"/>
-        <activity android:name=".social.activity.TencentQZoneShareActivity"
+        <activity android:name="cn.bidaround.youtui.social.TencentQZoneShareActivity"
             android:theme="@android:style/Theme.Translucent"/>
         
         <!-- ################需要引用的外部社交jar的Activity################### -->

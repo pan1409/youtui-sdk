@@ -1,6 +1,7 @@
-package cn.bidaround.youtui.social.activity;
+package cn.bidaround.youtui.social;
 
-import com.bidaround.youtui.outer.helper.DownloadImage;
+import cn.bidaround.youtui.helper.DownloadImage;
+
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;

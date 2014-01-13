@@ -1,4 +1,4 @@
-package cn.bidaround.youtui.social.activity;
+package cn.bidaround.youtui.social;
 
 /**
  * Description: created by qyj on January 7, 2014

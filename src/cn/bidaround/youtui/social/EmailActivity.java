@@ -1,4 +1,4 @@
-package cn.bidaround.youtui.social.activity;
+package cn.bidaround.youtui.social;
 
 import android.app.Activity;
 import android.content.Intent;

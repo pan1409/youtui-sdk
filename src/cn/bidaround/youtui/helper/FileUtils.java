@@ -1,4 +1,4 @@
-package com.bidaround.youtui.outer.helper;
+package cn.bidaround.youtui.helper;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bidaround.youtui.outer.helper;
+package cn.bidaround.youtui.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;

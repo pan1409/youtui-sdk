@@ -1,8 +1,8 @@
-package com.bidaround.youtui.outer.helper;
+package cn.bidaround.youtui.helper;
 
 import java.util.List;
 
-import cn.bidaround.youtui.social.activity.YoutuiConstants;
+import cn.bidaround.youtui.social.YoutuiConstants;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;

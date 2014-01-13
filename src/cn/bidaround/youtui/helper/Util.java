@@ -1,4 +1,4 @@
-package com.bidaround.youtui.outer.helper;
+package cn.bidaround.youtui.helper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
