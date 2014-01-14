@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Tue Jan 14 13:44:01 CST 2014
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=true
+jarname=C\:\\Documents and Settings\\Administrator\\\u684C\u9762\\youtui-sdk.jar
+manifest.mergeall=true
+manifest.mainclass=cn.bidaround.youtui.Main
+manifest.file=<createnew>
+jarname.isextern=true
+onejar.expand=
+excludes=
+includes=
