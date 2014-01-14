@@ -53,7 +53,7 @@ public class DownloadImage {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * 下载文件功能
 	 */

@@ -5,54 +5,61 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import android.os.Environment;
 
 public class FileUtils {
 	private String SDPATH;
-	
-	public String getSDPATH(){
+
+	public String getSDPATH() {
 		return SDPATH;
 	}
+
 	/**
 	 * 得到当前外部存储设备的目录
 	 */
-	public FileUtils(){
+	public FileUtils() {
 		SDPATH = Environment.getExternalStorageDirectory() + "/";
 	}
+
 	/**
 	 * 在SD卡上创建文件
 	 */
-	public File creatSDFile(String fileName) throws IOException{
+	public File creatSDFile(String fileName) throws IOException {
 		File file = new File(SDPATH + fileName);
 		file.createNewFile();
 		return file;
 	}
+
 	/**
 	 * 在SD卡上创建目录
 	 */
-	public File creatSDDir(String dirName){
+	public File creatSDDir(String dirName) {
 		File dir = new File(SDPATH + dirName);
 		dir.mkdir();
 		return dir;
 	}
+
 	/**
 	 * 判断SD卡上的文件是否存在
+	 * 
 	 * @param fileName
 	 * @return
 	 */
-	public boolean isFileExist(String fileName){
+	public boolean isFileExist(String fileName) {
 		File file = new File(SDPATH + fileName);
 		return file.exists();
 	}
+
 	/**
 	 * 将一个InputStream里面的数据写入到SD卡中
-	 * @param path ：要写入SDCARD的目录
-	 * @param fileName ：要写入的文件名
-	 * @param inpout ：要写入的数据
+	 * 
+	 * @param path：要写入SDCARD的目录
+	 * @param fileName：要写入的文件名
+	 * @param inpout：要写入的数据
 	 * @return
 	 */
-	public File write2SDFromInput(String path,String fileName,InputStream input){
+	public File write2SDFromInput(String path, String fileName,
+			InputStream input) {
 		File file = null;
 		OutputStream output = null;
 		try {

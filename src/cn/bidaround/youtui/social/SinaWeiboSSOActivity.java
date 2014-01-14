@@ -1,13 +1,11 @@
 package cn.bidaround.youtui.social;
 
 import java.text.SimpleDateFormat;
-
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -90,7 +88,8 @@ public class SinaWeiboSSOActivity extends Activity {
 								.getExpiresTime()));
 				Intent intent = new Intent();
 				intent.putExtra("AccessToken", mAccessToken.getToken());
-				intent.putExtra("ExpiresTime", String.valueOf(mAccessToken.getExpiresTime()));
+				intent.putExtra("ExpiresTime",
+						String.valueOf(mAccessToken.getExpiresTime()));
 				result(YoutuiConstants.RESULT_SUCCESSFUL, intent);
 			} else {
 				// 显示应用程序签名有误
@@ -105,9 +104,7 @@ public class SinaWeiboSSOActivity extends Activity {
 		@Override
 		public void onCancel() {
 			// 显示授权取消
-			Intent intent = new Intent();
-			intent.putExtra("Cancel", "授权取消");
-			result(YoutuiConstants.RESULT_CANCEL, intent);
+			result(YoutuiConstants.RESULT_CANCEL, null);
 		}
 
 		@Override

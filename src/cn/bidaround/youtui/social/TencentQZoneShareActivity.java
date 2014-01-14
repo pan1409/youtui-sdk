@@ -1,16 +1,14 @@
 package cn.bidaround.youtui.social;
 
 import java.util.ArrayList;
-
 import org.json.JSONObject;
-
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 /**
  * Description: created by qyj on January 7, 2014
  */
@@ -81,12 +79,10 @@ public class TencentQZoneShareActivity extends Activity {
 					@Override
 					public void onCancel() {
 						// 显示分享取消
-						Intent intent = new Intent();
-						intent.putExtra("Cancel", "分享取消");
-						result(YoutuiConstants.RESULT_CANCEL, intent);
+						result(YoutuiConstants.RESULT_CANCEL, null);
 					}
 				});
-		//this.finish();// 当sdk bug修好后这条语句请删除
+		this.finish();// 当sdk bug修好后这条语句请删除
 	}
 
 	/**

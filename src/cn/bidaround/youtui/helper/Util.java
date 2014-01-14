@@ -12,7 +12,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import junit.framework.Assert;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -415,7 +414,8 @@ public class Util {
 
 	public static final void showResultDialog(Context context, String msg,
 			String title) {
-		if(msg == null) return;
+		if (msg == null)
+			return;
 		String rmsg = msg.replace(",", "\n");
 		Log.d("Util", rmsg);
 		new AlertDialog.Builder(context).setTitle(title).setMessage(rmsg)

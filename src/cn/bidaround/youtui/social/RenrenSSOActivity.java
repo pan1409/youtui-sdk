@@ -2,13 +2,8 @@ package cn.bidaround.youtui.social;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.renn.rennsdk.RennClient;
 import com.renn.rennsdk.RennClient.LoginListener;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +14,7 @@ import android.os.Bundle;
 public class RenrenSSOActivity extends Activity {
 	private RennClient rennClient;
 	private String state;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,9 +47,7 @@ public class RenrenSSOActivity extends Activity {
 			public void onLoginCanceled() {
 				// TODO Auto-generated method stub
 				// 显示授权取消
-				Intent intent = new Intent();
-				intent.putExtra("Cancel", "授权取消");
-				result(YoutuiConstants.RESULT_CANCEL, intent);
+				result(YoutuiConstants.RESULT_CANCEL, null);
 			}
 		});
 	}
@@ -91,7 +85,7 @@ public class RenrenSSOActivity extends Activity {
 				.format(calendar.getTime());
 		return date;
 	}
-	
+
 	/**
 	 * 获取所需参数
 	 */
@@ -99,7 +93,7 @@ public class RenrenSSOActivity extends Activity {
 		Intent intent = getIntent();
 		state = intent.getStringExtra("state");
 	}
-	
+
 	/**
 	 * 返回授权信息。
 	 */
