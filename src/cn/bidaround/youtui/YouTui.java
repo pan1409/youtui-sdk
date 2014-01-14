@@ -1,16 +1,12 @@
 package cn.bidaround.youtui;
 
 import java.util.Iterator;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -67,7 +63,6 @@ public class YouTui extends Activity {
 	
 	/* 显示友推组件,供外部调用 */
 	public void show(Activity context, int type){
-		//setContent(type);
 		Intent intent = new Intent();
 		//调用友推组件，方便用户分享推荐，或举行推荐奖励活动
 		intent.setClass(context, YouTui.class);
@@ -154,7 +149,7 @@ public class YouTui extends Activity {
 	 */
 	private void jumpToWeb(String url, JSONObject json) {
 		String urlString = "http://yt.bidaround.cn";
-		// String urlString = "http://192.168.2.101";
+		// String urlString = "http://192.168.2.106";
 		urlString += url;
 
 		if (json != null) {
@@ -287,34 +282,32 @@ public class YouTui extends Activity {
 		}
 
 		/**
-		 * 该方法被浏览器端调用
+		 * 该方法被浏览器端调用，复制链接
 		 */
 		public void clickOnAndroidCopy(final String message) {
 			mHandler.post(new Runnable() {
 				@SuppressLint("NewApi")
 				public void run() {
-					ClipboardManager clip = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-					clip.setPrimaryClip(ClipData.newPlainText("link", message)); // 复制
-					AlertDialog.Builder b2 = new AlertDialog.Builder(
-							YouTui.this);
-
-					if (clip.hasPrimaryClip()) {
-						b2.setMessage("复制成功");
+					// API 11之前用android.text.ClipboardManager;
+					// API 11之后用android.content.ClipboardManager
+					if (android.os.Build.VERSION.SDK_INT >= 11) {
+						android.content.ClipboardManager clip = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+						clip.setPrimaryClip(android.content.ClipData
+								.newPlainText("link", message));
+						if (clip.hasPrimaryClip()) {
+							showAlert("复制成功");
+						} else {
+							showAlert("复制失败，请手动复制");
+						}
 					} else {
-						b2.setMessage("复制失败，请手动复制");
+						android.text.ClipboardManager clip = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+						clip.setText(message);
+						if (clip.hasText()) {
+							showAlert("复制成功");
+						} else {
+							showAlert("复制失败，请手动复制");
+						}
 					}
-
-					b2.setPositiveButton("ok",
-							new AlertDialog.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-
-								}
-							});
-					b2.setCancelable(false);
-					b2.create();
-					b2.show();
 				}
 			});
 		}

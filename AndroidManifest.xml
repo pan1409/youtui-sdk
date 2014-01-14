@@ -23,7 +23,7 @@
            	android:value="eben" />
             	
         <activity
-            android:name="cn.bidaround.youtui.YouTuiWebview"
+            android:name="cn.bidaround.youtui.YouTui"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
