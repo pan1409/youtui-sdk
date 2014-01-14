@@ -49,6 +49,9 @@
             android:theme="@android:style/Theme.Translucent"/>
         <activity android:name="cn.bidaround.youtui.social.TencentQZoneShareActivity"
             android:theme="@android:style/Theme.Translucent"/>
+        <activity android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent"/>
         
         <!-- ################需要引用的外部社交jar的Activity################### -->
         <activity

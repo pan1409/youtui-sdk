@@ -3,16 +3,13 @@ package cn.bidaround.youtui.helper;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-
 import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-
 import com.tencent.open.HttpStatusException;
 import com.tencent.open.NetworkUnavailableException;
 import com.tencent.tauth.IRequestListener;
@@ -22,12 +19,14 @@ public class BaseApiListener implements IRequestListener {
 	private String mScope = "all";
 	private Boolean mNeedReAuth = false;
 	private Activity mActivity;
-	public BaseApiListener(String scope, boolean needReAuth,Activity activity) {
+
+	public BaseApiListener(String scope, boolean needReAuth, Activity activity) {
 		mScope = scope;
 		mNeedReAuth = needReAuth;
 		mActivity = activity;
 	}
-	private Handler mHandler = new Handler(){
+
+	private Handler mHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
@@ -38,8 +37,9 @@ public class BaseApiListener implements IRequestListener {
 			super.handleMessage(msg);
 			Util.dismissDialog();
 		}
-		
+
 	};
+
 	@Override
 	public void onComplete(final JSONObject response, Object state) {
 		Message msg = new Message();
@@ -146,6 +146,5 @@ public class BaseApiListener implements IRequestListener {
 	public void setmActivity(Activity mActivity) {
 		this.mActivity = mActivity;
 	}
-	
-	
+
 }

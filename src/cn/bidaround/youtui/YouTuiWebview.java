@@ -18,7 +18,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +29,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 import cn.bidaround.youtui.helper.AppHelper;
 import cn.bidaround.youtui.helper.DownloadImage;
 import cn.bidaround.youtui.social.EmailActivity;
@@ -64,26 +64,27 @@ public class YouTuiWebview extends Activity {
 		/* 装载数据内容 */
 		loadContent();
 	}
-	
+
 	/**
 	 * 进度条
 	 */
-	private void loadingBar(){
-		//进度条
+	private void loadingBar() {
+		// 进度条
 		loadingDialog = new ProgressDialog(YouTuiWebview.this);
-		 // 设置进度条风格，风格为圆形，旋转的
-		loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);  
+		// 设置进度条风格，风格为圆形，旋转的
+		loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// 设置ProgressDialog 提示信息
 		loadingDialog.setMessage("加载中…");
-	    // 设置ProgressDialog 的进度条是否不明确
+		// 设置ProgressDialog 的进度条是否不明确
 		loadingDialog.setIndeterminate(false);
-	    // 设置ProgressDialog 是否可以按退回按键取消
+		// 设置ProgressDialog 是否可以按退回按键取消
 		loadingDialog.setCancelable(true);
-		
-	    int screenWidth  = getWindowManager().getDefaultDisplay().getWidth();
-	    int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
-	    loadingDialog.getWindow().setLayout(screenWidth*2/3, screenHeight/5);
-	    loadingDialog.show();
+
+		int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+		int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
+		loadingDialog.getWindow().setLayout(screenWidth * 2 / 3,
+				screenHeight / 5);
+		loadingDialog.show();
 	}
 
 	/**
@@ -106,7 +107,8 @@ public class YouTuiWebview extends Activity {
 		// 重新弹出框
 		webView.setWebChromeClient(new MyWebChromeClient());
 		// 接收web端 js 方法
-		webView.addJavascriptInterface(new YouTuiJavaScriptInterface(),"android");
+		webView.addJavascriptInterface(new YouTuiJavaScriptInterface(),
+				"android");
 		setContentView(webView);
 	}
 
@@ -130,11 +132,11 @@ public class YouTuiWebview extends Activity {
 			jumpToWeb("/activity/shared/get?appId=" + appId, null);
 		}
 	}
-	
+
 	/**
 	 * 结束分享
 	 */
-	private void end(){
+	private void end() {
 		this.finish();
 	}
 
@@ -143,7 +145,7 @@ public class YouTuiWebview extends Activity {
 	 */
 	private void jumpToWeb(String url, JSONObject json) {
 		String urlString = "http://yt.bidaround.cn";
-		//String urlString = "http://192.168.2.101";
+		// String urlString = "http://192.168.2.101";
 		urlString += url;
 
 		if (json != null) {
@@ -207,8 +209,8 @@ public class YouTuiWebview extends Activity {
 		@Override
 		public void onProgressChanged(WebView view, int progress) {
 			YouTuiWebview.this.setTitle("加载中...");
-			YouTuiWebview.this.getWindow().setFeatureInt(Window.FEATURE_PROGRESS,
-					progress * 100);
+			YouTuiWebview.this.getWindow().setFeatureInt(
+					Window.FEATURE_PROGRESS, progress * 100);
 			YouTuiWebview.this.setProgress(progress);
 			if (progress >= 80) {
 				YouTuiWebview.this.setTitle("");
@@ -228,7 +230,7 @@ public class YouTuiWebview extends Activity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					result.confirm();
-					//end();
+					// end();
 				}
 			});
 			b2.setCancelable(false);
@@ -274,7 +276,7 @@ public class YouTuiWebview extends Activity {
 			String savePath = YoutuiConstants.FILE_SAVE_PATH;
 			DownloadImage.downloadImage(url, savePath, appId);
 		}
-		
+
 		/**
 		 * 该方法被浏览器端调用
 		 */
@@ -284,7 +286,8 @@ public class YouTuiWebview extends Activity {
 				public void run() {
 					ClipboardManager clip = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 					clip.setPrimaryClip(ClipData.newPlainText("link", message)); // 复制
-					AlertDialog.Builder b2 = new AlertDialog.Builder(YouTuiWebview.this);
+					AlertDialog.Builder b2 = new AlertDialog.Builder(
+							YouTuiWebview.this);
 
 					if (clip.hasPrimaryClip()) {
 						b2.setMessage("复制成功");
@@ -295,8 +298,9 @@ public class YouTuiWebview extends Activity {
 					b2.setPositiveButton("ok",
 							new AlertDialog.OnClickListener() {
 								@Override
-								public void onClick(DialogInterface dialog,int which) {
-									
+								public void onClick(DialogInterface dialog,
+										int which) {
+
 								}
 							});
 					b2.setCancelable(false);
@@ -321,7 +325,8 @@ public class YouTuiWebview extends Activity {
 								YoutuiConstants.APP_NOT_EXIST, intent);
 					} else {
 						Intent intent = new Intent();
-						intent.setClass(YouTuiWebview.this, SinaWeiboSSOActivity.class);
+						intent.setClass(YouTuiWebview.this,
+								SinaWeiboSSOActivity.class);
 						intent.putExtra("state", state);
 						startActivityForResult(intent,
 								YoutuiConstants.SINA_WEIBO_REQUEST_CODE);
@@ -392,7 +397,8 @@ public class YouTuiWebview extends Activity {
 								YoutuiConstants.APP_NOT_EXIST, intent);
 					} else {
 						Intent intent = new Intent();
-						intent.setClass(YouTuiWebview.this, RenrenSSOActivity.class);
+						intent.setClass(YouTuiWebview.this,
+								RenrenSSOActivity.class);
 						intent.putExtra("state", state);
 						startActivityForResult(intent,
 								YoutuiConstants.RENREN_REQUEST_CODE);
@@ -445,7 +451,8 @@ public class YouTuiWebview extends Activity {
 								YoutuiConstants.APP_NOT_EXIST, null);
 					} else {
 						Intent intent = new Intent();
-						intent.setClass(YouTuiWebview.this, WeiXinShareActivity.class);
+						intent.setClass(YouTuiWebview.this,
+								WeiXinShareActivity.class);
 						intent.putExtra("mark", mark);
 						intent.putExtra("title", title);
 						intent.putExtra("description", description);
@@ -506,19 +513,21 @@ public class YouTuiWebview extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			showAlert("授权成功");
 			jumpToWeb("/weiboBindResponse", json);
 			break;
 		case YoutuiConstants.RESULT_SIGNATURE_ERROR:
 			String Code = data.getStringExtra("Code").toString();
+			showAlert("授权失败");
 			showAlert(Code);
 			break;
 		case YoutuiConstants.RESULT_CANCEL:
-			String Cancel = data.getStringExtra("Cancel").toString();
-			showAlert(Cancel);
+			showAlert("授权取消");
 			break;
 		case YoutuiConstants.RESULT_ERROR:
 			String Auth_Exception = data.getStringExtra("Auth_Exception")
 					.toString();
+			showAlert("授权失败");
 			showAlert(Auth_Exception);
 			break;
 		case YoutuiConstants.APP_NOT_EXIST:
@@ -529,8 +538,8 @@ public class YouTuiWebview extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			showAlert("新浪微博客户端不存在，跳转中...");
 			jumpToWeb("/authorize", json2);
-			// showAlert("新浪微博客户端不存在");
 			break;
 		default:
 			break;
@@ -546,20 +555,22 @@ public class YouTuiWebview extends Activity {
 			JSONObject json = new JSONObject();
 			try {
 				json.put("token", data.getStringExtra("AccessToken").toString());
-				json.put("ExpiresTime", data.getStringExtra("ExpiresTime").toString());
+				json.put("ExpiresTime", data.getStringExtra("ExpiresTime")
+						.toString());
 				json.put("openid", data.getStringExtra("OpenId").toString());
 				json.put("state", data.getStringExtra("state").toString());
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+			showAlert("授权成功");
 			jumpToWeb("/testauthorization", json);
 			break;
 		case YoutuiConstants.RESULT_CANCEL:
-			String Cancel = data.getStringExtra("Cancel").toString();
-			showAlert(Cancel);
+			showAlert("授权取消");
 			break;
 		case YoutuiConstants.RESULT_ERROR:
 			String Error = data.getStringExtra("Error").toString();
+			showAlert("授权失败");
 			showAlert(Error);
 			break;
 		case YoutuiConstants.APP_NOT_EXIST:
@@ -570,8 +581,8 @@ public class YouTuiWebview extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			showAlert("腾讯QQ客户端不存在，跳转中...");
 			jumpToWeb("/tencentauthorize", json2);
-			// showAlert("腾讯QQ客户端不存在");
 			break;
 		default:
 			break;
@@ -585,14 +596,15 @@ public class YouTuiWebview extends Activity {
 		switch (resultCode) {
 		case YoutuiConstants.RESULT_SUCCESSFUL:
 			String Response = data.getStringExtra("Response").toString();
+			showAlert("授权成功");
 			showAlert(Response);
 			break;
 		case YoutuiConstants.RESULT_CANCEL:
-			String Cancel = data.getStringExtra("Cancel").toString();
-			showAlert(Cancel);
+			showAlert("授权取消");
 			break;
 		case YoutuiConstants.RESULT_ERROR:
 			String Error = data.getStringExtra("Error").toString();
+			showAlert("授权失败");
 			showAlert(Error);
 			break;
 		default:
@@ -606,15 +618,15 @@ public class YouTuiWebview extends Activity {
 	public void DealTencentDirectionalShare(int resultCode, Intent data) {
 		switch (resultCode) {
 		case YoutuiConstants.RESULT_SUCCESSFUL:
-			String Success = data.getStringExtra("Success").toString();
-			showAlert(Success);
+			showAlert("分享成功");
 			break;
 		case YoutuiConstants.RESULT_CANCEL:
-			String Cancel = data.getStringExtra("Cancel").toString();
-			showAlert(Cancel);
+			showAlert("分享成功");// 这是QQ sdk的一个bug
+			// showAlert("分享取消");
 			break;
 		case YoutuiConstants.RESULT_ERROR:
 			String Error = data.getStringExtra("Error").toString();
+			showAlert("分享失败");
 			showAlert(Error);
 			break;
 		case YoutuiConstants.APP_NOT_EXIST:
@@ -630,16 +642,15 @@ public class YouTuiWebview extends Activity {
 	 */
 	public void DealWeixinShare(int resultCode, Intent data) {
 		switch (resultCode) {
-		case YoutuiConstants.RESULT_SUCCESSFUL:
-			String Success = data.getStringExtra("Success").toString();
-			showAlert(Success);
-			break;
 		case YoutuiConstants.RESULT_ERROR:
 			String Error = data.getStringExtra("Error").toString();
+			showAlert("分享失败");
 			showAlert(Error);
 			break;
 		case YoutuiConstants.APP_NOT_EXIST:
-			showAlert("微信客户端不存在");
+			String Dismiss = data.getStringExtra("Dismiss").toString();
+			showAlert("分享失败");
+			showAlert(Dismiss);
 			break;
 		default:
 			break;
@@ -660,11 +671,11 @@ public class YouTuiWebview extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			showAlert("授权成功");
 			jumpToWeb("/renrenauthorize2", json);
 			break;
 		case YoutuiConstants.RESULT_CANCEL:
-			String Cancel = data.getStringExtra("Cancel").toString();
-			showAlert(Cancel);
+			showAlert("授权取消");
 		case YoutuiConstants.APP_NOT_EXIST:
 			JSONObject json2 = new JSONObject();
 			try {
@@ -673,8 +684,8 @@ public class YouTuiWebview extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			showAlert("人人客户端不存在，跳转中...");
 			jumpToWeb("/renrenauthorize", json2);
-			//showAlert("人人客户端不存在");
 			break;
 		default:
 			break;
@@ -685,17 +696,7 @@ public class YouTuiWebview extends Activity {
 	 * 显示结果
 	 */
 	private void showAlert(String message) {
-		AlertDialog.Builder b2 = new AlertDialog.Builder(YouTuiWebview.this);
-		b2.setMessage(message);
-		b2.setPositiveButton("ok", new AlertDialog.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				
-			}
-		});
-		b2.setCancelable(false);
-		b2.create();
-		b2.show();
+		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
 
 	/**

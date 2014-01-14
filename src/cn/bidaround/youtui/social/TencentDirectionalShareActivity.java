@@ -1,14 +1,13 @@
 package cn.bidaround.youtui.social;
 
 import org.json.JSONObject;
-
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 /**
  * Description: created by qyj on January 7, 2014
  */
@@ -61,9 +60,7 @@ public class TencentDirectionalShareActivity extends Activity {
 					@Override
 					public void onComplete(JSONObject response) {
 						// 显示分享成功
-						Intent intent = new Intent();
-						intent.putExtra("Success", "分享成功");
-						result(YoutuiConstants.RESULT_SUCCESSFUL, intent);
+						result(YoutuiConstants.RESULT_SUCCESSFUL, null);
 					}
 
 					@Override
@@ -78,10 +75,7 @@ public class TencentDirectionalShareActivity extends Activity {
 					@Override
 					public void onCancel() {
 						// 显示分享取消
-						Intent intent = new Intent();
-						//intent.putExtra("Cancel", "分享取消");
-						intent.putExtra("Cancel", "分享成功");//这是腾讯sdk的一个bug
-						result(YoutuiConstants.RESULT_CANCEL, intent);
+						result(YoutuiConstants.RESULT_CANCEL, null);// 这是腾讯sdk的一个bug
 					}
 				});
 	}

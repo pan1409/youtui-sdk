@@ -1,11 +1,9 @@
 package cn.bidaround.youtui.helper;
 
 import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
-
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.UiError;
 

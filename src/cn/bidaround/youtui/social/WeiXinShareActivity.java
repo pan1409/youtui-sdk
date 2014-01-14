@@ -1,7 +1,6 @@
 package cn.bidaround.youtui.social;
 
 import cn.bidaround.youtui.helper.DownloadImage;
-
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -85,10 +84,10 @@ public class WeiXinShareActivity extends Activity {
 	private void share(WXMediaMessage msg) {
 		if (!api.isWXAppInstalled()) {
 			// 显示分享错误
-			String error = "您还没有安装微信客户端，请安装后再进行分享！";
+			String dismiss = "您还没有安装微信客户端，请安装后再进行分享！";
 			Intent intent = new Intent();
-			intent.putExtra("Error", error);
-			result(YoutuiConstants.RESULT_ERROR, intent);
+			intent.putExtra("Dismiss", dismiss);
+			result(YoutuiConstants.APP_NOT_EXIST, intent);
 			return;
 		}
 		if (api.getWXAppSupportAPI() < YoutuiConstants.WEIXIN_TIMELINE_SUPPORTED_VERSION) {
@@ -112,17 +111,8 @@ public class WeiXinShareActivity extends Activity {
 
 		// sendReq是第三方app的IWXAPI主动发送消息给微信，发送完成之后会切回到第三方app界面。
 		// sendResp是微信向第三方app的IWXAPI请求数据，第三方app回应数据之后会切回到微信界面。
-		if (api.sendReq(req)) {
-			// 显示分享成功
-			Intent intent = new Intent();
-			intent.putExtra("Success", "分享成功！");
-			result(YoutuiConstants.RESULT_SUCCESSFUL, intent);
-		} else {
-			// 显示分享错误
-			Intent intent = new Intent();
-			intent.putExtra("Error", "分享失败！");
-			result(YoutuiConstants.RESULT_ERROR, intent);
-		}
+		api.sendReq(req);
+		finish();
 	}
 
 	/**
@@ -137,7 +127,7 @@ public class WeiXinShareActivity extends Activity {
 	}
 
 	/**
-	 * 返回分享状况信息。
+	 * 返回分享状况的错误信息
 	 */
 	private void result(int i, Intent intent) {
 		this.setResult(i, intent);

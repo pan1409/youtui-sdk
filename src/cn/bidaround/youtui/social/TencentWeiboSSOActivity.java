@@ -2,13 +2,10 @@ package cn.bidaround.youtui.social;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
 import org.json.JSONObject;
-
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -19,6 +16,7 @@ import android.content.Intent;
 public class TencentWeiboSSOActivity extends Activity {
 	private Tencent mTencent;
 	private String state;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,7 +55,8 @@ public class TencentWeiboSSOActivity extends Activity {
 							// 显示获取Token正常
 							Intent intent = new Intent();
 							intent.putExtra("AccessToken", getToken());
-							intent.putExtra("ExpiresTime", String.valueOf(mTencent.getExpiresIn()));
+							intent.putExtra("ExpiresTime",
+									String.valueOf(mTencent.getExpiresIn()));
 							intent.putExtra("OpenId", getOpenId());
 							result(YoutuiConstants.RESULT_SUCCESSFUL, intent);
 						}
@@ -74,9 +73,7 @@ public class TencentWeiboSSOActivity extends Activity {
 						@Override
 						public void onCancel() {
 							// 显示授权取消
-							Intent intent = new Intent();
-							intent.putExtra("Cancel", "授权取消");
-							result(YoutuiConstants.RESULT_CANCEL, intent);
+							result(YoutuiConstants.RESULT_CANCEL, null);
 						}
 					});
 		}
@@ -89,7 +86,7 @@ public class TencentWeiboSSOActivity extends Activity {
 		String token = mTencent.getAccessToken();
 		return token;
 	}
-	
+
 	/**
 	 * 获取token(注意：需要登录后才能够获取token。但如果没有登录直接执行mTencent.getAccessToken()不会报错，返回空值)
 	 */
@@ -108,7 +105,7 @@ public class TencentWeiboSSOActivity extends Activity {
 				.format(calendar.getTime());
 		return date;
 	}
-	
+
 	/**
 	 * 获取所需参数
 	 */
