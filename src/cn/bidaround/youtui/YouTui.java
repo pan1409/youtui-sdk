@@ -5,10 +5,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -60,11 +58,11 @@ public class YouTui extends Activity {
 		/* 装载数据内容 */
 		loadContent();
 	}
-	
+
 	/* 显示友推组件,供外部调用 */
-	public void show(Activity context, int type){
+	public void show(Activity context, int type) {
 		Intent intent = new Intent();
-		//调用友推组件，方便用户分享推荐，或举行推荐奖励活动
+		// 调用友推组件，方便用户分享推荐，或举行推荐奖励活动
 		intent.setClass(context, YouTui.class);
 		context.startActivity(intent);
 	}
@@ -130,7 +128,7 @@ public class YouTui extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (appId == null || appId.length() == 0) {
+		if (appId == null) {
 			jumpToWeb("/activity/noappId/", null);
 		} else {
 			jumpToWeb("/activity/shared/get?appId=" + appId, null);
@@ -213,8 +211,8 @@ public class YouTui extends Activity {
 		@Override
 		public void onProgressChanged(WebView view, int progress) {
 			YouTui.this.setTitle("加载中...");
-			YouTui.this.getWindow().setFeatureInt(
-					Window.FEATURE_PROGRESS, progress * 100);
+			YouTui.this.getWindow().setFeatureInt(Window.FEATURE_PROGRESS,
+					progress * 100);
 			YouTui.this.setProgress(progress);
 			if (progress >= 80) {
 				YouTui.this.setTitle("");
@@ -228,18 +226,9 @@ public class YouTui extends Activity {
 		@Override
 		public boolean onJsAlert(WebView view, String url, String message,
 				final JsResult result) {
-			AlertDialog.Builder b2 = new AlertDialog.Builder(YouTui.this);
-			b2.setMessage(message);
-			b2.setPositiveButton("ok", new AlertDialog.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					result.confirm();
-					// end();
-				}
-			});
-			b2.setCancelable(false);
-			b2.create();
-			b2.show();
+			result.confirm();
+			showAlert(message);
+			end();
 			return true;
 		}
 
@@ -319,17 +308,24 @@ public class YouTui extends Activity {
 			mHandler.post(new Runnable() {
 				@SuppressLint("NewApi")
 				public void run() {
+					String appId = getAppIdSina("SINA_WEIBO_APP_ID");
 					if (!AppHelper.isSinaWeiboExisted(getApplicationContext())) {
 						Intent intent = new Intent();
 						intent.putExtra("state", state);
 						onActivityResult(
 								YoutuiConstants.SINA_WEIBO_REQUEST_CODE,
 								YoutuiConstants.APP_NOT_EXIST, intent);
+					} else if (appId == null) {
+						Intent intent = new Intent();
+						intent.putExtra("state", state);
+						onActivityResult(
+								YoutuiConstants.SINA_WEIBO_REQUEST_CODE,
+								YoutuiConstants.APP_ID_MISSING, intent);
 					} else {
 						Intent intent = new Intent();
-						intent.setClass(YouTui.this,
-								SinaWeiboSSOActivity.class);
+						intent.setClass(YouTui.this, SinaWeiboSSOActivity.class);
 						intent.putExtra("state", state);
+						intent.putExtra("appid", appId);
 						startActivityForResult(intent,
 								YoutuiConstants.SINA_WEIBO_REQUEST_CODE);
 					}
@@ -399,8 +395,7 @@ public class YouTui extends Activity {
 								YoutuiConstants.APP_NOT_EXIST, intent);
 					} else {
 						Intent intent = new Intent();
-						intent.setClass(YouTui.this,
-								RenrenSSOActivity.class);
+						intent.setClass(YouTui.this, RenrenSSOActivity.class);
 						intent.putExtra("state", state);
 						startActivityForResult(intent,
 								YoutuiConstants.RENREN_REQUEST_CODE);
@@ -447,18 +442,23 @@ public class YouTui extends Activity {
 			mHandler.post(new Runnable() {
 				@SuppressLint("NewApi")
 				public void run() {
+					String appId = getAppIdByString("WEIXIN_APP_ID");
 					if (!AppHelper.isWeixinExisted(getApplicationContext())) {
 						onActivityResult(
 								YoutuiConstants.WEIXIN_SHARE_REQUEST_CODE,
 								YoutuiConstants.APP_NOT_EXIST, null);
+					} else if (appId == null) {
+						onActivityResult(
+								YoutuiConstants.WEIXIN_SHARE_REQUEST_CODE,
+								YoutuiConstants.APP_ID_MISSING, null);
 					} else {
 						Intent intent = new Intent();
-						intent.setClass(YouTui.this,
-								WeiXinShareActivity.class);
+						intent.setClass(YouTui.this, WeiXinShareActivity.class);
 						intent.putExtra("mark", mark);
 						intent.putExtra("title", title);
 						intent.putExtra("description", description);
 						intent.putExtra("target_url", target_url);
+						intent.putExtra("appid", appId);
 						startActivityForResult(intent,
 								YoutuiConstants.WEIXIN_SHARE_REQUEST_CODE);
 					}
@@ -476,7 +476,8 @@ public class YouTui extends Activity {
 					Intent intent = new Intent();
 					intent.setClass(YouTui.this, SMSActivity.class);
 					intent.putExtra("content", content);
-					startActivity(intent);
+					startActivityForResult(intent,
+							YoutuiConstants.SMS_REQUEST_CODE);
 				}
 			});
 		}
@@ -493,7 +494,8 @@ public class YouTui extends Activity {
 					intent.putExtra("subject", subject);
 					intent.putExtra("content", content);
 					intent.setClass(YouTui.this, EmailActivity.class);
-					startActivity(intent);
+					startActivityForResult(intent,
+							YoutuiConstants.EMAIL_REQUEST_CODE);
 				}
 			});
 		}
@@ -542,6 +544,17 @@ public class YouTui extends Activity {
 			}
 			showAlert("新浪微博客户端不存在，跳转中...");
 			jumpToWeb("/authorize", json2);
+			break;
+		case YoutuiConstants.APP_ID_MISSING:
+			JSONObject json3 = new JSONObject();
+			try {
+				json3.put("state", data.getStringExtra("state").toString());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			showAlert("新浪微博AppId不存在，跳转中...");
+			jumpToWeb("/authorize", json3);
 			break;
 		default:
 			break;
@@ -650,9 +663,10 @@ public class YouTui extends Activity {
 			showAlert(Error);
 			break;
 		case YoutuiConstants.APP_NOT_EXIST:
-			String Dismiss = data.getStringExtra("Dismiss").toString();
-			showAlert("分享失败");
-			showAlert(Dismiss);
+			showAlert("分享失败，没有安装微信客户端");
+			break;
+		case YoutuiConstants.APP_ID_MISSING:
+			showAlert("分享失败，没有AppId");
 			break;
 		default:
 			break;
@@ -695,6 +709,77 @@ public class YouTui extends Activity {
 	}
 
 	/**
+	 * 处理短信结果
+	 */
+	public void DealSMS(int resultCode, Intent data) {
+		switch (resultCode) {
+		case YoutuiConstants.RESULT_SUCCESSFUL:
+			break;
+		case YoutuiConstants.RESULT_CANCEL:
+			showAlert("系统没有安装短信客户端");
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * 处理电子邮件结果
+	 */
+	public void DealEmail(int resultCode, Intent data) {
+		switch (resultCode) {
+		case YoutuiConstants.RESULT_SUCCESSFUL:
+			break;
+		case YoutuiConstants.RESULT_CANCEL:
+			showAlert("系统没有安装电子邮件客户端");
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * 从AndroidManifest中获取appid
+	 */
+	private String getAppIdByString(String appid) {
+		ApplicationInfo info;
+		String msg = null;
+		try {
+			info = getPackageManager().getApplicationInfo(getPackageName(),
+					PackageManager.GET_META_DATA);
+			msg = info.metaData.getString(appid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (msg == null || msg.length() == 0) {
+			return null;
+		} else {
+			return msg;
+		}
+	}
+
+	/**
+	 * 新浪微博从AndroidManifest中获取appid
+	 */
+	private String getAppIdSina(String appid) {
+		ApplicationInfo info;
+		String msg = null;
+		try {
+			info = getPackageManager().getApplicationInfo(getPackageName(),
+					PackageManager.GET_META_DATA);
+			msg = info.metaData.getString(appid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (msg == null || msg.length() == 0) {
+			return null;
+		} else {
+			String result = msg.substring(4);
+			return result;
+		}
+	}
+
+	/**
 	 * 显示结果
 	 */
 	private void showAlert(String message) {
@@ -724,6 +809,12 @@ public class YouTui extends Activity {
 			break;
 		case YoutuiConstants.RENREN_REQUEST_CODE:
 			DealRenren(resultCode, data);
+			break;
+		case YoutuiConstants.SMS_REQUEST_CODE:
+			DealSMS(resultCode, data);
+			break;
+		case YoutuiConstants.EMAIL_REQUEST_CODE:
+			DealEmail(resultCode, data);
 			break;
 		default:
 			break;

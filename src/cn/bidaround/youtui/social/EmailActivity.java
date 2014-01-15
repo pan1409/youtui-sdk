@@ -1,5 +1,6 @@
 package cn.bidaround.youtui.social;
 
+import cn.bidaround.youtui.helper.AppHelper;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -24,11 +25,18 @@ public class EmailActivity extends Activity {
 	private void sendEmail() {
 		getData();
 		Uri uri = Uri.parse("mailto:");// 可以直接填写确定的收件人，如"mailto:1353015987@qq.com"
-		Intent it = new Intent(Intent.ACTION_SENDTO, uri);
+		Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
 		// it.putExtra(Intent.EXTRA_EMAIL, email_address);// 收件人（一定要为String[]）
-		it.putExtra(Intent.EXTRA_SUBJECT, subject); // 邮件的主题
-		it.putExtra(Intent.EXTRA_TEXT, content);// 邮件的内容
-		startActivity(it);
+		intent.putExtra(Intent.EXTRA_SUBJECT, subject); // 邮件的主题
+		intent.putExtra(Intent.EXTRA_TEXT, content);// 邮件的内容
+		if (AppHelper.isIntentAvailable(this, intent)) {
+			// 显示跳转成功
+			result(YoutuiConstants.RESULT_SUCCESSFUL, null);
+			startActivity(intent);
+		} else {
+			// 显示跳转取消
+			result(YoutuiConstants.RESULT_CANCEL, null);
+		}
 		finish();
 	}
 
@@ -39,5 +47,13 @@ public class EmailActivity extends Activity {
 		Intent intent = getIntent();
 		subject = intent.getStringExtra("subject");
 		content = intent.getStringExtra("content");
+	}
+
+	/**
+	 * 返回分享状况信息。
+	 */
+	private void result(int i, Intent intent) {
+		this.setResult(i, intent);
+		this.finish();
 	}
 }

@@ -1,6 +1,5 @@
 package cn.bidaround.youtui.wxapi;
 
-import cn.bidaround.youtui.social.YoutuiConstants;
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -8,6 +7,8 @@ import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -18,13 +19,14 @@ import android.widget.Toast;
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	// IWXAPI是第三方app和微信通信的openapi接口
 	private IWXAPI api;
+	private String appid;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		api = WXAPIFactory.createWXAPI(this, YoutuiConstants.WEIXIN_APP_ID,
-				false);
-		api.registerApp(YoutuiConstants.WEIXIN_APP_ID);
+		appid = getAppIdByString("WEIXIN_APP_ID");
+		api = WXAPIFactory.createWXAPI(this, appid, false);
+		api.registerApp(appid);
 		api.handleIntent(getIntent(), this);
 	}
 
@@ -58,6 +60,26 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 		}
 		Toast.makeText(this, result, Toast.LENGTH_LONG).show();
 		finish();
+	}
+
+	/**
+	 * 从AndroidManifest中获取appid
+	 */
+	private String getAppIdByString(String appid) {
+		ApplicationInfo info;
+		String msg = null;
+		try {
+			info = getPackageManager().getApplicationInfo(getPackageName(),
+					PackageManager.GET_META_DATA);
+			msg = info.metaData.getString(appid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (msg == null || msg.length() == 0) {
+			return null;
+		} else {
+			return msg;
+		}
 	}
 
 	/**

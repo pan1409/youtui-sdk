@@ -9,7 +9,7 @@ public class YoutuiConstants {
 	public static final String FILE_SAVE_PATH = "/youtui/";
 
 	// 新浪微博的参数
-	public static final String SINA_WEIBO_APP_ID = "2502314449";
+	// public static final String SINA_WEIBO_APP_ID = "2502314449";
 	public static final String SINA_WEIBO_REDIRECT_URL = "http://yt.bidaround.cn/weiboBindResponse";
 	public static final String SINA_WEIBO_SCOPE = "email,direct_messages_read,direct_messages_write,"
 			+ "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
@@ -20,7 +20,7 @@ public class YoutuiConstants {
 	public static final String TENCENT_SCOPE = "all";
 
 	// 微信的参数
-	public static final String WEIXIN_APP_ID = "wxbc9e6010cf85c3e4";
+	// public static final String WEIXIN_APP_ID = "wxbc9e6010cf85c3e4";
 	public static final int WEIXIN_TIMELINE_SUPPORTED_VERSION = 0x21020001;// 微信4.2以上支持分享至朋友圈
 
 	// 人人的参数
@@ -42,6 +42,8 @@ public class YoutuiConstants {
 	public static final int TENCENT_DIRECTIONAL_SHARE_REQUEST_CODE = 103;
 	public static final int WEIXIN_SHARE_REQUEST_CODE = 104;
 	public static final int RENREN_REQUEST_CODE = 105;
+	public static final int SMS_REQUEST_CODE = 106;
+	public static final int EMAIL_REQUEST_CODE = 107;
 
 	// result
 	public static final int RESULT_SUCCESSFUL = -1;
@@ -49,4 +51,5 @@ public class YoutuiConstants {
 	public static final int RESULT_ERROR = 1;
 	public static final int RESULT_SIGNATURE_ERROR = 2;
 	public static final int APP_NOT_EXIST = 3;
+	public static final int APP_ID_MISSING = 4;
 }

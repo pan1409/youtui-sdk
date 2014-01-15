@@ -15,6 +15,8 @@ import android.os.Bundle;
  */
 public class SinaWeiboSSOActivity extends Activity {
 	private String state;
+	private String appid;
+
 	/** 微博 Web 授权类，提供登陆等功能 */
 	private WeiboAuth mWeiboAuth;
 
@@ -39,8 +41,9 @@ public class SinaWeiboSSOActivity extends Activity {
 	 * 初始化
 	 */
 	private void init() {
+		getData();
 		// 创建微博实例
-		mWeiboAuth = new WeiboAuth(this, YoutuiConstants.SINA_WEIBO_APP_ID,
+		mWeiboAuth = new WeiboAuth(this, appid,
 				YoutuiConstants.SINA_WEIBO_REDIRECT_URL,
 				YoutuiConstants.SINA_WEIBO_SCOPE);
 	}
@@ -49,7 +52,6 @@ public class SinaWeiboSSOActivity extends Activity {
 	 * SSO单点登录
 	 */
 	private void sso_login() {
-		getData();
 		mSsoHandler = new SsoHandler(SinaWeiboSSOActivity.this, mWeiboAuth);
 		mSsoHandler.authorize(new AuthListener());
 	}
@@ -123,6 +125,7 @@ public class SinaWeiboSSOActivity extends Activity {
 	private void getData() {
 		Intent intent = getIntent();
 		state = intent.getStringExtra("state");
+		appid = intent.getStringExtra("appid");
 	}
 
 	/**

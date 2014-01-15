@@ -1,10 +1,13 @@
 package cn.bidaround.youtui.helper;
 
 import java.util.List;
+
 import cn.bidaround.youtui.social.YoutuiConstants;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 
 /**
  * Description: created by qyj on January 7, 2014
@@ -66,5 +69,15 @@ public class AppHelper {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * 用于检测该intent能否可以使用
+	 */
+	public static boolean isIntentAvailable(Context context, Intent intent) {
+		final PackageManager packageManager = context.getPackageManager();
+		List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
+				PackageManager.GET_ACTIVITIES);
+		return list.size() > 0;
 	}
 }

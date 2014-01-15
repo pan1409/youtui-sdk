@@ -25,6 +25,7 @@ public class WeiXinShareActivity extends Activity {
 	private String title;
 	private String description;
 	private String target_url;
+	private String appid;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +38,17 @@ public class WeiXinShareActivity extends Activity {
 	 * 初始化微信
 	 */
 	private void init() {
+		getData();
 		// 通过WXAPIFactory工厂，获取IWXAPI的实例
-		api = WXAPIFactory.createWXAPI(this, YoutuiConstants.WEIXIN_APP_ID,
-				true);
+		api = WXAPIFactory.createWXAPI(this, appid, true);
 		// 将该app注册到微信
-		api.registerApp(YoutuiConstants.WEIXIN_APP_ID);
+		api.registerApp(appid);
 	}
 
 	/**
 	 * 微信分享的内容
 	 */
 	private void shareContent() {
-		getData();
 		WXMediaMessage msg = new WXMediaMessage();
 		msg.title = title;// 在这里填写APP的名称，不超过512Bytes
 		msg.description = description;// 在这里填写APP的简介，限制长度不超过1KB
@@ -124,6 +124,7 @@ public class WeiXinShareActivity extends Activity {
 		title = intent.getStringExtra("title");
 		description = intent.getStringExtra("description");
 		target_url = intent.getStringExtra("target_url");
+		appid = intent.getStringExtra("appid");
 	}
 
 	/**

@@ -75,7 +75,7 @@ public class TencentDirectionalShareActivity extends Activity {
 					@Override
 					public void onCancel() {
 						// 显示分享取消
-						result(YoutuiConstants.RESULT_CANCEL, null);// 这是腾讯sdk的一个bug
+						result(YoutuiConstants.RESULT_CANCEL, null);
 					}
 				});
 	}
