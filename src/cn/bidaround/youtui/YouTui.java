@@ -1,8 +1,10 @@
 package cn.bidaround.youtui;
 
 import java.util.Iterator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -12,6 +14,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +49,7 @@ public class YouTui extends Activity {
 	private String appId;
 	private Handler mHandler = new Handler();
 	private ProgressDialog loadingDialog;
+	private String imei,sdk,model,sys;
 
 	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
 	@Override
@@ -57,6 +61,8 @@ public class YouTui extends Activity {
 		loadingBar();
 		/* 装载数据内容 */
 		loadContent();
+		/* 获取设备信息 */
+		readPhoneInfo();
 	}
 
 	/* 显示友推组件,供外部调用 */
@@ -66,7 +72,17 @@ public class YouTui extends Activity {
 		intent.setClass(context, YouTui.class);
 		context.startActivity(intent);
 	}
-
+	
+	/* 获取设备信息 */
+	private void readPhoneInfo(){
+		TelephonyManager tm = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+		if(tm != null){
+			imei = tm.getDeviceId(); /* 获取imei号 */
+		}
+		sdk = android.os.Build.VERSION.SDK;    // SDK号
+		model = android.os.Build.MODEL;   // 手机型号
+		sys = android.os.Build.VERSION.RELEASE;  // android系统版本号
+	}
 	/**
 	 * 进度条
 	 */
@@ -103,7 +119,7 @@ public class YouTui extends Activity {
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setSavePassword(true);
 		webSettings.setSaveFormData(false);
-		webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+		webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 		webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 		webSettings.setDatabaseEnabled(true);
 		// 重新弹出框
@@ -147,7 +163,7 @@ public class YouTui extends Activity {
 	 */
 	private void jumpToWeb(String url, JSONObject json) {
 		String urlString = "http://yt.bidaround.cn";
-		// String urlString = "http://192.168.2.106";
+		//String urlString = "http://192.168.2.104";
 		urlString += url;
 
 		if (json != null) {
@@ -172,8 +188,6 @@ public class YouTui extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		/* 添加退出菜单 */
 		exit = menu.add("Exit");
-		/* 设置退出菜单图片 */
-		exit.setIcon(R.drawable.close_btn);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -228,7 +242,7 @@ public class YouTui extends Activity {
 				final JsResult result) {
 			result.confirm();
 			showAlert(message);
-			end();
+			//end();
 			return true;
 		}
 
@@ -268,6 +282,19 @@ public class YouTui extends Activity {
 			// 保存在sd卡中的文件夹名称
 			String savePath = YoutuiConstants.FILE_SAVE_PATH;
 			DownloadImage.downloadImage(url, savePath, appId);
+		}
+		
+		/**
+		 * 该方法被浏览器端调用，接收邀请
+		 */
+		public void clickOnAndroidAccept() {
+			mHandler.post(new Runnable() {
+				@SuppressLint("NewApi")
+				public void run() {
+					String phoneInfo = imei + ":" + sdk + ":" + model + ":" + sys;
+					webView.loadUrl("javascript:accept_invite_code._accept"+"('"+ phoneInfo +"')"); 
+				}
+			});
 		}
 
 		/**
@@ -312,6 +339,7 @@ public class YouTui extends Activity {
 					if (!AppHelper.isSinaWeiboExisted(getApplicationContext())) {
 						Intent intent = new Intent();
 						intent.putExtra("state", state);
+						
 						onActivityResult(
 								YoutuiConstants.SINA_WEIBO_REQUEST_CODE,
 								YoutuiConstants.APP_NOT_EXIST, intent);
@@ -517,8 +545,8 @@ public class YouTui extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			showAlert("授权成功");
 			jumpToWeb("/weiboBindResponse", json);
+			
 			break;
 		case YoutuiConstants.RESULT_SIGNATURE_ERROR:
 			String Code = data.getStringExtra("Code").toString();
@@ -633,10 +661,10 @@ public class YouTui extends Activity {
 	public void DealTencentDirectionalShare(int resultCode, Intent data) {
 		switch (resultCode) {
 		case YoutuiConstants.RESULT_SUCCESSFUL:
-			showAlert("分享成功");
+			showAlert("操作成功");
 			break;
 		case YoutuiConstants.RESULT_CANCEL:
-			showAlert("分享成功");// 这是QQ sdk的一个bug
+			showAlert("操作成功");// 这是QQ sdk的一个bug
 			// showAlert("分享取消");
 			break;
 		case YoutuiConstants.RESULT_ERROR:
