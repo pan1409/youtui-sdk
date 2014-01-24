@@ -1,8 +1,10 @@
 package cn.bidaround.youtui;
 
 import java.util.Iterator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -172,8 +174,6 @@ public class YouTui extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		/* 添加退出菜单 */
 		exit = menu.add("Exit");
-		/* 设置退出菜单图片 */
-		exit.setIcon(R.drawable.close_btn);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -633,10 +633,10 @@ public class YouTui extends Activity {
 	public void DealTencentDirectionalShare(int resultCode, Intent data) {
 		switch (resultCode) {
 		case YoutuiConstants.RESULT_SUCCESSFUL:
-			showAlert("分享成功");
+			showAlert("操作成功");
 			break;
 		case YoutuiConstants.RESULT_CANCEL:
-			showAlert("分享成功");// 这是QQ sdk的一个bug
+			showAlert("操作成功");// 这是QQ sdk的一个bug
 			// showAlert("分享取消");
 			break;
 		case YoutuiConstants.RESULT_ERROR:

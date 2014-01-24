@@ -1,14 +1,20 @@
 package cn.bidaround.youtui.social;
 
 import java.text.SimpleDateFormat;
+
+import cn.bidaround.youtui.R;
+
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.widget.Toast;
 
 /**
  * Description: created by qyj on January 7, 2014
@@ -132,7 +138,8 @@ public class SinaWeiboSSOActivity extends Activity {
 	 * 返回授权信息。
 	 */
 	private void result(int i, Intent intent) {
-		intent.putExtra("state", state);
+		if(!(intent == null))
+			intent.putExtra("state", state);
 		this.setResult(i, intent);
 		this.finish();
 	}
