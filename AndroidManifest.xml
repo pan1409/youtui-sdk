@@ -29,9 +29,11 @@
             android:name="SINA_WEIBO_APP_ID"
             android:value="sina2502314449" >
         </meta-data>
-        <meta-data
-            android:name="channel"
-            android:value="eben" />
+        <!-- 友推渠道号，应用名(英文或拼音)+"_yt"，如：“jd_yt”，用于识别通过友推活动下载的应用，请正确填写，否则无法正确统计  -->
+		<meta-data
+		    android:name="YOUTUI_CHANNEL"
+		    android:value="tuoche_yt" >
+		</meta-data>
 
         <activity
             android:name="cn.bidaround.youtui.YouTui"
