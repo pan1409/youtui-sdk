@@ -165,6 +165,10 @@ public class YouTui extends Activity {
 		String urlString = "http://yt.bidaround.cn";
 		//String urlString = "http://192.168.2.104";
 		urlString += url;
+		//如果已配置url则直接使用不用组装
+		if(url.contains("http://")){
+			urlString = url;
+		}
 
 		if (json != null) {
 			urlString += "?";
@@ -545,7 +549,14 @@ public class YouTui extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			jumpToWeb("/weiboBindResponse", json);
+			String uri = "/weiboBindResponse";
+			String redirect_url = getAppIdByString("SINA_WEIBO_REDIRECT_URL");
+			//如果配置了新浪授权回调地址 则请求到应用自己的回调地址，并加上友推标志位
+			if(redirect_url != null || redirect_url != "" ){
+				String stateString = data.getStringExtra("state").toString();
+				uri = redirect_url + "?proxy=youtui&act=" + stateString;
+			}
+			jumpToWeb(uri, json);
 			
 			break;
 		case YoutuiConstants.RESULT_SIGNATURE_ERROR:
