@@ -29,6 +29,11 @@
             android:name="SINA_WEIBO_APP_ID"
             android:value="sina2502314449" >
         </meta-data>
+        <!-- 友推sdk meta配置，请填写您的新浪微博授权代理回调地址(选填，如果已经在新浪开发者后台授权设置中将回调地址设置为友推的回调，则此处可以不填) -->
+        <meta-data
+            android:name="SINA_WEIBO_REDIRECT_URL"
+            android:value="http://yt.bidaround.cn/weiboBindResponse" >
+        </meta-data>
         <meta-data
             android:name="channel"
             android:value="eben" />
