@@ -82,6 +82,7 @@ public class YouTuiAcceptor {
 		params.add(new BasicNameValuePair("sdkVersion", sdk));
 		params.add(new BasicNameValuePair("phoneType", model));
 		params.add(new BasicNameValuePair("sysVersion", sys));
+		params.add(new BasicNameValuePair("type", "auto"));//接收推荐类型 auto 自动,manual 人工
 		try {
 			// 请求到服务器
 			post(actionUrl, params);
