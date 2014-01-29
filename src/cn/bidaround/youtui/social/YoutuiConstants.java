@@ -10,7 +10,7 @@ public class YoutuiConstants {
 
 	// 新浪微博的参数
 	// public static final String SINA_WEIBO_APP_ID = "2502314449";
-	public static final String SINA_WEIBO_REDIRECT_URL = "http://yt.bidaround.cn/weiboBindResponse";
+	public static final String SINA_WEIBO_REDIRECT_URL = "http://youtui.mobi/weiboResponse";
 	public static final String SINA_WEIBO_SCOPE = "email,direct_messages_read,direct_messages_write,"
 			+ "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
 			+ "follow_app_official_microblog," + "invitation_write";

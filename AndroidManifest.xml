@@ -18,6 +18,12 @@
             android:value="10000" >
         </meta-data>
 
+        <!-- 友推渠道号，应用名(英文或拼音)+"_yt"，如：“jd_yt”，用于识别通过友推活动下载的应用，请正确填写，否则无法正确统计  -->
+		<meta-data
+		    android:name="YOUTUI_CHANNEL"
+		    android:value="youtuidemo_yt" >
+		</meta-data>
+
         <!-- 友推sdk meta配置，请填写您的微信appid -->
         <meta-data
             android:name="WEIXIN_APP_ID"
@@ -30,16 +36,10 @@
             android:value="sina2502314449" >
         </meta-data>
 
-        <!-- 友推渠道号，应用名(英文或拼音)+"_yt"，如：“jd_yt”，用于识别通过友推活动下载的应用，请正确填写，否则无法正确统计  -->
-		<meta-data
-		    android:name="YOUTUI_CHANNEL"
-		    android:value="youtuidemo_yt" >
-		</meta-data>
-
         <!-- 友推sdk meta配置，请填写您的新浪微博授权代理回调地址(选填，如果已经在新浪开发者后台授权设置中将回调地址设置为友推的回调，则此处可以不填) -->
         <meta-data
             android:name="SINA_WEIBO_REDIRECT_URL"
-            android:value="http://yt.bidaround.cn/weiboBindResponse" >
+            android:value="http://youtui.mobi/weiboResponse" >
         </meta-data>
 
         <activity

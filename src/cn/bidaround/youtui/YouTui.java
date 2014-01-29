@@ -162,7 +162,7 @@ public class YouTui extends Activity {
 	 * webview 跳转到网页
 	 */
 	private void jumpToWeb(String url, JSONObject json) {
-		String urlString = "http://yt.bidaround.cn";
+		String urlString = "http://youtui.mobi";
 		//String urlString = "http://192.168.2.104";
 		urlString += url;
 		//如果已配置url则直接使用不用组装
@@ -549,7 +549,7 @@ public class YouTui extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			String uri = "/weiboBindResponse";
+			String uri = "/weiboResponse";
 			String redirect_url = getAppIdByString("SINA_WEIBO_REDIRECT_URL");
 			//如果配置了新浪授权回调地址 则请求到应用自己的回调地址，并加上友推标志位
 			if(redirect_url != null || redirect_url != "" ){

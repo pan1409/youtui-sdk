@@ -74,7 +74,7 @@ public class YouTuiAcceptor {
 
 	/* 把相关信息（设备信息、appId、邀请码等）发送到服务器 */
 	public static void doPost() {
-		String actionUrl = "http://yt.bidaround.cn/activity/checkCode";
+		String actionUrl = "http://youtui.mobi/activity/checkCode";
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
 		params.add(new BasicNameValuePair("appId", appId));
 		params.add(new BasicNameValuePair("inviteCode", inviteNum));

@@ -88,7 +88,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	private void openBrouser() {
 		Intent intent = new Intent();
 		intent.setAction("android.intent.action.VIEW");
-		Uri content_url = Uri.parse("http://yt.bidaround.cn");// 浏览器打开的网址
+		Uri content_url = Uri.parse("http://youtui.mobi");// 浏览器打开的网址
 		intent.setData(content_url);
 		intent.setClassName("com.android.browser",
 				"com.android.browser.BrowserActivity");
