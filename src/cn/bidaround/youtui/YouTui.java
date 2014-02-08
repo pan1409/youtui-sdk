@@ -18,7 +18,9 @@ import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
@@ -127,6 +129,30 @@ public class YouTui extends Activity {
 		// 接收web端 js 方法
 		webView.addJavascriptInterface(new YouTuiJavaScriptInterface(),
 				"android");
+		//监听滑动事件
+		webView.setOnTouchListener(new OnTouchListener() {  
+			float xDown = 0, yDown, xUp, yUp;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            	
+            	if(event.getAction() == MotionEvent.ACTION_DOWN){
+            		xDown = event.getX();
+            		yDown = event.getY();
+            	}
+            	else if(event.getAction() == MotionEvent.ACTION_UP){
+            		xUp = event.getX();
+            		yUp = event.getY();
+            		if(xUp - xDown < -30){
+            			//向左滑动
+            			webView.loadUrl("javascript:shared._switch_tab('left')");
+            		}else if(xUp - xDown > 30){
+            			//向右滑动
+            			webView.loadUrl("javascript:shared._switch_tab('right')"); 
+            		}
+            	}
+               return false;
+            }
+    });
 		setContentView(webView);
 	}
 
@@ -163,7 +189,7 @@ public class YouTui extends Activity {
 	 */
 	private void jumpToWeb(String url, JSONObject json) {
 		String urlString = "http://youtui.mobi";
-		//String urlString = "http://192.168.2.104";
+		//String urlString = "http://192.168.2.101";
 		urlString += url;
 		//如果已配置url则直接使用不用组装
 		if(url.contains("http://")){
