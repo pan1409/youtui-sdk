@@ -578,7 +578,7 @@ public class YouTui extends Activity {
 			String uri = "/weiboResponse";
 			String redirect_url = getAppIdByString("SINA_WEIBO_REDIRECT_URL");
 			//如果配置了新浪授权回调地址 则请求到应用自己的回调地址，并加上友推标志位
-			if(redirect_url != null || redirect_url != "" ){
+			if(redirect_url != null && redirect_url != "" ){
 				String stateString = data.getStringExtra("state").toString();
 				uri = redirect_url + "?proxy=youtui&act=" + stateString;
 			}
