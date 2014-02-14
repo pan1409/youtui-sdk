@@ -52,6 +52,8 @@ public class YouTui extends Activity {
 	private Handler mHandler = new Handler();
 	private ProgressDialog loadingDialog;
 	private String imei,sdk,model,sys;
+	private String homeUrl = "";
+	private String backUrl = "";
 
 	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
 	@Override
@@ -173,6 +175,8 @@ public class YouTui extends Activity {
 		if (appId == null) {
 			jumpToWeb("/activity/noappId/", null);
 		} else {
+			//homeUrl为第一个页面的地址
+			homeUrl = "http://youtui.mobi"+"/activity/shared/get?appId=" + appId;
 			jumpToWeb("/activity/shared/get?appId=" + appId, null);
 		}
 	}
@@ -210,6 +214,9 @@ public class YouTui extends Activity {
 				}
 			}
 		}
+		//backUrl为点击返回按钮后要返回的页面（授权后的页面）
+		if(urlString.contains(backUrl))
+			backUrl = urlString;
 		webView.loadUrl(urlString);
 	}
 
@@ -235,10 +242,26 @@ public class YouTui extends Activity {
 
 	public boolean onKeyDown(int keyCoder, KeyEvent event) {
 		if (webView.canGoBack() && keyCoder == KeyEvent.KEYCODE_BACK) {
-			// goBack()表示返回webView的上一页面
-			webView.goBack();
-			return true;
+			//获当前页面的URL
+			String pageUrl = webView.getUrl();
+			//如果此页面是授权后的开始页面，则返回到homeUrl
+			if(pageUrl.contains("/activity/join?")&&pageUrl.contains("&recommender=")
+					&&pageUrl.contains("&picUrl=")&&pageUrl.contains("&weiboUid=")&&pageUrl.contains("&type=")) {
+				webView.loadUrl(homeUrl);
+				return true;
+			}
+			//如果此页面是homeUrl，即第一个页面，则结束该Activity
+			else if (pageUrl.contains("/activity/shared/get?appId=")) {
+				this.finish();
+				return true;
+			}
+			//如果是其他页面，则返回到backUrl，即授权后的开始页面
+			else {
+				webView.loadUrl(backUrl);
+				return true;
+			}
 		}
+			
 		if (keyCoder == KeyEvent.KEYCODE_F5) {
 			// f5刷新页面
 			webView.reload();
@@ -582,6 +605,8 @@ public class YouTui extends Activity {
 				String stateString = data.getStringExtra("state").toString();
 				uri = redirect_url + "?proxy=youtui&act=" + stateString;
 			}
+			//获取授权页面url的后缀
+			backUrl = uri;
 			jumpToWeb(uri, json);
 			
 			break;
