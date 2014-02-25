@@ -90,6 +90,19 @@ public class YouTuiAcceptor {
 			e.printStackTrace();
 		}
 	}
+	
+	/* 关闭应用时发送相关信息（appId和IMEI码） */
+	public static void toPost() {
+		String actionUrl = "http://youtui.mobi/activity/closeApp";
+		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
+		params.add(new BasicNameValuePair("appId", appId));		
+		params.add(new BasicNameValuePair("imei", imei));
+		try {
+			post(actionUrl, params);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/* 遍历sd卡中的文件，找到对应的apk，从名字中获得邀请码 */
 	private static void getInviteNum() {
@@ -157,7 +170,10 @@ public class YouTuiAcceptor {
 		}
 	}
 	
-	/* 此方法用于邀请码等的自动上传，必须放在用户应用的初始化函数里  */
+	/**
+	 * 此方法用于邀请码等的自动上传，必须放在用户应用的初始化函数里
+	 * @param context
+	 */
 	public static void init(final Context context) {
 		/* 新开一个线程 */
 		new Thread() {
@@ -174,5 +190,18 @@ public class YouTuiAcceptor {
 				 doPost();
 			 }
 		}.start();
+	}
+	
+	/**
+	 * 此方法用于应用关闭时数据的上传（统计使用时间），必须写在应用退出的相关函数里
+	 * @param context
+	 */
+	public static void close(final Context context) {
+		/* 获取应用的appId */
+		 initAppId(context);
+		 /* 获取手机信息 */
+		 readPhoneInfo(context);
+		 /* 发送到服务器 */
+		 toPost();
 	}
 }

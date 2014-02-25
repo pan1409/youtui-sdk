@@ -31,13 +31,13 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 import cn.bidaround.youtui.helper.AppHelper;
 import cn.bidaround.youtui.helper.DownloadImage;
-import cn.bidaround.youtui.social.EmailActivity;
-import cn.bidaround.youtui.social.RenrenSSOActivity;
-import cn.bidaround.youtui.social.SMSActivity;
+import cn.bidaround.youtui.social.EmailShare;
+import cn.bidaround.youtui.social.RenrenSSO;
+import cn.bidaround.youtui.social.SMSShare;
 import cn.bidaround.youtui.social.SinaWeiboSSOActivity;
-import cn.bidaround.youtui.social.TencentDirectionalShareActivity;
+import cn.bidaround.youtui.social.TencentDirectionalShare;
 import cn.bidaround.youtui.social.TencentQZoneShareActivity;
-import cn.bidaround.youtui.social.TencentWeiboSSOActivity;
+import cn.bidaround.youtui.social.TencentWeiboSSO;
 import cn.bidaround.youtui.social.WeiXinShareActivity;
 import cn.bidaround.youtui.social.YoutuiConstants;
 
@@ -54,7 +54,7 @@ public class YouTui extends Activity {
 	private String imei,sdk,model,sys;
 	private String homeUrl = "";
 	private String backUrl = "";
-
+	
 	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class YouTui extends Activity {
 		/* 获取设备信息 */
 		readPhoneInfo();
 	}
-
+	
 	/* 显示友推组件,供外部调用 */
 	public void show(Activity context, int type) {
 		Intent intent = new Intent();
@@ -421,19 +421,32 @@ public class YouTui extends Activity {
 			mHandler.post(new Runnable() {
 				@SuppressLint("NewApi")
 				public void run() {
-					if (!AppHelper.isTencentQQExisted(getApplicationContext())) {
-						Intent intent = new Intent();
-						intent.putExtra("state", state);
-						onActivityResult(
-								YoutuiConstants.TENCENT_WEIBO_REQUEST_CODE,
-								YoutuiConstants.APP_NOT_EXIST, intent);
+					if (!AppHelper.isTencentQQExisted(getApplicationContext())) {				
+						JSONObject json2 = new JSONObject();
+						try {
+							json2.put("state", state);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						showAlert("腾讯QQ客户端不存在，跳转中...");
+						jumpToWeb("/tencentauthorize", json2);
 					} else {
 						Intent intent = new Intent();
 						intent.setClass(YouTui.this,
-								TencentWeiboSSOActivity.class);
+								TencentWeiboSSO.class);
 						intent.putExtra("state", state);
 						startActivityForResult(intent,
 								YoutuiConstants.TENCENT_WEIBO_REQUEST_CODE);
+						
+						JSONObject jsonObject = new JSONObject();
+						try {
+							jsonObject.put("state", state);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						TencentWeiboSSO tencentWeiboSSO = new TencentWeiboSSO();
+						tencentWeiboSSO.shareByTencentWeibo(jsonObject, YouTui.this, webView);
+						Toast.makeText(YouTui.this, "请稍候", Toast.LENGTH_SHORT).show();
 					}
 				}
 			});
@@ -470,16 +483,24 @@ public class YouTui extends Activity {
 				@SuppressLint("NewApi")
 				public void run() {
 					if (!AppHelper.isRenrenExisted(getApplicationContext())) {
-						Intent intent = new Intent();
-						intent.putExtra("state", state);
-						onActivityResult(YoutuiConstants.RENREN_REQUEST_CODE,
-								YoutuiConstants.APP_NOT_EXIST, intent);
+						JSONObject json2 = new JSONObject();
+						try {
+							json2.put("state", state);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						showAlert("人人客户端不存在，跳转中...");
+						jumpToWeb("/renrenauthorize", json2);
 					} else {
-						Intent intent = new Intent();
-						intent.setClass(YouTui.this, RenrenSSOActivity.class);
-						intent.putExtra("state", state);
-						startActivityForResult(intent,
-								YoutuiConstants.RENREN_REQUEST_CODE);
+						JSONObject jsonObject = new JSONObject();
+						try {
+							jsonObject.put("state", state);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						RenrenSSO renrenSSO = new RenrenSSO();
+						renrenSSO.shareByRenren(jsonObject, YouTui.this, webView);
+						Toast.makeText(YouTui.this, "请稍候", Toast.LENGTH_SHORT).show();
 					}
 				}
 			});
@@ -495,20 +516,21 @@ public class YouTui extends Activity {
 				@SuppressLint("NewApi")
 				public void run() {
 					if (!AppHelper.isTencentQQExisted(getApplicationContext())) {
-						onActivityResult(
-								YoutuiConstants.TENCENT_DIRECTIONAL_SHARE_REQUEST_CODE,
-								YoutuiConstants.APP_NOT_EXIST, null);
+						showAlert("腾讯QQ客户端不存在");
 					} else {
-						Intent intent = new Intent();
-						intent.setClass(YouTui.this,
-								TencentDirectionalShareActivity.class);
-						intent.putExtra("title", title);
-						intent.putExtra("description", description);
-						intent.putExtra("target_url", target_url);
-						intent.putExtra("image_url", image_url);
-						startActivityForResult(
-								intent,
-								YoutuiConstants.TENCENT_DIRECTIONAL_SHARE_REQUEST_CODE);
+						JSONObject jsonObject = new JSONObject();
+						try {
+							jsonObject.put("title", title);
+							jsonObject.put("description", description);
+							jsonObject.put("target_url", target_url);
+							jsonObject.put("image_url", image_url);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						//如果相应app存在，则调用TencentDirectionalShare类中的方法实现分享
+						TencentDirectionalShare tencentDirectionalShare = new TencentDirectionalShare();
+						tencentDirectionalShare.shareByTencentDirection(jsonObject, YouTui.this);
+						Toast.makeText(YouTui.this, "请稍候", Toast.LENGTH_SHORT).show();	
 					}
 				}
 			});
@@ -554,11 +576,15 @@ public class YouTui extends Activity {
 			mHandler.post(new Runnable() {
 				@SuppressLint("NewApi")
 				public void run() {
-					Intent intent = new Intent();
-					intent.setClass(YouTui.this, SMSActivity.class);
-					intent.putExtra("content", content);
-					startActivityForResult(intent,
-							YoutuiConstants.SMS_REQUEST_CODE);
+					JSONObject jsonObject = new JSONObject();
+					try {
+						jsonObject.put("content", content);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					SMSShare smsShare = new SMSShare();
+					smsShare.sendSMS(jsonObject, YouTui.this);
+					Toast.makeText(YouTui.this, "请稍候", Toast.LENGTH_SHORT).show();
 				}
 			});
 		}
@@ -571,12 +597,16 @@ public class YouTui extends Activity {
 			mHandler.post(new Runnable() {
 				@SuppressLint("NewApi")
 				public void run() {
-					Intent intent = new Intent();
-					intent.putExtra("subject", subject);
-					intent.putExtra("content", content);
-					intent.setClass(YouTui.this, EmailActivity.class);
-					startActivityForResult(intent,
-							YoutuiConstants.EMAIL_REQUEST_CODE);
+					JSONObject jsonObject = new JSONObject();
+					try {
+						jsonObject.put("subject", subject);
+						jsonObject.put("content", content);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					EmailShare emailShare = new EmailShare();
+					emailShare.sendEmail(jsonObject, YouTui.this);
+					Toast.makeText(YouTui.this, "请稍候", Toast.LENGTH_SHORT).show();
 				}
 			});
 		}
@@ -720,7 +750,7 @@ public class YouTui extends Activity {
 	/**
 	 * 处理QQ定向分享返回的结果
 	 */
-	public void DealTencentDirectionalShare(int resultCode, Intent data) {
+	public void DealTencentDirectionalShare(int resultCode, String data) {
 		switch (resultCode) {
 		case YoutuiConstants.RESULT_SUCCESSFUL:
 			showAlert("操作成功");
@@ -730,9 +760,8 @@ public class YouTui extends Activity {
 			// showAlert("分享取消");
 			break;
 		case YoutuiConstants.RESULT_ERROR:
-			String Error = data.getStringExtra("Error").toString();
 			showAlert("分享失败");
-			showAlert(Error);
+			showAlert(data);
 			break;
 		case YoutuiConstants.APP_NOT_EXIST:
 			showAlert("腾讯QQ客户端不存在");
@@ -774,7 +803,6 @@ public class YouTui extends Activity {
 				json.put("token", data.getStringExtra("AccessToken").toString());
 				json.put("state", data.getStringExtra("state").toString());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			showAlert("授权成功");
@@ -787,7 +815,6 @@ public class YouTui extends Activity {
 			try {
 				json2.put("state", data.getStringExtra("state").toString());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			showAlert("人人客户端不存在，跳转中...");
@@ -872,7 +899,7 @@ public class YouTui extends Activity {
 	/**
 	 * 显示结果
 	 */
-	private void showAlert(String message) {
+	public void showAlert(String message) {
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
 
@@ -892,7 +919,7 @@ public class YouTui extends Activity {
 			DealTencentQzone(resultCode, data);
 			break;
 		case YoutuiConstants.TENCENT_DIRECTIONAL_SHARE_REQUEST_CODE:
-			DealTencentDirectionalShare(resultCode, data);
+			DealTencentDirectionalShare(resultCode, "");
 			break;
 		case YoutuiConstants.WEIXIN_SHARE_REQUEST_CODE:
 			DealWeixinShare(resultCode, data);

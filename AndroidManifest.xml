@@ -52,28 +52,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="cn.bidaround.youtui.social.EmailActivity"
-            android:theme="@android:style/Theme.Translucent" />
-        <activity
-            android:name="cn.bidaround.youtui.social.RenrenSSOActivity"
-            android:theme="@android:style/Theme.Translucent" />
-        <activity
             android:name="cn.bidaround.youtui.social.SinaWeiboSSOActivity"
             android:theme="@android:style/Theme.Translucent" />
         <activity
-            android:name="cn.bidaround.youtui.social.SMSActivity"
-            android:theme="@android:style/Theme.Translucent" />
-        <activity
             android:name="cn.bidaround.youtui.social.WeiXinShareActivity"
-            android:theme="@android:style/Theme.Translucent" />
-        <activity
-            android:name="cn.bidaround.youtui.social.TencentDirectionalShareActivity"
-            android:theme="@android:style/Theme.Translucent" />
-        <activity
-            android:name="cn.bidaround.youtui.social.TencentWeiboSSOActivity"
-            android:theme="@android:style/Theme.Translucent" />
-        <activity
-            android:name="cn.bidaround.youtui.social.TencentQZoneShareActivity"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".wxapi.WXEntryActivity"
