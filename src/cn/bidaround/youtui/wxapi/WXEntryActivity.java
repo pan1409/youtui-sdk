@@ -1,97 +1,94 @@
 package cn.bidaround.youtui.wxapi;
 
+import cn.bidaround.youtui.R;
+
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.widget.Toast;
+import com.tencent.mm.sdk.openapi.WXMediaMessage;
+import com.tencent.mm.sdk.openapi.WXTextObject;
 
-/**
- * Description: created by qyj on January 7, 2014
- */
-public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
-	// IWXAPI是第三方app和微信通信的openapi接口
-	private IWXAPI api;
-	private String appid;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.Toast;
+public class WXEntryActivity extends Activity implements OnClickListener,IWXAPIEventHandler  {
+	private IWXAPI mIWXAPI;
+	private static String APPID_WX = "wxbc9e6010cf85c3e4";
+	private Button wxShareBt;
+	private Button wxCancelBt;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		appid = getAppIdByString("WEIXIN_APP_ID");
-		api = WXAPIFactory.createWXAPI(this, appid, false);
-		api.registerApp(appid);
-		api.handleIntent(getIntent(), this);
+		setContentView(R.layout.wxskip_activity);
+		initView();
+		mIWXAPI = WXAPIFactory.createWXAPI(this, APPID_WX, false);
+		mIWXAPI.registerApp(APPID_WX);	
 	}
 
-	/**
-	 * 微信发送请求到第三方应用时，会回调到该方法
-	 */
+	void initView() {
+		wxShareBt = (Button) findViewById(R.id.wxshare_bt);
+		wxCancelBt = (Button) findViewById(R.id.wxcancel_bt);
+		wxShareBt.setOnClickListener(this);
+		wxCancelBt.setOnClickListener(this);
+	}
+	
 	@Override
-	public void onReq(BaseReq req) {
-
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+	}
+	//创建唯一标示
+	private String buildTransaction(final String type) {
+		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
 	}
 
-	/**
-	 * 第三方应用发送到微信的请求处理后的响应结果，会回调到该方法
-	 */
 	@Override
-	public void onResp(BaseResp resp) {
-		String result = "";
-		switch (resp.errCode) {
-		case BaseResp.ErrCode.ERR_OK:
-			result = "分享成功";
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.wxshare_bt:			
+			WXTextObject textObject = new WXTextObject();
+			textObject.text = "微信测试分享";		
+			WXMediaMessage msg = new WXMediaMessage();
+			msg.mediaObject = textObject;
+			msg.description = "微信分享";
+			SendMessageToWX.Req req = new SendMessageToWX.Req();
+			req.transaction = buildTransaction("测试");
+			req.message = msg;
+			if(getIntent().getExtras().getBoolean("pyq")){
+				req.scene = SendMessageToWX.Req.WXSceneTimeline;
+			}else{
+				req.scene = SendMessageToWX.Req.WXSceneSession;
+			}
+			mIWXAPI.sendReq(req);
+			finish();
 			break;
-		case BaseResp.ErrCode.ERR_USER_CANCEL:
-			result = "取消分享";
+		case R.id.wxcancel_bt:
+			finish();
 			break;
-		case BaseResp.ErrCode.ERR_AUTH_DENIED:
-			result = "认证失败";
-			break;
+
 		default:
-			result = "其他错误";
 			break;
 		}
-		Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	public void onReq(BaseReq arg0) {
+		// TODO Auto-generated method stub
 		finish();
 	}
 
-	/**
-	 * 从AndroidManifest中获取appid
-	 */
-	private String getAppIdByString(String appid) {
-		ApplicationInfo info;
-		String msg = null;
-		try {
-			info = getPackageManager().getApplicationInfo(getPackageName(),
-					PackageManager.GET_META_DATA);
-			msg = info.metaData.getString(appid);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (msg == null || msg.length() == 0) {
-			return null;
-		} else {
-			return msg;
-		}
-	}
-
-	/**
-	 * 打开本地浏览器至指定网页
-	 */
-	private void openBrouser() {
-		Intent intent = new Intent();
-		intent.setAction("android.intent.action.VIEW");
-		Uri content_url = Uri.parse("http://youtui.mobi");// 浏览器打开的网址
-		intent.setData(content_url);
-		intent.setClassName("com.android.browser",
-				"com.android.browser.BrowserActivity");
-		startActivity(intent);
+	@Override
+	public void onResp(BaseResp arg0) {
+		// TODO Auto-generated method stub
+		finish();
 	}
 }
