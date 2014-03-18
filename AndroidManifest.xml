@@ -7,7 +7,8 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 检测网络状态 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <!-- 获取mac地址作为用户的备用唯一标识 -->
@@ -82,16 +83,24 @@
         <activity
             android:name="cn.bidaround.youtui.social.WeiXinShareActivity"
             android:theme="@android:style/Theme.Translucent" />
+        <!-- 新浪微博activity -->
+        <activity
+            android:name="cn.bidaround.youtui.ui.SinaSkipActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+            <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
 
-        <activity android:name="cn.bidaround.youtui.ui.SinaSkipActivity" >
-            <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />                 
+            <category android:name="android.intent.category.DEFAULT" >
+            </category>
         </activity>
-          <activity android:name="cn.bidaround.youtui.ui.QQSkipActivity" />
-                  <!-- 微信需要注册 -->
+        <activity android:name="cn.bidaround.youtui.ui.QQSkipActivity" />
+        <!-- 微信需要注册 -->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
-             />
+            android:theme="@android:style/Theme.Translucent"
+            android:launchMode="singleTask" />
         <!-- android:theme="@android:style/Theme.Translucent" -->
         <!-- qq回调需要注册该activity -->
         <activity
@@ -117,9 +126,15 @@
 
         <!-- ################需要引用的外部社交jar的Activity################### -->
         <activity android:name="com.tencent.plus.ImageActivity" />
+        <activity android:name="cn.bidaround.youtui.ui.TencentWBSkipActivity" />
+        <activity android:name="cn.bidaround.youtui.ui.ShareAuthActivity" >
+            <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+        </activity>
+        <activity android:name="cn.bidaround.youtui.ui.ShareActivity" 
+            android:theme="@android:style/Theme.Translucent"/>
+        <activity android:name="cn.bidaround.youtui.ui.WebActivity"/>
     </application>
 
     <!-- ###################声明SDK使用的相关权限###################### -->
-
 
 </manifest>

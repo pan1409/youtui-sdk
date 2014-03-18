@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/qqwbskip_share_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="124dp"
+        android:text="分享" />
+
+    <Button
+        android:id="@+id/qqwbskip_auth_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/qqwbskip_share_bt"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="44dp"
+        android:text="授权" />
+
+    <Button
+        android:id="@+id/qqwbskip_cancel_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/qqwbskip_share_bt"
+        android:layout_centerVertical="true"
+        android:text="返回" />
+
+</RelativeLayout>
