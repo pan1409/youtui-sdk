@@ -1,6 +1,14 @@
 package cn.bidaround.youtui.social;
 
-public class ShareData {
+import java.io.Serializable;
+/**
+ * author:gaopan
+ */
+
+public class ShareData implements Serializable{
+	private static final long serialVersionUID = 1L;
+	public static int TYPE_TEXT = 0;
+	public static int TYPE_IAMGE = 1;
 	//待分享文本
 	private String text = "default text";
 	//待分享的图片路径
@@ -8,7 +16,7 @@ public class ShareData {
 	//带分享的文件路径
 	private String filePath;
 	//待分享的标题
-	private String title = "default title" ;
+	private String title = "default title";
 	//标题超链接
 	private String titleUrl;
 	//网络图片

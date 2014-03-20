@@ -3,7 +3,9 @@ package cn.bidaround.youtui.social;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-
+/**
+ * author:gaopan
+ */
 public class OtherShare {
 	private Activity act;
 

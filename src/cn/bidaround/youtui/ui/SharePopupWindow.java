@@ -1,12 +1,15 @@
 package cn.bidaround.youtui.ui;
 
 import java.util.ArrayList;
+
 import com.viewpagerindicator.CirclePageIndicator;
 import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.helper.AppHelper;
+import cn.bidaround.youtui.helper.DownloadImage;
 import cn.bidaround.youtui.social.OtherShare;
 import cn.bidaround.youtui.social.ShareData;
+import cn.bidaround.youtui.social.YoutuiConstants;
 import cn.bidaround.youtui.util.DensityUtil;
 import cn.bidaround.youtui.util.ShareList;
 import cn.bidaround.youtui.util.TitleAndLogo;
@@ -27,7 +30,9 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
-
+/**
+ * author:gaopan
+ */
 public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		OnItemClickListener {
 	private String message;
@@ -60,11 +65,10 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		setWidth(act.getWindowManager().getDefaultDisplay().getWidth());
 		setHeight(DensityUtil.dip2px(act, 300));
 		showAtLocation(act.findViewById(R.id.popup_bt), Gravity.BOTTOM, 0, 0);
-
 	}
+	
 
 	void initViewPager(View view) {
-
 		ViewPager viewPager = (ViewPager) view
 				.findViewById(R.id.share_viewpager);
 		ArrayList<View> pagerList = new ArrayList<View>();
@@ -74,23 +78,23 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		pagerOne_gridView = (GridView) pagerOne
 				.findViewById(R.id.sharepager_grid);
 		ArrayList<TitleAndLogo> logoList_pagerOne = new ArrayList<TitleAndLogo>();
-		logoList_pagerOne.add(new TitleAndLogo("新浪微博", R.drawable.xinlangact));
-		logoList_pagerOne.add(new TitleAndLogo("QQ", R.drawable.qqact));
-		logoList_pagerOne.add(new TitleAndLogo("QQ空间", R.drawable.qqkjact));
-		logoList_pagerOne.add(new TitleAndLogo("微信", R.drawable.wxact));
-		logoList_pagerOne.add(new TitleAndLogo("人人", R.drawable.renrenact));
-		logoList_pagerOne.add(new TitleAndLogo("腾讯微博", R.drawable.tengxunact));
+		logoList_pagerOne.add(ShareList.sinaWB);
+		logoList_pagerOne.add(ShareList.tencentQQ);
+		logoList_pagerOne.add(ShareList.qqKongJian);
+		logoList_pagerOne.add(ShareList.weiXin);
+		logoList_pagerOne.add(ShareList.renRen);
+		logoList_pagerOne.add(ShareList.tencentWB);
 		ShareGridAdapter pagerOne_gridAdapter = new ShareGridAdapter(act,
 				logoList_pagerOne);
 		pagerOne_gridView.setAdapter(pagerOne_gridAdapter);
 		pagerOne_gridView.setOnItemClickListener(this);
 		// 初始化第二页
 		ArrayList<TitleAndLogo> logoList_pagerTwo = new ArrayList<TitleAndLogo>();
-		logoList_pagerTwo.add(new TitleAndLogo("朋友圈", R.drawable.weixinhyact));
-		logoList_pagerTwo.add(new TitleAndLogo("短信", R.drawable.messact));
-		logoList_pagerTwo.add(new TitleAndLogo("邮件", R.drawable.mailact));
-		logoList_pagerTwo.add(new TitleAndLogo("二维码", R.drawable.erweimaact));
-		logoList_pagerTwo.add(new TitleAndLogo("复制链接", R.drawable.lianjieact));
+		logoList_pagerTwo.add(ShareList.wxPYQ);
+		logoList_pagerTwo.add(ShareList.sms);
+		logoList_pagerTwo.add(ShareList.email);
+		logoList_pagerTwo.add(ShareList.erWeiMa);
+		logoList_pagerTwo.add(ShareList.copyLink);
 		View pagerTwo = LayoutInflater.from(act).inflate(
 				R.layout.share_fragment, null);
 		pagerTwo_gridView = (GridView) pagerTwo
@@ -167,9 +171,11 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 							ShareAuthActivity.class);
 					act.startActivity(shareAuthIt);
 				}else{
-					Intent ShareIt = new Intent(act, ShareActivity.class);
-					ShareIt.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-					act.startActivity(ShareIt);				
+					Intent shareIt = new Intent(act, ShareActivity.class);
+					shareIt.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+					shareIt.putExtra("shareData",shareData);
+					shareIt.putExtra("from", "sina");
+					act.startActivity(shareIt);				
 				}
 
 				break;
@@ -179,7 +185,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 					Intent wxIt = new Intent(act, WXEntryActivity.class);
 					wxIt.putExtra("wx", true);
 					wxIt.putExtra("fromshare", true);
-					wxIt.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+					wxIt.putExtra("shareData", shareData);
 					act.startActivity(wxIt);
 				} else {
 					Toast.makeText(act, "未安装微信", Toast.LENGTH_SHORT).show();
@@ -196,12 +202,13 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 				break;
 				//人人
 			case ShareList.RENREN:
+				Intent renrenIt = new Intent(act, ShareActivity.class);
+				renrenIt.putExtra("from", "renren");
+				act.startActivity(renrenIt);
 				break;
 				//腾讯微博
 			case ShareList.TENGXUNWEIBO:
-				Intent TencentWbIt = new Intent(act,
-						WebActivity.class);
-				act.startActivity(TencentWbIt);
+				
 				break;
 			default:
 				break;
@@ -210,12 +217,13 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		} else if (adapterView == pagerTwo_gridView) {
 			switch (position) {
 			//朋友圈
-			case ShareList.WXPYQ:
+			case ShareList.WXPYQ%6:
 				if (AppHelper.isWeixinExisted(act)) {
 					Intent wxIt = new Intent(act, WXEntryActivity.class);
 					wxIt.putExtra("pyq", true);
 					wxIt.putExtra("fromshare", true);
 					wxIt.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+					wxIt.putExtra("shareData", shareData);
 					act.startActivity(wxIt);
 				} else {
 					Toast.makeText(act, "未安装微信", Toast.LENGTH_SHORT).show();
@@ -223,19 +231,19 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 
 				break;
 				//短信
-			case ShareList.MESSAGE:
+			case ShareList.MESSAGE%6:
 				new OtherShare(act).sendSMS(shareData.getText());
 				break;
 				//邮件
-			case ShareList.EMAIL:
+			case ShareList.EMAIL%6:
 				new OtherShare(act).sendMail(shareData.getText());
 				break;
 				//二维码
-			case ShareList.ERWEIMA:
+			case ShareList.ERWEIMA%6:
 
 				break;
 				//复制链接
-			case ShareList.COPYLINK:
+			case ShareList.COPYLINK%6:
 				copyLink();
 				break;
 

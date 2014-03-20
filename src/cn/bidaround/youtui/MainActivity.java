@@ -19,12 +19,12 @@ public class MainActivity extends Activity implements OnClickListener{
 		initView();
 	}
 	void initView(){
+		shareData.setImageUrl("http://img0.bdstatic.com/img/image/shouye/quanzhixian.jpg");
 		popupBt = (Button) findViewById(R.id.popup_bt);
 		popupBt.setOnClickListener(this);
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.you_tui, menu);
 		return true;
 	}
