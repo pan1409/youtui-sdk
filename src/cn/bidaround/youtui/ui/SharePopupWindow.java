@@ -2,6 +2,7 @@ package cn.bidaround.youtui.ui;
 
 import java.util.ArrayList;
 
+import com.tencent.weibo.sdk.android.api.util.Util;
 import com.viewpagerindicator.CirclePageIndicator;
 import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
@@ -35,12 +36,14 @@ import android.widget.Toast;
  */
 public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		OnItemClickListener {
+	
 	private String message;
 	private Activity act;
 	private GridView pagerOne_gridView;
 	private GridView pagerTwo_gridView;
 	private Handler mHandler = new Handler();
 	private ShareData shareData;
+	
 	public SharePopupWindow(Activity act,ShareData shareData) {
 		super(act);
 		this.act = act;
@@ -95,6 +98,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		logoList_pagerTwo.add(ShareList.email);
 		logoList_pagerTwo.add(ShareList.erWeiMa);
 		logoList_pagerTwo.add(ShareList.copyLink);
+		
 		View pagerTwo = LayoutInflater.from(act).inflate(
 				R.layout.share_fragment, null);
 		pagerTwo_gridView = (GridView) pagerTwo
@@ -108,8 +112,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		pagerList.add(pagerTwo);
 		SharePagerAdapter PagerAdapter = new SharePagerAdapter(pagerList);
 		viewPager.setAdapter(PagerAdapter);
-		CirclePageIndicator indicator = (CirclePageIndicator) view
-				.findViewById(R.id.indicator);
+		CirclePageIndicator indicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
 		indicator.setViewPager(viewPager);
 
 	}
@@ -169,6 +172,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 					Toast.makeText(act, "请先授权登录", Toast.LENGTH_SHORT).show();
 					Intent shareAuthIt = new Intent(act,
 							ShareAuthActivity.class);
+					shareAuthIt.putExtra("from", "sina");
 					act.startActivity(shareAuthIt);
 				}else{
 					Intent shareIt = new Intent(act, ShareActivity.class);
@@ -204,11 +208,20 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 			case ShareList.RENREN:
 				Intent renrenIt = new Intent(act, ShareActivity.class);
 				renrenIt.putExtra("from", "renren");
+				renrenIt.putExtra("shareData", shareData);
 				act.startActivity(renrenIt);
 				break;
 				//腾讯微博
 			case ShareList.TENGXUNWEIBO:
-				
+				if(Util.getSharePersistent(act, "ACCESS_TOKEN")==null||"".equals(Util.getSharePersistent(act, "ACCESS_TOKEN"))){
+					Intent tencentWbIt = new Intent(act, ShareAuthActivity.class);
+					tencentWbIt.putExtra("from", "TencentWB");
+					act.startActivity(tencentWbIt);
+				}else{
+					Intent tencentWbIt = new Intent(act, ShareActivity.class);
+					tencentWbIt.putExtra("from", "TencentWB");
+					act.startActivity(tencentWbIt);
+				}
 				break;
 			default:
 				break;

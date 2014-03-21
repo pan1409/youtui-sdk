@@ -9,7 +9,7 @@ public class YoutuiConstants {
 	public static final String FILE_SAVE_PATH = "/youtui/";
 
 	// 新浪微博的参数
-	// public static final String SINA_WEIBO_APP_ID = "2502314449";
+	public static final String SINA_WEIBO_APP_ID = "2502314449";
 	public static final String SINA_WEIBO_REDIRECT_URL = "http://youtui.mobi/weiboResponse";
 	public static final String SINA_WEIBO_SCOPE = "email,direct_messages_read,direct_messages_write,"
 			+ "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
@@ -20,8 +20,9 @@ public class YoutuiConstants {
 	public static final String TENCENT_SCOPE = "all";
 
 	// 微信的参数
-	// public static final String WEIXIN_APP_ID = "wxbc9e6010cf85c3e4";
+	public static final String WEIXIN_APP_ID = "wxbc9e6010cf85c3e4";
 	public static final int WEIXIN_TIMELINE_SUPPORTED_VERSION = 0x21020001;// 微信4.2以上支持分享至朋友圈
+	
 
 	// 人人的参数
 	public static final String RENREN_APP_ID = "244110";

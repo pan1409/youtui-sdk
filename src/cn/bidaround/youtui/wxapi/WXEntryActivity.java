@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import cn.bidaround.youtui.social.ShareData;
+import cn.bidaround.youtui.social.YoutuiConstants;
+
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -13,6 +15,8 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXImageObject;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXTextObject;
+import com.tencent.mm.sdk.openapi.WXWebpageObject;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -28,7 +32,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	private ShareData shareData;
 	private IWXAPI mIWXAPI;
 	private Bitmap bitmap;
-	private static String APPID_WX = "wxbc9e6010cf85c3e4";
 	private ProgressDialog loadingDialog;
 	private Handler mHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
@@ -53,9 +56,9 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 					shareData = (ShareData) getIntent().getExtras()
 							.getSerializable("shareData");
 					mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this,
-							APPID_WX, false);
+							YoutuiConstants.WEIXIN_APP_ID, false);
 					mIWXAPI.handleIntent(getIntent(),WXEntryActivity.this);
-					mIWXAPI.registerApp(APPID_WX);
+					mIWXAPI.registerApp(YoutuiConstants.WEIXIN_APP_ID);
 					
 					WXMediaMessage msg = new WXMediaMessage();
 					try {
@@ -69,10 +72,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 						e.printStackTrace();
 					}
 					if (bitmap != null) {
+						msg.title = shareData.getTitle();
+						msg.description = shareData.getDescription();
 						Bitmap bmpThum = Bitmap.createScaledBitmap(bitmap, 150,
 								150, true);
 						msg.setThumbImage(bmpThum);
-						msg.mediaObject = getImageForUrl();
+						WXWebpageObject pageObject = new WXWebpageObject();
+						pageObject.webpageUrl = shareData.getTarget_url();
+						msg.mediaObject = pageObject;
 					}
 					SendMessageToWX.Req req = new SendMessageToWX.Req();
 					req.transaction = buildTransaction("测试");
@@ -96,19 +103,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 		super.onNewIntent(intent);
 		setIntent(intent);
 		mIWXAPI.handleIntent(intent, this);
-	}
-
-	/*
-	 * 获取分享的内容的类型，暂时支持文字和图片两种
-	 */
-	private int getShareType() {
-		if(shareData.getImageUrl()!=null){
-			return ShareData.TYPE_IAMGE;
-		}
-		if(shareData.getText()!=null){
-			return ShareData.TYPE_TEXT;
-		}
-		return -1;
 	}
 
 	private void loadingBar() {
@@ -137,24 +131,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 				screenHeight / 5);
 		loadingDialog.show();
 	}
-
-	/*
-	 * 分享一张网络上的图片
-	 */
-	private WXImageObject getImageForUrl() {
-		WXImageObject imageObject = new WXImageObject(bitmap);
-		return imageObject;
-	}
-
-	/*
-	 * 分享
-	 */
-	private WXTextObject getTextObject() {
-		WXTextObject textObject = new WXTextObject();
-		textObject.text = shareData.getText();
-		return textObject;
-	}
-
+	
 	// 创建唯一标示
 	private String buildTransaction(final String type) {
 		return (type == null) ? String.valueOf(System.currentTimeMillis())

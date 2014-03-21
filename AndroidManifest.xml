@@ -111,13 +111,12 @@
             android:configChanges="orientation|navigation|keyboardHidden" />
 
         <!-- ################需要引用的外部社交jar的Activity################### -->
-        <activity android:name="com.tencent.plus.ImageActivity" />
-        <activity android:name="cn.bidaround.youtui.ui.TencentWBSkipActivity" />
         <activity android:name="cn.bidaround.youtui.ui.ShareAuthActivity" >
             <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
         </activity>
         <activity
             android:name="cn.bidaround.youtui.ui.ShareActivity"
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.Translucent" />
     </application>
 

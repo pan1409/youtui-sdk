@@ -1,6 +1,7 @@
 package cn.bidaround.youtui.ui;
 import cn.bidaround.youtui.social.RennShare;
 import cn.bidaround.youtui.social.SinaShare;
+import cn.bidaround.youtui.social.TencentWBShare;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.Window;
 public class ShareActivity extends Activity {
 	private SinaShare sinaShare;
 	private String from;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -22,6 +24,8 @@ public class ShareActivity extends Activity {
 			sinaShare.shareToSina();
 		}else if("renren".equals(from)){
 			new RennShare(this).shareToRenn();
+		}else if("TencentWB".equals(from)){
+			
 		}
 	}
 	/*
