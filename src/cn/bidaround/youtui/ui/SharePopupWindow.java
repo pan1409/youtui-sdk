@@ -66,7 +66,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		setOutsideTouchable(true);
 		setContentView(view);
 		setWidth(act.getWindowManager().getDefaultDisplay().getWidth());
-		setHeight(DensityUtil.dip2px(act, 300));
+		setHeight(DensityUtil.dip2px(act, 350));
 		showAtLocation(act.findViewById(R.id.popup_bt), Gravity.BOTTOM, 0, 0);
 	}
 	

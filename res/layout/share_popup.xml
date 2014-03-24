@@ -8,22 +8,47 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/cancel_bt" >
+        android:layout_above="@+id/share_popup_textlinearlayout" >
 
         <android.support.v4.view.ViewPager
             android:id="@+id/share_viewpager"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-    <com.viewpagerindicator.CirclePageIndicator
-        android:id="@+id/indicator"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:padding="10dip" />
-
+        <com.viewpagerindicator.CirclePageIndicator
+            android:id="@+id/indicator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:padding="10dip" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_above="@+id/cancel_bt"
+        android:id="@+id/share_popup_textlinearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:layout_marginRight="20dp"
+            android:text="了解积分活动"
+            android:textColor="#ffffff" />
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:layout_marginLeft="20dp"
+            android:text="查看我的积分"
+            android:textColor="#ffffff" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/cancel_bt"
