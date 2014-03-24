@@ -9,7 +9,7 @@ public interface ShareList {
 	public static TitleAndLogo weiXin = new TitleAndLogo(3, "微信", R.drawable.wxact);
 	public static TitleAndLogo renRen = new TitleAndLogo(4, "人人", R.drawable.renrenact);
 	public static TitleAndLogo tencentWB = new TitleAndLogo(5, "腾讯微博", R.drawable.tengxunact);
-	public static TitleAndLogo wxPYQ = new TitleAndLogo(6, "朋友圈", R.drawable.weixinhyact);
+	public static TitleAndLogo wxPYQ = new TitleAndLogo(6, "朋友圈", R.drawable.pyqact);
 	public static TitleAndLogo sms = new TitleAndLogo(7, "短信", R.drawable.messact);
 	public static TitleAndLogo email = new TitleAndLogo(8, "邮件", R.drawable.mailact);
 	public static TitleAndLogo erWeiMa = new TitleAndLogo(9, "二维码", R.drawable.erweimaact);

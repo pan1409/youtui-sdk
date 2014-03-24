@@ -25,27 +25,27 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_above="@+id/cancel_bt"
         android:id="@+id/share_popup_textlinearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/cancel_bt"
         android:orientation="horizontal" >
 
         <TextView
             android:layout_width="0px"
             android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:gravity="right"
-            android:layout_marginRight="20dp"
             android:text="了解积分活动"
             android:textColor="#ffffff" />
 
         <TextView
             android:layout_width="0px"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:gravity="left"
-            android:layout_marginLeft="20dp"
             android:text="查看我的积分"
             android:textColor="#ffffff" />
     </LinearLayout>

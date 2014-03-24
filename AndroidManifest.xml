@@ -7,7 +7,8 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/> 
+	<!-- 悬浮窗口权限 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 检测网络状态 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -118,6 +119,7 @@
             android:name="cn.bidaround.youtui.ui.ShareActivity"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Translucent" />
+        <service android:name="cn.bidaround.youtui.service.AlertWindowService" />
     </application>
 
     <!-- ###################声明SDK使用的相关权限###################### -->

@@ -36,12 +36,14 @@ public class ShareGridAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup arg2) {
-		View view = LayoutInflater.from(act).inflate(R.layout.pagergrid_item,
-				null);
-		ImageView imageView = (ImageView)view.findViewById(R.id.logo_imageview);
-		imageView.setImageResource(list.get(position).getLogoSrc());
-		((TextView)view.findViewById(R.id.logo_textview)).setText(list.get(position).getTitle());
-		convertView = view;
+		if(convertView==null){
+			View view = LayoutInflater.from(act).inflate(R.layout.pagergrid_item,
+					null);
+			ImageView imageView = (ImageView)view.findViewById(R.id.logo_imageview);
+			imageView.setImageResource(list.get(position).getLogoSrc());
+			((TextView)view.findViewById(R.id.logo_textview)).setText(list.get(position).getTitle());
+			convertView = view;
+		}
 		return convertView;
 	}
 

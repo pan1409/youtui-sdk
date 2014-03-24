@@ -31,10 +31,13 @@
             android:src="@drawable/xinlangact" />
 
         <TextView
+            android:background="@drawable/reddot"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="right"
+            android:gravity="center"
             android:text="+5"
+            android:textSize="12sp"
             android:textColor="#ffffff" />
     </FrameLayout>
 
