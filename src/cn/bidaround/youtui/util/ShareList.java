@@ -1,5 +1,9 @@
 package cn.bidaround.youtui.util;
 import cn.bidaround.youtui.R;
+/**
+ * author:gaopan
+ * time:2014/3/25
+ */
 
 public interface ShareList {
 	//保存着分享媒体的信息

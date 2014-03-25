@@ -1,7 +1,6 @@
 package cn.bidaround.youtui.ui;
 import cn.bidaround.youtui.social.RennShare;
 import cn.bidaround.youtui.social.SinaShare;
-import cn.bidaround.youtui.social.TencentWBShare;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,5 +36,11 @@ public class ShareActivity extends Activity {
 		super.onNewIntent(intent);
 		setIntent(intent);
 		sinaShare.handResp(intent);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.i("onActivityResult", "onActivityResult");
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

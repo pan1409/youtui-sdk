@@ -53,4 +53,8 @@ public class YoutuiConstants {
 	public static final int RESULT_SIGNATURE_ERROR = 2;
 	public static final int APP_NOT_EXIST = 3;
 	public static final int APP_ID_MISSING = 4;
+	
+	//显示样式
+	public static final int BLACK_STYLE = 0;
+	public static final int WHITE_STYLE = 1;
 }

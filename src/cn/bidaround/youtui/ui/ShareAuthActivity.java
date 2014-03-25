@@ -1,19 +1,27 @@
 package cn.bidaround.youtui.ui;
 import cn.bidaround.youtui.social.SinaShare;
-import cn.bidaround.youtui.social.TencentWBShare;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 public class ShareAuthActivity extends Activity{
+	SinaShare sinaShare;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		String from = getIntent().getExtras().getString("from");
 		if("TencentWB".equals(from)){
-			new TencentWBShare(this).tencentWBAuth();
 		}else if("sina".equals(from)){
-			new SinaShare(this).sinaAuth();	
+			sinaShare = new SinaShare(this);
+			sinaShare.sinaAuth();	
 		}
-	
 	}	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(sinaShare!=null){
+			sinaShare.sinaResult(requestCode, resultCode, data);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 }

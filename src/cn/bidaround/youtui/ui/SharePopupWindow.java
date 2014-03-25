@@ -25,14 +25,17 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewDebug.FlagToString;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 /**
  * author:gaopan
+ * time:2014/3/25
  */
 public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		OnItemClickListener {
@@ -43,11 +46,13 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 	private GridView pagerTwo_gridView;
 	private Handler mHandler = new Handler();
 	private ShareData shareData;
+	private int showStyle = -1;
 	
-	public SharePopupWindow(Activity act,ShareData shareData) {
+	public SharePopupWindow(Activity act,ShareData shareData,int showStyle) {
 		super(act);
 		this.act = act;
 		this.shareData = shareData;
+		this.showStyle = showStyle;
 	}
 
 	/*
@@ -55,8 +60,14 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 	 */
 	public void show() {
 
-		View view = LayoutInflater.from(act)
-				.inflate(R.layout.share_popup, null);
+		View view = LayoutInflater.from(act).inflate(R.layout.share_popup, null);
+		//
+		if(showStyle==1){
+			view.setBackgroundColor(0xffffffff);
+			((TextView)view.findViewById(R.id.share_popup_liaojietv)).setTextColor(0xff6c7471);
+			((TextView)view.findViewById(R.id.share_popup_chakantv)).setTextColor(0xff6c7471);
+		}
+
 		// 消失按钮点击事件
 		Button cancelBt = (Button) view.findViewById(R.id.cancel_bt);
 		cancelBt.setOnClickListener(this);
@@ -72,14 +83,11 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 	
 
 	void initViewPager(View view) {
-		ViewPager viewPager = (ViewPager) view
-				.findViewById(R.id.share_viewpager);
+		ViewPager viewPager = (ViewPager) view.findViewById(R.id.share_viewpager);
 		ArrayList<View> pagerList = new ArrayList<View>();
 		// 初始化第一页
-		View pagerOne = LayoutInflater.from(act).inflate(
-				R.layout.share_fragment, null);
-		pagerOne_gridView = (GridView) pagerOne
-				.findViewById(R.id.sharepager_grid);
+		View pagerOne = LayoutInflater.from(act).inflate(R.layout.share_fragment, null);
+		pagerOne_gridView = (GridView) pagerOne.findViewById(R.id.sharepager_grid);
 		ArrayList<TitleAndLogo> logoList_pagerOne = new ArrayList<TitleAndLogo>();
 		logoList_pagerOne.add(ShareList.sinaWB);
 		logoList_pagerOne.add(ShareList.tencentQQ);
@@ -87,8 +95,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		logoList_pagerOne.add(ShareList.weiXin);
 		logoList_pagerOne.add(ShareList.renRen);
 		logoList_pagerOne.add(ShareList.tencentWB);
-		ShareGridAdapter pagerOne_gridAdapter = new ShareGridAdapter(act,
-				logoList_pagerOne);
+		ShareGridAdapter pagerOne_gridAdapter = new ShareGridAdapter(act,logoList_pagerOne,showStyle);
 		pagerOne_gridView.setAdapter(pagerOne_gridAdapter);
 		pagerOne_gridView.setOnItemClickListener(this);
 		// 初始化第二页
@@ -99,12 +106,9 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		logoList_pagerTwo.add(ShareList.erWeiMa);
 		logoList_pagerTwo.add(ShareList.copyLink);
 		
-		View pagerTwo = LayoutInflater.from(act).inflate(
-				R.layout.share_fragment, null);
-		pagerTwo_gridView = (GridView) pagerTwo
-				.findViewById(R.id.sharepager_grid);
-		ShareGridAdapter pagerTwo_gridAdapter = new ShareGridAdapter(act,
-				logoList_pagerTwo);
+		View pagerTwo = LayoutInflater.from(act).inflate(R.layout.share_fragment, null);
+		pagerTwo_gridView = (GridView) pagerTwo.findViewById(R.id.sharepager_grid);
+		ShareGridAdapter pagerTwo_gridAdapter = new ShareGridAdapter(act,logoList_pagerTwo,showStyle);
 		pagerTwo_gridView.setAdapter(pagerTwo_gridAdapter);
 		pagerTwo_gridView.setOnItemClickListener(this);
 
@@ -119,7 +123,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.cancel_bt:
 			dismiss();
@@ -141,8 +144,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 			public void run() {
 				if (android.os.Build.VERSION.SDK_INT >= 11) {
 					android.content.ClipboardManager clip = (android.content.ClipboardManager) act.getSystemService(Context.CLIPBOARD_SERVICE);
-					clip.setPrimaryClip(android.content.ClipData
-							.newPlainText("link", message));
+					clip.setPrimaryClip(android.content.ClipData.newPlainText("link", message));
 					if (clip.hasPrimaryClip()) {
 						Toast.makeText(act, "复制成功", Toast.LENGTH_SHORT).show();
 					} else {
@@ -169,9 +171,9 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 			//新浪微博
 			case ShareList.XINGLANGWEIBO:
 				if (!AccessTokenKeeper.readAccessToken(act).isSessionValid()) {
+					//这里不能设置setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)，会导致授权无法完成
 					Toast.makeText(act, "请先授权登录", Toast.LENGTH_SHORT).show();
-					Intent shareAuthIt = new Intent(act,
-							ShareAuthActivity.class);
+					Intent shareAuthIt = new Intent(act,ShareAuthActivity.class);
 					shareAuthIt.putExtra("from", "sina");
 					act.startActivity(shareAuthIt);
 				}else{
@@ -213,15 +215,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 				break;
 				//腾讯微博
 			case ShareList.TENGXUNWEIBO:
-				if(Util.getSharePersistent(act, "ACCESS_TOKEN")==null||"".equals(Util.getSharePersistent(act, "ACCESS_TOKEN"))){
-					Intent tencentWbIt = new Intent(act, ShareAuthActivity.class);
-					tencentWbIt.putExtra("from", "TencentWB");
-					act.startActivity(tencentWbIt);
-				}else{
-					Intent tencentWbIt = new Intent(act, ShareActivity.class);
-					tencentWbIt.putExtra("from", "TencentWB");
-					act.startActivity(tencentWbIt);
-				}
+				
 				break;
 			default:
 				break;
