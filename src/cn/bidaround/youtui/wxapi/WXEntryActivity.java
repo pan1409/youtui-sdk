@@ -1,22 +1,18 @@
 package cn.bidaround.youtui.wxapi;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
-
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import com.tencent.mm.sdk.openapi.WXImageObject;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
-import com.tencent.mm.sdk.openapi.WXTextObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -33,9 +29,10 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	private IWXAPI mIWXAPI;
 	private Bitmap bitmap;
 	private ProgressDialog loadingDialog;
-	private Handler mHandler = new Handler(){
+	private Bitmap bmpThum;
+	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			if(msg.what==0){
+			if (msg.what == 0) {
 				loadingDialog.dismiss();
 				return;
 			}
@@ -47,7 +44,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
-		
 		loadingBar();
 		new Thread() {
 			@Override
@@ -57,30 +53,34 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 							.getSerializable("shareData");
 					mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this,
 							YoutuiConstants.WEIXIN_APP_ID, false);
-					mIWXAPI.handleIntent(getIntent(),WXEntryActivity.this);
+					mIWXAPI.handleIntent(getIntent(), WXEntryActivity.this);
 					mIWXAPI.registerApp(YoutuiConstants.WEIXIN_APP_ID);
-					
+
 					WXMediaMessage msg = new WXMediaMessage();
-					try {
-						bitmap = BitmapFactory
-								.decodeStream(new URL(shareData.getImageUrl()).openStream());
-						mHandler.removeMessages(0);
-						mHandler.sendEmptyMessage(0);
-					} catch (MalformedURLException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					 try {
+					 bitmap = BitmapFactory
+					 .decodeStream(new
+					 URL(shareData.getImageUrl()).openStream());
+					 mHandler.removeMessages(0);
+					 mHandler.sendEmptyMessage(0);
+					 } catch (MalformedURLException e) {
+					 e.printStackTrace();
+					 } catch (IOException e) {
+					 e.printStackTrace();
+					 }
+					msg.title = shareData.getTitle();
+					msg.description = shareData.getDescription();
 					if (bitmap != null) {
-						msg.title = shareData.getTitle();
-						msg.description = shareData.getDescription();
-						Bitmap bmpThum = Bitmap.createScaledBitmap(bitmap, 150,
-								150, true);
-						msg.setThumbImage(bmpThum);
-						WXWebpageObject pageObject = new WXWebpageObject();
-						pageObject.webpageUrl = shareData.getTarget_url();
-						msg.mediaObject = pageObject;
+						bmpThum = Bitmap.createScaledBitmap(bitmap, 150, 150,true);
+					} else {
+						bmpThum = Bitmap.createScaledBitmap(BitmapFactory
+								.decodeResource(getResources(),
+										R.drawable.erweimaact), 150, 150, true);	
 					}
+					msg.setThumbImage(bmpThum);
+					WXWebpageObject pageObject = new WXWebpageObject();
+					pageObject.webpageUrl = shareData.getTarget_url();
+					msg.mediaObject = pageObject;
 					SendMessageToWX.Req req = new SendMessageToWX.Req();
 					req.transaction = buildTransaction("测试");
 					req.message = msg;
@@ -96,10 +96,9 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 			}
 		}.start();
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
 		super.onNewIntent(intent);
 		setIntent(intent);
 		mIWXAPI.handleIntent(intent, this);
@@ -116,14 +115,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 		loadingDialog.setIndeterminate(false);
 		// 设置ProgressDialog 是否可以按退回按键取消
 		loadingDialog.setCancelable(true);
-		loadingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-			
-			@Override
-			public void onCancel(DialogInterface dialog) {
-				// TODO Auto-generated method stub
-				WXEntryActivity.this.finish();
-			}
-		});
+		loadingDialog
+				.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						WXEntryActivity.this.finish();
+					}
+				});
 
 		int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
 		int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
@@ -131,17 +130,23 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 				screenHeight / 5);
 		loadingDialog.show();
 	}
-	
+
 	// 创建唯一标示
 	private String buildTransaction(final String type) {
 		return (type == null) ? String.valueOf(System.currentTimeMillis())
 				: type + System.currentTimeMillis();
 	}
 
+	/**
+	 * 监听请求
+	 */
 	@Override
 	public void onReq(BaseReq req) {
 	}
 
+	/**
+	 * @see com.tencent.mm.sdk.openapi.IWXAPIEventHandler#onResp(com.tencent.mm.sdk.openapi.BaseResp)
+	 */
 	@Override
 	public void onResp(BaseResp respone) {
 		switch (respone.errCode) {

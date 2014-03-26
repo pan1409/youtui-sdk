@@ -170,20 +170,23 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 			switch (position) {
 			//新浪微博
 			case ShareList.XINGLANGWEIBO:
-				if (!AccessTokenKeeper.readAccessToken(act).isSessionValid()) {
-					//这里不能设置setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)，会导致授权无法完成
-					Toast.makeText(act, "请先授权登录", Toast.LENGTH_SHORT).show();
-					Intent shareAuthIt = new Intent(act,ShareAuthActivity.class);
-					shareAuthIt.putExtra("from", "sina");
-					act.startActivity(shareAuthIt);
+				if(AppHelper.isSinaWeiboExisted(act)){
+					if (!AccessTokenKeeper.readAccessToken(act).isSessionValid()) {
+						//这里不能设置setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)，会导致授权无法完成
+						Toast.makeText(act, "请先授权登录", Toast.LENGTH_SHORT).show();
+						Intent shareAuthIt = new Intent(act,ShareAuthActivity.class);
+						shareAuthIt.putExtra("from", "sina");
+						act.startActivity(shareAuthIt);
+					}else{
+						Intent shareIt = new Intent(act, ShareActivity.class);
+						shareIt.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+						shareIt.putExtra("shareData",shareData);
+						shareIt.putExtra("from", "sina");
+						act.startActivity(shareIt);				
+					}
 				}else{
-					Intent shareIt = new Intent(act, ShareActivity.class);
-					shareIt.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-					shareIt.putExtra("shareData",shareData);
-					shareIt.putExtra("from", "sina");
-					act.startActivity(shareIt);				
+					Toast.makeText(act, "未安装新浪微博", Toast.LENGTH_SHORT).show();
 				}
-
 				break;
 				//微信
 			case ShareList.WEIXIN:

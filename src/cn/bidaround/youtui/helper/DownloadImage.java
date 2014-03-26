@@ -26,10 +26,8 @@ public class DownloadImage {
 					down_file(url, savePath, filename);
 					// 下载文件，参数：第一个URL，第二个存放路径
 				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

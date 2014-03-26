@@ -1,8 +1,7 @@
 package cn.bidaround.youtui;
-import cn.bidaround.youtui.service.AlertWindowService;
+import cn.bidaround.youtui.helper.DownloadImage;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
-import cn.bidaround.youtui.ui.SharePopupWindow;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -29,6 +28,11 @@ public class MainActivity extends Activity implements OnClickListener{
 		popupBt.setOnClickListener(this);
 		main_alert_bt = (Button) findViewById(R.id.main_alert_bt);
 		main_alert_bt.setOnClickListener(this);
+		new  Runnable() {
+			public void run() {				
+				DownloadImage.downloadImage(shareData.getImageUrl(), YoutuiConstants.FILE_SAVE_PATH, "326.jpg");
+			}
+		}.run();	
 	}
 	
 
@@ -41,10 +45,12 @@ public class MainActivity extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.popup_bt:
-			new SharePopupWindow(this,shareData,YoutuiConstants.WHITE_STYLE).show();
+			//初始化友推分享窗口
+			new YouTui(this, shareData, YouTuiViewType.WHITE_FULL).init();
 			break;
 		case R.id.main_alert_bt:
-			alertIt = new Intent(this, AlertWindowService.class);
+
+			
 			break;
 		default:
 			break;
