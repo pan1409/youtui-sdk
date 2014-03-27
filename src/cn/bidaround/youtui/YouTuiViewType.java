@@ -8,5 +8,5 @@ public class YouTuiViewType {
 	/**
 	 * 白色样式
 	 */
-	public static int WHITE_FULL = 0;
+	public static int WHITE_FULL = 1;
 }

@@ -1,9 +1,27 @@
 package cn.bidaround.youtui.wxapi;
+
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
 import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.social.ShareData;
+import cn.bidaround.youtui.social.UserId;
 import cn.bidaround.youtui.social.YoutuiConstants;
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
@@ -13,14 +31,19 @@ import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
+import com.tencent.mm.sdk.storage.ISQLiteDatabase;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -30,6 +53,9 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	private Bitmap bitmap;
 	private ProgressDialog loadingDialog;
 	private Bitmap bmpThum;
+	private boolean isPyq;
+	private int wxPoint;
+	private int pyqPoint;
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			if (msg.what == 0) {
@@ -44,6 +70,8 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
+		// 判断是否为朋友圈
+		isPyq = getIntent().getExtras().getBoolean("pyq");
 		loadingBar();
 		new Thread() {
 			@Override
@@ -57,25 +85,25 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 					mIWXAPI.registerApp(YoutuiConstants.WEIXIN_APP_ID);
 
 					WXMediaMessage msg = new WXMediaMessage();
-					 try {
-					 bitmap = BitmapFactory
-					 .decodeStream(new
-					 URL(shareData.getImageUrl()).openStream());
-					 mHandler.removeMessages(0);
-					 mHandler.sendEmptyMessage(0);
-					 } catch (MalformedURLException e) {
-					 e.printStackTrace();
-					 } catch (IOException e) {
-					 e.printStackTrace();
-					 }
+					try {
+						bitmap = BitmapFactory.decodeStream(new URL(shareData
+								.getImageUrl()).openStream());
+						mHandler.removeMessages(0);
+						mHandler.sendEmptyMessage(0);
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					msg.title = shareData.getTitle();
 					msg.description = shareData.getDescription();
 					if (bitmap != null) {
-						bmpThum = Bitmap.createScaledBitmap(bitmap, 150, 150,true);
+						bmpThum = Bitmap.createScaledBitmap(bitmap, 150, 150,
+								true);
 					} else {
 						bmpThum = Bitmap.createScaledBitmap(BitmapFactory
 								.decodeResource(getResources(),
-										R.drawable.erweimaact), 150, 150, true);	
+										R.drawable.erweimaact), 150, 150, true);
 					}
 					msg.setThumbImage(bmpThum);
 					WXWebpageObject pageObject = new WXWebpageObject();
@@ -84,9 +112,11 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 					SendMessageToWX.Req req = new SendMessageToWX.Req();
 					req.transaction = buildTransaction("测试");
 					req.message = msg;
-					if (getIntent().getExtras().getBoolean("pyq")) {
+					if (isPyq) {
+						pyqPoint = getIntent().getExtras().getInt("point");
 						req.scene = SendMessageToWX.Req.WXSceneTimeline;
 					} else {
+						wxPoint = getIntent().getExtras().getInt("point");
 						req.scene = SendMessageToWX.Req.WXSceneSession;
 					}
 					mIWXAPI.sendReq(req);
@@ -101,6 +131,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		setIntent(intent);
+		// 监听分享后的返回结果
 		mIWXAPI.handleIntent(intent, this);
 	}
 
@@ -148,10 +179,49 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	 * @see com.tencent.mm.sdk.openapi.IWXAPIEventHandler#onResp(com.tencent.mm.sdk.openapi.BaseResp)
 	 */
 	@Override
-	public void onResp(BaseResp respone) {
-		switch (respone.errCode) {
+	public void onResp(BaseResp response) {
+		switch (response.errCode) {
 		case BaseResp.ErrCode.ERR_OK:
 			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
+			//在有积分的情况下分享成功后会向服务器发送通知获得积分
+			if((!isPyq&&wxPoint!=0)||(isPyq&&pyqPoint!=0)){
+				new Thread() {
+					public void run() {
+						TelephonyManager teleManager = (TelephonyManager) WXEntryActivity.this
+								.getSystemService(Context.TELEPHONY_SERVICE);
+						UserId user = new UserId(teleManager);
+						HttpClient client = new DefaultHttpClient();
+						List<NameValuePair> params = new ArrayList<NameValuePair>();
+						HttpPost post = new HttpPost(
+								"http://192.168.2.108/activity/sharePoint");
+						params.add(new BasicNameValuePair("cardNum", user
+								.getSimSerialNumber()));
+						params.add(new BasicNameValuePair("appId", "10023"));
+						if (isPyq) {
+							params.add(new BasicNameValuePair("channelId", "10"));
+							params.add(new BasicNameValuePair("point", pyqPoint
+									+ ""));
+						} else {
+							params.add(new BasicNameValuePair("channelId", "3"));
+							params.add(new BasicNameValuePair("point", wxPoint
+									+ ""));
+						}
+						try {
+							post.setEntity(new UrlEncodedFormEntity(params,
+									HTTP.UTF_8));
+							client.execute(post);
+
+						} catch (UnsupportedEncodingException e) {
+							e.printStackTrace();
+						} catch (ClientProtocolException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}.start();		
+			}
+			
 			break;
 		case BaseResp.ErrCode.ERR_SENT_FAILED:
 			Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();

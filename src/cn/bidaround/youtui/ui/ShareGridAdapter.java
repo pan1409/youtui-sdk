@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,10 +21,12 @@ public class ShareGridAdapter extends BaseAdapter {
 	private Activity act;
 	private ArrayList<TitleAndLogo> list;
 	private int showStyle;
-	public ShareGridAdapter(Activity act,ArrayList<TitleAndLogo> list,int showStyle) {
+	private int[] pointArr;
+	public ShareGridAdapter(Activity act,ArrayList<TitleAndLogo> list,int showStyle,int[] pointArr) {
 		this.act = act;
 		this.list = list;
 		this.showStyle = showStyle;
+		this.pointArr = pointArr;
 	}
 
 	@Override
@@ -52,29 +55,85 @@ public class ShareGridAdapter extends BaseAdapter {
 			if(showStyle==1){
 				textView.setTextColor(0xff6c7471);
 			}
+			TextView pointText = (TextView) view.findViewById(R.id.griditem_point_tv);
 			//处理积分显示
 			switch (list.get(position).getId()) {
-			case ShareList.XINGLANGWEIBO:	
+			case ShareList.XINGLANGWEIBO:
+				if(pointArr[0]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[0]);
+				}
 				break;
-			case ShareList.QQ:	
+			case ShareList.QQ:
+				if(pointArr[5]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[5]);
+				}
 				break;
 			case ShareList.QQKONGJIAN:	
+				if(pointArr[2]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[2]);
+				}
 				break;
 			case ShareList.WEIXIN:	
+				if(pointArr[3]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[3]);
+				}
 				break;
 			case ShareList.RENREN:	
+				if(pointArr[4]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[4]);
+				}
 				break;
-			case ShareList.TENGXUNWEIBO:	
+			case ShareList.TENGXUNWEIBO:
+				if(pointArr[1]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[1]);
+				}
 				break;
 			case ShareList.WXPYQ:	
+				if(pointArr[10]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[10]);
+				}
 				break;
-			case ShareList.MESSAGE:	
+			case ShareList.MESSAGE:
+				if(pointArr[7]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[7]);
+				}
 				break;
-			case ShareList.EMAIL:	
+			case ShareList.EMAIL:
+				if(pointArr[8]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[8]);
+				}
 				break;
-			case ShareList.ERWEIMA:	
+			case ShareList.ERWEIMA:
+				if(pointArr[6]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[6]);
+				}
 				break;
-			case ShareList.COPYLINK:	
+			case ShareList.COPYLINK:
+				if(pointArr[9]==0){
+					pointText.setVisibility(View.GONE);
+				}else{
+					pointText.setText("+"+pointArr[9]);
+				}
 				break;
 			default:
 				break;

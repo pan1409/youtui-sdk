@@ -48,9 +48,7 @@ public class MainActivity extends Activity implements OnClickListener{
 			//初始化友推分享窗口
 			new YouTui(this, shareData, YouTuiViewType.WHITE_FULL).init();
 			break;
-		case R.id.main_alert_bt:
-
-			
+		case R.id.main_alert_bt:	
 			break;
 		default:
 			break;

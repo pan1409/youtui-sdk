@@ -31,6 +31,7 @@
             android:src="@drawable/xinlangact" />
 
         <TextView
+            android:id="@+id/griditem_point_tv"
             android:background="@drawable/reddot"
             android:layout_width="20dp"
             android:layout_height="20dp"
