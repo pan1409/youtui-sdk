@@ -36,19 +36,19 @@ import android.widget.Toast;
 /**
  * author:gaopan
  */
-public class ShareActivity extends Activity implements IWeiboHandler.Response{
+public class ShareActivity extends Activity implements IWeiboHandler.Response {
 	private SinaShare sinaShare;
 	private String from;
-	private IWeiboShareAPI iWeiboShareAPI; 
+	private IWeiboShareAPI iWeiboShareAPI;
 	private int point;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		point = getIntent().getExtras().getInt("point");
-		iWeiboShareAPI =  WeiboShareSDK.createWeiboAPI(this,
-				YoutuiConstants.SINA_WEIBO_APP_ID);
-		//判断需要分享的媒体
+		iWeiboShareAPI = WeiboShareSDK.createWeiboAPI(this, YoutuiConstants.SINA_WEIBO_APP_ID);
+		// 判断需要分享的媒体
 		from = getIntent().getExtras().getString("from");
 		if ("sina".equals(from)) {
 			new Thread() {
@@ -71,11 +71,12 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response{
 	protected void onNewIntent(Intent intent) {
 		Log.i("onNewIntent", "onNewIntent");
 		setIntent(intent);
-		if ("sina".equals(from)){
+		if ("sina".equals(from)) {
 			iWeiboShareAPI.handleWeiboResponse(intent, this);
 		}
 		super.onNewIntent(intent);
 	}
+
 	/**
 	 * 新浪分享回调
 	 */
@@ -83,27 +84,22 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response{
 	public void onResponse(BaseResponse baseResp) {
 		switch (baseResp.errCode) {
 		case WBConstants.ErrorCode.ERR_OK:
-			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT)
-					.show();
-			//在该分享有积分获得的情况下，分享成功后通知服务器加
-			if(point!=0){
-				new Thread(){
+			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
+			// 在该分享有积分获得的情况下，分享成功后通知服务器加
+			if (point != 0) {
+				new Thread() {
 					public void run() {
 						TelephonyManager teleManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 						UserId user = new UserId(teleManager);
 						HttpClient client = new DefaultHttpClient();
 						List<NameValuePair> params = new ArrayList<NameValuePair>();
-						HttpPost post = new HttpPost(
-								"http://192.168.2.108/activity/sharePoint");
-						params.add(new BasicNameValuePair("cardNum", user
-								.getSimSerialNumber()));
+						HttpPost post = new HttpPost("http://192.168.2.108/activity/sharePoint");
+						params.add(new BasicNameValuePair("cardNum", user.getSimSerialNumber()));
 						params.add(new BasicNameValuePair("appId", "10023"));
 						params.add(new BasicNameValuePair("channelId", "0"));
-						params.add(new BasicNameValuePair("point", point+""));
-
+						params.add(new BasicNameValuePair("point", point + ""));
 						try {
-							post.setEntity(new UrlEncodedFormEntity(params,
-									HTTP.UTF_8));
+							post.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
 							client.execute(post);
 						} catch (ClientProtocolException e) {
 							e.printStackTrace();
@@ -116,12 +112,10 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response{
 			}
 			break;
 		case WBConstants.ErrorCode.ERR_CANCEL:
-			Toast.makeText(this, "分享取消", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "分享取消", Toast.LENGTH_SHORT).show();
 			break;
 		case WBConstants.ErrorCode.ERR_FAIL:
-			Toast.makeText(this, "分享失败", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "分享失败", Toast.LENGTH_SHORT).show();
 			break;
 		default:
 			break;

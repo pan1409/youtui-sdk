@@ -14,6 +14,8 @@ public class ShareAuthActivity extends Activity{
 		}else if("sina".equals(from)){
 			sinaShare = new SinaShare(this);
 			sinaShare.sinaAuth();	
+		}else if("check".equals("from")){
+			
 		}
 	}	
 	

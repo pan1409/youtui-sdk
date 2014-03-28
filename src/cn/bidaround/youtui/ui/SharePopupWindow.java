@@ -2,6 +2,9 @@ package cn.bidaround.youtui.ui;
 
 import java.util.ArrayList;
 import com.viewpagerindicator.CirclePageIndicator;
+
+import cn.bidaround.point.ChannelId;
+import cn.bidaround.point.YtPoint;
 import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.helper.AppHelper;
@@ -21,6 +24,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -43,6 +47,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 	private ShareData shareData;
 	private int showStyle = -1;
 	private int[] pointArr;
+	
 
 	public SharePopupWindow(Activity act, ShareData shareData, int showStyle,
 			int[] pointArr) {
@@ -57,23 +62,11 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 	 * 显示分享主界面
 	 */
 	public void show() {
-
 		View view = LayoutInflater.from(act)
 				.inflate(R.layout.share_popup, null);
-		//
-		if (showStyle == 1) {
-			view.setBackgroundColor(0xffffffff);
-			((TextView) view.findViewById(R.id.share_popup_liaojietv))
-					.setTextColor(0xff6c7471);
-			((TextView) view.findViewById(R.id.share_popup_chakantv))
-					.setTextColor(0xff6c7471);
-		}
-
-		// 消失按钮点击事件
-		Button cancelBt = (Button) view.findViewById(R.id.cancel_bt);
-		cancelBt.setOnClickListener(this);
-
+		initButton(view);
 		initViewPager(view);
+		//设置popupwindow的属性
 		setFocusable(true);
 		setOutsideTouchable(true);
 		setContentView(view);
@@ -81,7 +74,26 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		setHeight(DensityUtil.dip2px(act, 350));
 		showAtLocation(act.findViewById(R.id.popup_bt), Gravity.BOTTOM, 0, 0);
 	}
-
+	
+	void initButton(View view){
+		TextView know = (TextView) view.findViewById(R.id.share_popup_knowtv);
+		TextView check = (TextView) view.findViewById(R.id.share_popup_checktv);
+		//在style变化时改变背景和文字颜色
+		if (showStyle == 1) {
+			view.setBackgroundColor(0xffffffff);
+			know.setTextColor(0xff6c7471);
+			check.setTextColor(0xff6c7471);
+		}
+		know.setOnClickListener(this);
+		check.setOnClickListener(this);
+		// 消失按钮点击事件
+		Button cancelBt = (Button) view.findViewById(R.id.cancel_bt);
+		cancelBt.setOnClickListener(this);
+	}
+	
+	/**
+	 * 初始化viewpager
+	 */
 	void initViewPager(View view) {
 		ViewPager viewPager = (ViewPager) view
 				.findViewById(R.id.share_viewpager);
@@ -92,12 +104,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		pagerOne_gridView = (GridView) pagerOne
 				.findViewById(R.id.sharepager_grid);
 		ArrayList<TitleAndLogo> logoList_pagerOne = new ArrayList<TitleAndLogo>();
-		// logoList_pagerOne.add(ShareList.sinaWB);
-		// logoList_pagerOne.add(ShareList.tencentQQ);
-		// logoList_pagerOne.add(ShareList.qqKongJian);
-		// logoList_pagerOne.add(ShareList.weiXin);
-		// logoList_pagerOne.add(ShareList.renRen);
-		// logoList_pagerOne.add(ShareList.tencentWB);
 		logoList_pagerOne.add(ShareList.weiXin);
 		logoList_pagerOne.add(ShareList.wxPYQ);
 		logoList_pagerOne.add(ShareList.sinaWB);
@@ -111,11 +117,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		pagerOne_gridView.setOnItemClickListener(this);
 		// 初始化第二页
 		ArrayList<TitleAndLogo> logoList_pagerTwo = new ArrayList<TitleAndLogo>();
-		// logoList_pagerTwo.add(ShareList.wxPYQ);
-		// logoList_pagerTwo.add(ShareList.sms);
-		// logoList_pagerTwo.add(ShareList.email);
-		// logoList_pagerTwo.add(ShareList.erWeiMa);
-		// logoList_pagerTwo.add(ShareList.copyLink);
 		logoList_pagerTwo.add(ShareList.renRen);
 		logoList_pagerTwo.add(ShareList.sms);
 		logoList_pagerTwo.add(ShareList.email);
@@ -147,7 +148,14 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 		case R.id.cancel_bt:
 			dismiss();
 			break;
-
+		case R.id.share_popup_knowtv:
+			
+			break;
+		case R.id.share_popup_checktv:
+			Intent checkIt = new Intent(act,ShareAuthActivity.class);
+			checkIt.putExtra("from", "check");
+			act.startActivity(checkIt);
+			break;
 		default:
 			break;
 		}
@@ -237,6 +245,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener,
 				break;
 			// QQ空间
 			case ShareList.QQKONGJIAN:
+				new YtPoint().getPoint(act, "10023", ChannelId.qqZone);
 				break;
 			// 人人
 			case ShareList.WXPYQ:

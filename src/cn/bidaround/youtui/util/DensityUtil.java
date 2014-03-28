@@ -1,5 +1,4 @@
 package cn.bidaround.youtui.util;
-
 import android.content.Context;
 
 public class DensityUtil {
