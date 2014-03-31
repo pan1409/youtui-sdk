@@ -8,6 +8,8 @@ import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.bidaround.youtui.social.YoutuiConstants;
+
 import com.tencent.open.HttpStatusException;
 import com.tencent.open.NetworkUnavailableException;
 import com.tencent.tauth.IRequestListener;
@@ -16,6 +18,8 @@ import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 
 public class QQSkipActivity extends Activity {
@@ -24,8 +28,11 @@ public class QQSkipActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		mTencent = Tencent.createInstance("1101119016", getApplicationContext());
-		mTencent.login(this, "get_user_info,add_topic", new QQUiListener());
+		mTencent = Tencent.createInstance("1101255276", getApplicationContext());	
+		//mTencent.setOpenId(arg0)
+		//mTencent.setAccessToken(arg0, arg1)
+		
+		mTencent.login(this, YoutuiConstants.TENCENT_SCOPE, new QQUiListener());
 	}
 	
 	
@@ -42,9 +49,19 @@ public class QQSkipActivity extends Activity {
 		}
 
 		@Override
-		public void onComplete(JSONObject arg0) {
+		public void onComplete(JSONObject json) {
 			// TODO Auto-generated method stub
-			
+			SharedPreferences sp = getSharedPreferences("tencent_open_access", 0);
+			Editor edit = sp.edit();
+			try {
+				edit.putString("openid",json.getString("openid"));
+				edit.putString("access_token",json.getString("access_token"));
+				edit.putLong("expires_in", System.currentTimeMillis()+Long.parseLong(json.getString("expires_in")));
+				edit.commit();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		@Override

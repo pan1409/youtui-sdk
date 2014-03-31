@@ -52,7 +52,7 @@
             android:name="YOUTUI_CHANNEL"
             android:value="youtuidemo_yt" >
         </meta-data>
-
+        
         <!-- 友推sdk meta配置，请填写您的微信appid -->
         <meta-data
             android:name="WEIXIN_APP_ID"
@@ -105,7 +105,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="tencent1101119016" />
+                <data android:scheme="tencent1101255276" />
             </intent-filter>
         </activity>
         <!-- 人人授权需要注册的activity -->

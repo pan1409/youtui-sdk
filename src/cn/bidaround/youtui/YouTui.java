@@ -45,9 +45,9 @@ public class YouTui {
 			public void run() {
 				try {
 					//这里应该修改
-					int[] pointArr = parse();
+					int[] pointArr = parse(getPoints());
 					Looper.prepare();
-					new SharePopupWindow(act, shareData, showStyle, pointArr).show();
+					//new SharePopupWindow(act, shareData, showStyle, pointArr).show();
 					Looper.loop();
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -96,9 +96,9 @@ public class YouTui {
 	 * 解析获得的积分Json文件
 	 * @throws JSONException
 	 */
-	public int[] parse() throws JSONException {
+	public static int[] parse(String str) throws JSONException {
 		int[] pointArr = new int[11];
-		String str = getPoints();
+		
 		if (str != null) {
 			JSONObject objectJson = new JSONObject(str).getJSONObject("object");
 			for (int i = 0; i < pointArr.length; i++) {
@@ -107,4 +107,5 @@ public class YouTui {
 		}
 		return pointArr;
 	}
+	
 }

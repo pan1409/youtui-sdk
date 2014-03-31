@@ -19,6 +19,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import cn.bidaround.point.ChannelId;
+import cn.bidaround.point.YtPoint;
 import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.UserId;
@@ -56,6 +58,8 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	private boolean isPyq;
 	private int wxPoint;
 	private int pyqPoint;
+	private int[] pointArr;
+	
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			if (msg.what == 0) {
@@ -72,6 +76,8 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 		super.onCreate(savedInstanceState);
 		// 判断是否为朋友圈
 		isPyq = getIntent().getExtras().getBoolean("pyq");
+		pointArr = getIntent().getExtras().getIntArray("pointArr");
+		Log.i("---wxpointarr---", pointArr.toString());
 		loadingBar();
 		new Thread() {
 			@Override
@@ -113,10 +119,10 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 					req.transaction = buildTransaction("测试");
 					req.message = msg;
 					if (isPyq) {
-						pyqPoint = getIntent().getExtras().getInt("point");
+						pyqPoint = getIntent().getExtras().getIntArray("pointArr")[ChannelId.WECHATFRIEND];
 						req.scene = SendMessageToWX.Req.WXSceneTimeline;
 					} else {
-						wxPoint = getIntent().getExtras().getInt("point");
+						wxPoint = getIntent().getExtras().getIntArray("pointArr")[ChannelId.WECHAT];
 						req.scene = SendMessageToWX.Req.WXSceneSession;
 					}
 					mIWXAPI.sendReq(req);
@@ -141,7 +147,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 		// 设置进度条风格，风格为圆形，旋转的
 		loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// 设置ProgressDialog 提示信息
-		loadingDialog.setMessage("加载待分享图片…");
+		loadingDialog.setMessage("加载中…");
 		// 设置ProgressDialog 的进度条是否不明确
 		loadingDialog.setIndeterminate(false);
 		// 设置ProgressDialog 是否可以按退回按键取消
@@ -185,41 +191,13 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
 			//在有积分的情况下分享成功后会向服务器发送通知获得积分
 			if((!isPyq&&wxPoint!=0)||(isPyq&&pyqPoint!=0)){
-				new Thread() {
-					public void run() {
-						TelephonyManager teleManager = (TelephonyManager) WXEntryActivity.this
-								.getSystemService(Context.TELEPHONY_SERVICE);
-						UserId user = new UserId(teleManager);
-						HttpClient client = new DefaultHttpClient();
-						List<NameValuePair> params = new ArrayList<NameValuePair>();
-						HttpPost post = new HttpPost(
-								"http://192.168.2.108/activity/sharePoint");
-						params.add(new BasicNameValuePair("cardNum", user
-								.getSimSerialNumber()));
-						params.add(new BasicNameValuePair("appId", "10023"));
-						if (isPyq) {
-							params.add(new BasicNameValuePair("channelId", "10"));
-							params.add(new BasicNameValuePair("point", pyqPoint
-									+ ""));
-						} else {
-							params.add(new BasicNameValuePair("channelId", "3"));
-							params.add(new BasicNameValuePair("point", wxPoint
-									+ ""));
-						}
-						try {
-							post.setEntity(new UrlEncodedFormEntity(params,
-									HTTP.UTF_8));
-							client.execute(post);
-
-						} catch (UnsupportedEncodingException e) {
-							e.printStackTrace();
-						} catch (ClientProtocolException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}.start();		
+				if(isPyq){
+					Log.i("--wxshare--", "share to wx friend");
+					YtPoint.sharePoint(this, "10023",ChannelId.WECHATFRIEND, pointArr);
+				}else{
+					Log.i("--wxshare--", "share to wx");
+					YtPoint.sharePoint(this, "10023",ChannelId.WECHAT, pointArr);
+				}
 			}
 			
 			break;
