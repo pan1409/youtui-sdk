@@ -119,11 +119,12 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		ShareGridAdapter pagerTwo_gridAdapter = new ShareGridAdapter(act, logoList_pagerTwo, showStyle, point.getPoint());
 		pagerTwo_gridView.setAdapter(pagerTwo_gridAdapter);
 		pagerTwo_gridView.setOnItemClickListener(this);
-
+		//将两页都加入到viewpager
 		pagerList.add(pagerOne);
 		pagerList.add(pagerTwo);
 		SharePagerAdapter PagerAdapter = new SharePagerAdapter(pagerList);
 		viewPager.setAdapter(PagerAdapter);
+		//添加滑动下标
 		CirclePageIndicator indicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
 		indicator.setViewPager(viewPager);
 
@@ -139,10 +140,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 			
 			break;
 		case R.id.share_popup_checktv:
-			Intent checkIt = new Intent(act, ShareAuthActivity.class);
-			checkIt.putExtra("from", "check");
-			act.startActivity(checkIt);
-			break;
+
 		default:
 			break;
 		}
@@ -211,7 +209,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 					wxIt.putExtra("fromshare", true);
 					wxIt.putExtra("shareData", shareData);
 					
-					act.startActivity(wxIt);
+					act.startActivityForResult(wxIt, ShareList.WEIXIN);
 				} else {
 					Toast.makeText(act, "未安装微信", Toast.LENGTH_SHORT).show();
 				}
@@ -222,14 +220,14 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				Intent qqIt = new Intent(act, ShareActivity.class);
 				qqIt.putExtra("shareData", shareData);
 				qqIt.putExtra("from", "QQ");
-				act.startActivity(qqIt);
+				act.startActivityForResult(qqIt, ShareList.QQ);
 				break;
 			// QQ空间
 			case ShareList.QQKONGJIAN:
 				Intent qzoneIt = new Intent(act, ShareActivity.class);
 				qzoneIt.putExtra("shareData", shareData);
 				qzoneIt.putExtra("from", "Qzone");
-				act.startActivity(qzoneIt);
+				act.startActivityForResult(qzoneIt, ShareList.QQKONGJIAN);
 
 				break;
 			// 人人
@@ -240,7 +238,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 					wxIt.putExtra("fromshare", true);
 					wxIt.putExtra("shareData", shareData);
 					wxIt.putExtra("pointArr", point.getPoint());
-					act.startActivity(wxIt);
+					act.startActivityForResult(wxIt, ShareList.WXPYQ);
 				} else {
 					Toast.makeText(act, "未安装微信", Toast.LENGTH_SHORT).show();
 				}
@@ -252,7 +250,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				Intent qqWBIt = new Intent(act, ShareActivity.class);
 				qqWBIt.putExtra("shareData", shareData);
 				qqWBIt.putExtra("from", "QQWB");
-				act.startActivity(qqWBIt);
+				act.startActivityForResult(qqWBIt, ShareList.TENGXUNWEIBO);
 				break;
 			default:
 				break;
@@ -265,7 +263,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				Intent renrenIt = new Intent(act, ShareActivity.class);
 				renrenIt.putExtra("from", "renren");
 				renrenIt.putExtra("shareData", shareData);
-				act.startActivity(renrenIt);
+				act.startActivityForResult(renrenIt, ShareList.RENREN);
 				break;
 
 			// 短信

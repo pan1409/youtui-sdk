@@ -194,9 +194,11 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 				if(isPyq){
 					Log.i("--wxshare--", "share to wx friend");
 					YtPoint.sharePoint(this, "10023",ChannelId.WECHATFRIEND, pointArr);
+					YtPoint.getInstance(this).refresh(this);
 				}else{
 					Log.i("--wxshare--", "share to wx");
 					YtPoint.sharePoint(this, "10023",ChannelId.WECHAT, pointArr);
+					YtPoint.getInstance(this).refresh(this);
 				}
 			}
 			

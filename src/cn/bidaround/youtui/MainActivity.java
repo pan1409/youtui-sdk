@@ -14,15 +14,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-
 import cn.bidaround.point.YtPoint;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.helper.DownloadImage;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
 import cn.bidaround.youtui.ui.SharePopupWindow;
-import cn.bidaround.youtui.util.ShareList;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -32,21 +29,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-
 public class MainActivity extends Activity implements OnClickListener {
 	private Button popupBt;
 	private Button main_alert_bt;
-	private YtPoint point;
 	private ShareData shareData = new ShareData();
-	private int[] pointArr;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		point = new YtPoint(this);
-		point.init();
-		pointArr = point.getPoint();
+		YtPoint.getInstance(this);
 		initView();
 	}
 
@@ -63,17 +55,12 @@ public class MainActivity extends Activity implements OnClickListener {
 		}.run();
 	}
 
+
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.you_tui, menu);
 		return true;
-	}
-		
-	@Override
-	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
-		Log.i("----onnewintent", "main on new intent");
-		super.onNewIntent(intent);
 	}
 
 	@Override
@@ -82,7 +69,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		case R.id.popup_bt:
 			// 初始化友推分享窗口
 			// new YouTui(this, shareData, YouTuiViewType.BLANK_FULL).init();
-			new SharePopupWindow(this, shareData, YouTuiViewType.BLANK_FULL,point).show();
+			new SharePopupWindow(this, shareData, YouTuiViewType.BLANK_FULL, YtPoint.getInstance(this)).show();
 			break;
 		case R.id.main_alert_bt:
 			// 测试http请求新浪接口方式分享

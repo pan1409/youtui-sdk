@@ -1,8 +1,4 @@
 package cn.bidaround.youtui.ui;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-
 import com.sina.weibo.sdk.api.share.BaseResponse;
 import com.sina.weibo.sdk.api.share.IWeiboHandler;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
@@ -17,9 +13,7 @@ import cn.bidaround.youtui.social.YoutuiConstants;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
@@ -32,13 +26,7 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response {
 	private String from;
 	private IWeiboShareAPI iWeiboShareAPI;
 	private int[] pointArr;
-	private String reStr = "default";
-	private Handler mHandler = new Handler() {
-		public void handleMessage(Message msg) {
-			reStr = (String) msg.obj;
-		};
-	};
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -61,15 +49,15 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response {
 			new Thread() {
 				public void run() {
 					Looper.prepare();
-					new QQOpenShare(ShareActivity.this).shareToQQWB();
+					new QQOpenShare(ShareActivity.this,pointArr).shareToQQWB();
 					Looper.loop();
 				};
 			}.start();
 
 		} else if ("QQ".equals(from)) {
-			new QQOpenShare(this).shareToQQ();
+			new QQOpenShare(this,pointArr).shareToQQ();
 		} else if ("Qzone".equals(from)) {
-			new QQOpenShare(this).shareToQzone();
+			new QQOpenShare(this,pointArr).shareToQzone();
 		}
 	}
 
@@ -95,6 +83,7 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response {
 		case WBConstants.ErrorCode.ERR_OK:
 			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
 			YtPoint.sharePoint(this, "10023", ChannelId.SINACHANNEL, pointArr);
+			YtPoint.getInstance(this).refresh(this);
 			break;
 		case WBConstants.ErrorCode.ERR_CANCEL:
 			Toast.makeText(this, "分享取消", Toast.LENGTH_SHORT).show();
