@@ -2,8 +2,6 @@ package cn.bidaround.youtui.ui;
 
 import java.util.ArrayList;
 import com.viewpagerindicator.CirclePageIndicator;
-
-import cn.bidaround.point.ChannelId;
 import cn.bidaround.point.YtPoint;
 import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
@@ -20,12 +18,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -223,11 +219,17 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				break;
 			// QQ
 			case ShareList.QQ:
-				Intent QQIt = new Intent(act, QQSkipActivity.class);
-				act.startActivity(QQIt);
+				Intent qqIt = new Intent(act, ShareActivity.class);
+				qqIt.putExtra("shareData", shareData);
+				qqIt.putExtra("from", "QQ");
+				act.startActivity(qqIt);
 				break;
 			// QQ空间
 			case ShareList.QQKONGJIAN:
+				Intent qzoneIt = new Intent(act, ShareActivity.class);
+				qzoneIt.putExtra("shareData", shareData);
+				qzoneIt.putExtra("from", "Qzone");
+				act.startActivity(qzoneIt);
 
 				break;
 			// 人人
@@ -247,7 +249,10 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 
 			// 腾讯微博
 			case ShareList.TENGXUNWEIBO:
-
+				Intent qqWBIt = new Intent(act, ShareActivity.class);
+				qqWBIt.putExtra("shareData", shareData);
+				qqWBIt.putExtra("from", "QQWB");
+				act.startActivity(qqWBIt);
 				break;
 			default:
 				break;

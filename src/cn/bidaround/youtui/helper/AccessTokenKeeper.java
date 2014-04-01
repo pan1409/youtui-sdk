@@ -34,6 +34,30 @@ public class AccessTokenKeeper {
     private static final String KEY_UID           = "uid";
     private static final String KEY_ACCESS_TOKEN  = "access_token";
     private static final String KEY_EXPIRES_IN    = "expires_in";
+    private static final String KEY_OPENID = "openid";
+    
+    /**
+     * 读取腾讯开放平台AccessToken
+     */
+    public static String readQQAccessToken(Context context){
+    	SharedPreferences sp = context.getSharedPreferences("tencent_open_access", 0);
+		return sp.getString(KEY_ACCESS_TOKEN, null);
+    }
+    /**
+     * 读取腾讯开放平台Expires
+     */
+    public static String readQQExpires(Context context){
+    	SharedPreferences sp = context.getSharedPreferences("tencent_open_access", 0);
+		return sp.getString(KEY_EXPIRES_IN, null);
+    }
+    /**
+     * 读取腾讯开放平台openid
+     */
+    
+    public static String readQQOpenid(Context context){
+    	SharedPreferences sp = context.getSharedPreferences("tencent_open_access", 0);
+		return sp.getString(KEY_OPENID, null);
+    }
     
     /**
      * 保存 Token 对象到 SharedPreferences。

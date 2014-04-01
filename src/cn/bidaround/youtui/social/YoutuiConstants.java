@@ -16,7 +16,7 @@ public class YoutuiConstants {
 			+ "follow_app_official_microblog," + "invitation_write";
 
 	// 腾讯的参数(包括腾讯微博、QQ空间、定向分享)
-	public static final String TENCENT_APP_ID = "100566655";
+	public static final String TENCENT_APP_ID = "1101255276";
 	public static final String TENCENT_SCOPE = "all";
 
 	// 微信的参数
