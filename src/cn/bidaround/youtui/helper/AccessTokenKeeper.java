@@ -24,16 +24,14 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
 /**
  * 该类定义了微博授权时所需要的参数。
- * 
- * @author SINA
- * @since 2013-10-07
  */
 public class AccessTokenKeeper {
     private static final String PREFERENCES_NAME = "com_weibo_sdk_android";
-
+    //新浪微博和腾讯开放平台都需要的字段
     private static final String KEY_UID           = "uid";
     private static final String KEY_ACCESS_TOKEN  = "access_token";
     private static final String KEY_EXPIRES_IN    = "expires_in";
+    //腾讯开放平台使用
     private static final String KEY_OPENID = "openid";
     
     /**

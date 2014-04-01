@@ -80,7 +80,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="cn.bidaround.youtui.ui.QQSkipActivity" />
         <!-- 微信分享需要注册该activity -->
         <activity
             android:name=".wxapi.WXEntryActivity"
@@ -131,8 +130,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <service android:name="cn.bidaround.youtui.service.AlertWindowService" />
     </application>
 
 </manifest>

@@ -94,8 +94,6 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response {
 		switch (baseResp.errCode) {
 		case WBConstants.ErrorCode.ERR_OK:
 			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
-			// 在该分享有积分获得的情况下，分享成功后通知服务器加
-			// 这里应该是不等于0，调试
 			YtPoint.sharePoint(this, "10023", ChannelId.SINACHANNEL, pointArr);
 			break;
 		case WBConstants.ErrorCode.ERR_CANCEL:
@@ -107,6 +105,7 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response {
 		default:
 			break;
 		}
+		finish();
 
 	}
 }

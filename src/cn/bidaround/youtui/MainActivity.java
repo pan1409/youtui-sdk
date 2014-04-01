@@ -68,33 +68,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		getMenuInflater().inflate(R.menu.you_tui, menu);
 		return true;
 	}
-	
-	/**
-	 * 接收分享activity回传的数据
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode==ShareList.XINGLANGWEIBO){
-			Log.i("------onresult", "onActivityResult");
-			String str = data.getExtras().getString("point");
-			if(str!=null){
-				Log.i("--------onresult", str);
-				try {
-					pointArr = YouTui.parse(str);
-
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}else{
-				Log.i("--------onresult", "null");
-			}
-		}
-
 		
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-	
 	@Override
 	protected void onNewIntent(Intent intent) {
 		// TODO Auto-generated method stub
