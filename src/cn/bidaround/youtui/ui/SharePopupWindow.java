@@ -137,7 +137,8 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 			dismiss();
 			break;
 		case R.id.share_popup_knowtv:
-			
+			Intent it = new Intent(act, CheckPointActivity.class);
+			act.startActivity(it);
 			break;
 		case R.id.share_popup_checktv:
 
@@ -208,7 +209,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 					wxIt.putExtra("pointArr", point.getPoint());
 					wxIt.putExtra("fromshare", true);
 					wxIt.putExtra("shareData", shareData);
-					
 					act.startActivityForResult(wxIt, ShareList.WEIXIN);
 				} else {
 					Toast.makeText(act, "未安装微信", Toast.LENGTH_SHORT).show();
@@ -228,7 +228,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				qzoneIt.putExtra("shareData", shareData);
 				qzoneIt.putExtra("from", "Qzone");
 				act.startActivityForResult(qzoneIt, ShareList.QQKONGJIAN);
-
 				break;
 			// 人人
 			case ShareList.WXPYQ:

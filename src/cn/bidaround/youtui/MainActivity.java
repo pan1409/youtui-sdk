@@ -21,8 +21,8 @@ import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
 import cn.bidaround.youtui.ui.SharePopupWindow;
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -43,7 +43,12 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	void initView() {
-		shareData.setImageUrl("http://img0.bdstatic.com/img/image/shouye/quanzhixian.jpg");
+		//模拟开发者传递数据
+		shareData.setText("default share");
+		shareData.setTitle("标题");
+		shareData.setTarget_url("http://www.baidu.com");
+		shareData.setImageUrl("http://imgt9.bdstatic.com/it/u=2,843227418&fm=19&gp=0.jpg");
+		shareData.setImagePath(Environment.getExternalStorageDirectory()+YoutuiConstants.FILE_SAVE_PATH+"326.jpg");
 		popupBt = (Button) findViewById(R.id.popup_bt);
 		popupBt.setOnClickListener(this);
 		main_alert_bt = (Button) findViewById(R.id.main_alert_bt);

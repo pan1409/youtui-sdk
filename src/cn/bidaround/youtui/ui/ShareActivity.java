@@ -44,7 +44,7 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response {
 			}.start();
 
 		} else if ("renren".equals(from)) {
-			new RennShare(this).shareToRenn();
+			new RennShare(this,pointArr).shareToRenn();
 		} else if ("QQWB".equals(from)) {
 			new Thread() {
 				public void run() {

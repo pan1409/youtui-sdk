@@ -94,6 +94,11 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 					try {
 						bitmap = BitmapFactory.decodeStream(new URL(shareData
 								.getImageUrl()).openStream());
+						if(bitmap==null){
+							Log.i("--bitmap--", "null");
+						}else{
+							Log.i("--bitmap--", "notnull");
+						}
 						mHandler.removeMessages(0);
 						mHandler.sendEmptyMessage(0);
 					} catch (MalformedURLException e) {
