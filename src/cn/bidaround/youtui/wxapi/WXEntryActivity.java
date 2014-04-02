@@ -1,30 +1,27 @@
 package cn.bidaround.youtui.wxapi;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.Window;
+import android.widget.Toast;
 import cn.bidaround.point.ChannelId;
 import cn.bidaround.point.YtPoint;
 import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.social.ShareData;
-import cn.bidaround.youtui.social.UserId;
 import cn.bidaround.youtui.social.YoutuiConstants;
+
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -33,21 +30,6 @@ import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
-import com.tencent.mm.sdk.storage.ISQLiteDatabase;
-
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.os.Handler;
-import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.view.Window;
-import android.widget.Toast;
 
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	private ShareData shareData;
@@ -59,7 +41,8 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	private int wxPoint;
 	private int pyqPoint;
 	private int[] pointArr;
-	
+
+	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			if (msg.what == 0) {
@@ -83,22 +66,27 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 			@Override
 			public void run() {
 				if (getIntent().getExtras().getBoolean("fromshare")) {
-					shareData = (ShareData) getIntent().getExtras()
-							.getSerializable("shareData");
-					mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this,
-							YoutuiConstants.WEIXIN_APP_ID, false);
+					shareData = (ShareData) getIntent().getExtras().getSerializable("shareData");
+					mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this, YoutuiConstants.WEIXIN_APP_ID, false);
 					mIWXAPI.handleIntent(getIntent(), WXEntryActivity.this);
 					mIWXAPI.registerApp(YoutuiConstants.WEIXIN_APP_ID);
 
 					WXMediaMessage msg = new WXMediaMessage();
 					try {
-						bitmap = BitmapFactory.decodeStream(new URL(shareData
-								.getImageUrl()).openStream());
-						if(bitmap==null){
-							Log.i("--bitmap--", "null");
-						}else{
-							Log.i("--bitmap--", "notnull");
+						if (shareData.getImagePath() != null) {
+							bitmap = BitmapFactory.decodeFile(shareData.getImagePath());
+						} else {
+							//一般情况下不会执行该方法，如果用户网络较差，进行分享时网络图片没有下载完时调用
+							if (shareData.getImageUrl() != null) {
+								bitmap = BitmapFactory.decodeStream(new URL(shareData.getImageUrl()).openStream());
+							}
 						}
+
+						// if(bitmap==null){
+						// Log.i("--bitmap--", "null");
+						// }else{
+						// Log.i("--bitmap--", "notnull");
+						// }
 						mHandler.removeMessages(0);
 						mHandler.sendEmptyMessage(0);
 					} catch (MalformedURLException e) {
@@ -108,13 +96,11 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 					}
 					msg.title = shareData.getTitle();
 					msg.description = shareData.getDescription();
+					// bitmap为空时微信分享会没有响应，所以要设置一个默认图片让用户知道
 					if (bitmap != null) {
-						bmpThum = Bitmap.createScaledBitmap(bitmap, 150, 150,
-								true);
+						bmpThum = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
 					} else {
-						bmpThum = Bitmap.createScaledBitmap(BitmapFactory
-								.decodeResource(getResources(),
-										R.drawable.erweimaact), 150, 150, true);
+						bmpThum = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.erweimaact), 150, 150, true);
 					}
 					msg.setThumbImage(bmpThum);
 					WXWebpageObject pageObject = new WXWebpageObject();
@@ -157,26 +143,25 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 		loadingDialog.setIndeterminate(false);
 		// 设置ProgressDialog 是否可以按退回按键取消
 		loadingDialog.setCancelable(true);
-		loadingDialog
-				.setOnCancelListener(new DialogInterface.OnCancelListener() {
+		loadingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						WXEntryActivity.this.finish();
-					}
-				});
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				WXEntryActivity.this.finish();
+			}
+		});
 
+		@SuppressWarnings("deprecation")
 		int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+		@SuppressWarnings("deprecation")
 		int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
-		loadingDialog.getWindow().setLayout(screenWidth * 2 / 3,
-				screenHeight / 5);
+		loadingDialog.getWindow().setLayout(screenWidth * 2 / 3, screenHeight / 5);
 		loadingDialog.show();
 	}
 
 	// 创建唯一标示
 	private String buildTransaction(final String type) {
-		return (type == null) ? String.valueOf(System.currentTimeMillis())
-				: type + System.currentTimeMillis();
+		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
 	}
 
 	/**
@@ -194,19 +179,19 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 		switch (response.errCode) {
 		case BaseResp.ErrCode.ERR_OK:
 			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
-			//在有积分的情况下分享成功后会向服务器发送通知获得积分
-			if((!isPyq&&wxPoint!=0)||(isPyq&&pyqPoint!=0)){
-				if(isPyq){
+			// 在有积分的情况下分享成功后会向服务器发送通知获得积分
+			if ((!isPyq && wxPoint != 0) || (isPyq && pyqPoint != 0)) {
+				if (isPyq) {
 					Log.i("--wxshare--", "share to wx friend");
-					YtPoint.sharePoint(this, "10023",ChannelId.WECHATFRIEND, pointArr);
+					YtPoint.sharePoint(this, "10023", ChannelId.WECHATFRIEND, pointArr);
 					YtPoint.getInstance(this).refresh(this);
-				}else{
+				} else {
 					Log.i("--wxshare--", "share to wx");
-					YtPoint.sharePoint(this, "10023",ChannelId.WECHAT, pointArr);
+					YtPoint.sharePoint(this, "10023", ChannelId.WECHAT, pointArr);
 					YtPoint.getInstance(this).refresh(this);
 				}
 			}
-			
+
 			break;
 		case BaseResp.ErrCode.ERR_SENT_FAILED:
 			Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();

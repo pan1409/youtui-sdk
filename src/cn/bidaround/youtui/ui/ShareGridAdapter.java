@@ -5,17 +5,17 @@ package cn.bidaround.youtui.ui;
  */
 
 import java.util.ArrayList;
-import cn.bidaround.youtui.R;
-import cn.bidaround.youtui.util.ShareList;
-import cn.bidaround.youtui.util.TitleAndLogo;
+
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import cn.bidaround.youtui.R;
+import cn.bidaround.youtui.util.ShareList;
+import cn.bidaround.youtui.util.TitleAndLogo;
 
 public class ShareGridAdapter extends BaseAdapter {
 	private Activity act;

@@ -7,18 +7,18 @@ import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.renn.rennsdk.RennClient;
-import com.renn.rennsdk.RennClient.LoginListener;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.renn.rennsdk.RennClient;
+import com.renn.rennsdk.RennClient.LoginListener;
+
 /**
- * Description: created by qyj on January 7, 2014
- * revise by hcy on February 19, 2014
+ * Description: created by qyj on January 7, 2014 revise by hcy on February 19,
+ * 2014
  */
 public class RenrenSSO extends Activity {
 	private RennClient rennClient;
@@ -28,25 +28,25 @@ public class RenrenSSO extends Activity {
 
 	/**
 	 * 总的操作函数
+	 * 
 	 * @param jsonCome
 	 * @param activity
 	 * @param webView
 	 */
-	public void shareByRenren(JSONObject jsonCome,Activity activity,WebView webView) {
+	public void shareByRenren(JSONObject jsonCome, Activity activity, WebView webView) {
 		mActivity = activity;
 		mWebView = webView;
 		init();
 		getData(jsonCome);
 		login();
 	}
+
 	/**
 	 * 人人初始化
 	 */
 	private void init() {
 		rennClient = RennClient.getInstance(mActivity);
-		rennClient.init(YoutuiConstants.RENREN_APP_ID,
-				YoutuiConstants.RENREN_API_KEY,
-				YoutuiConstants.RENREN_SECRET_KEY);
+		rennClient.init(YoutuiConstants.RENREN_APP_ID, YoutuiConstants.RENREN_API_KEY, YoutuiConstants.RENREN_SECRET_KEY);
 		rennClient.setScope(YoutuiConstants.RENREN_SCOPE);
 		rennClient.setTokenType("bearer");
 		rennClient.setLoginListener(new LoginListener() {
@@ -97,12 +97,11 @@ public class RenrenSSO extends Activity {
 	/**
 	 * 获取token有效期(请先登录)
 	 */
+	@SuppressLint("SimpleDateFormat")
 	private String getExpiresTime() {
 		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND,
-				(int) rennClient.getAccessToken().expiresIn);
-		String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-				.format(calendar.getTime());
+		calendar.add(Calendar.SECOND, (int) rennClient.getAccessToken().expiresIn);
+		String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(calendar.getTime());
 		return date;
 	}
 
@@ -120,25 +119,27 @@ public class RenrenSSO extends Activity {
 	/**
 	 * 返回授权信息。
 	 */
+	@SuppressWarnings("unused")
 	private void result(int i, Intent intent) {
 		intent.putExtra("state", state);
 		this.setResult(i, intent);
 		logout();
 		this.finish();
 	}
-	
+
 	/**
 	 * webview 跳转到网页
 	 */
 	private void jumpToWeb(String url, JSONObject json) {
 		String urlString = "http://youtui.mobi";
 		urlString += url;
-		//如果已配置url则直接使用不用组装
-		if(url.contains("http://")){
+		// 如果已配置url则直接使用不用组装
+		if (url.contains("http://")) {
 			urlString = url;
 		}
 		if (json != null) {
 			urlString += "?";
+			@SuppressWarnings("rawtypes")
 			Iterator keys = json.keys();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();

@@ -1,21 +1,12 @@
 package cn.bidaround.youtui.ui;
 
 import java.util.ArrayList;
-import com.viewpagerindicator.CirclePageIndicator;
-import cn.bidaround.point.YtPoint;
-import cn.bidaround.youtui.R;
-import cn.bidaround.youtui.helper.AccessTokenKeeper;
-import cn.bidaround.youtui.helper.AppHelper;
-import cn.bidaround.youtui.social.OtherShare;
-import cn.bidaround.youtui.social.ShareData;
-import cn.bidaround.youtui.util.DensityUtil;
-import cn.bidaround.youtui.util.ShareList;
-import cn.bidaround.youtui.util.TitleAndLogo;
-import cn.bidaround.youtui.wxapi.WXEntryActivity;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
@@ -29,6 +20,20 @@ import android.widget.GridView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.bidaround.point.YtPoint;
+import cn.bidaround.youtui.R;
+import cn.bidaround.youtui.YouTui;
+import cn.bidaround.youtui.helper.AccessTokenKeeper;
+import cn.bidaround.youtui.helper.AppHelper;
+import cn.bidaround.youtui.social.OtherShare;
+import cn.bidaround.youtui.social.ShareData;
+import cn.bidaround.youtui.social.YoutuiConstants;
+import cn.bidaround.youtui.util.DensityUtil;
+import cn.bidaround.youtui.util.ShareList;
+import cn.bidaround.youtui.util.TitleAndLogo;
+import cn.bidaround.youtui.wxapi.WXEntryActivity;
+
+import com.viewpagerindicator.CirclePageIndicator;
 
 /**
  * author:gaopan time:2014/3/25
@@ -39,14 +44,19 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	private Activity act;
 	private GridView pagerOne_gridView;
 	private GridView pagerTwo_gridView;
-	ShareGridAdapter pagerOne_gridAdapter;
+	private ShareGridAdapter pagerOne_gridAdapter;
 	private YtPoint point;
 	private ShareData shareData;
 	private int showStyle = -1;
 	private Handler mHandler = new Handler();
-	
 
-	public SharePopupWindow(Activity act, ShareData shareData, int showStyle,YtPoint point) {
+	public SharePopupWindow() {
+	}
+
+	public SharePopupWindow(Context context) {
+	}
+
+	public SharePopupWindow(Activity act, ShareData shareData, int showStyle, YtPoint point) {
 		super(act);
 		this.act = act;
 		this.shareData = shareData;
@@ -57,7 +67,9 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	/*
 	 * 显示分享主界面
 	 */
+	@SuppressWarnings("deprecation")
 	public void show() {
+		new YouTui().autoDownImage(shareData);
 		View view = LayoutInflater.from(act).inflate(R.layout.share_popup, null);
 		initButton(view);
 		initViewPager(view);
@@ -111,20 +123,20 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		logoList_pagerTwo.add(ShareList.renRen);
 		logoList_pagerTwo.add(ShareList.sms);
 		logoList_pagerTwo.add(ShareList.email);
-		logoList_pagerTwo.add(ShareList.erWeiMa);
-		logoList_pagerTwo.add(ShareList.copyLink);
+		//logoList_pagerTwo.add(ShareList.erWeiMa);
+		//logoList_pagerTwo.add(ShareList.copyLink);
 
 		View pagerTwo = LayoutInflater.from(act).inflate(R.layout.share_fragment, null);
 		pagerTwo_gridView = (GridView) pagerTwo.findViewById(R.id.sharepager_grid);
 		ShareGridAdapter pagerTwo_gridAdapter = new ShareGridAdapter(act, logoList_pagerTwo, showStyle, point.getPoint());
 		pagerTwo_gridView.setAdapter(pagerTwo_gridAdapter);
 		pagerTwo_gridView.setOnItemClickListener(this);
-		//将两页都加入到viewpager
+		// 将两页都加入到viewpager
 		pagerList.add(pagerOne);
 		pagerList.add(pagerTwo);
 		SharePagerAdapter PagerAdapter = new SharePagerAdapter(pagerList);
 		viewPager.setAdapter(PagerAdapter);
-		//添加滑动下标
+		// 添加滑动下标
 		CirclePageIndicator indicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
 		indicator.setViewPager(viewPager);
 
@@ -137,10 +149,15 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 			dismiss();
 			break;
 		case R.id.share_popup_knowtv:
-			Intent it = new Intent(act, CheckPointActivity.class);
-			act.startActivity(it);
+			Intent knowIt = new Intent(act, CheckPointActivity.class);
+			knowIt.putExtra("from", "know");
+			act.startActivity(knowIt);
 			break;
 		case R.id.share_popup_checktv:
+			Intent checkIt = new Intent(act, CheckPointActivity.class);
+			checkIt.putExtra("from", "check");
+			act.startActivity(checkIt);
+			break;
 
 		default:
 			break;
@@ -154,6 +171,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	 */
 	void copyLink() {
 		mHandler.post(new Runnable() {
+			@SuppressWarnings("deprecation")
 			@SuppressLint("NewApi")
 			public void run() {
 				if (android.os.Build.VERSION.SDK_INT >= 11) {
@@ -179,6 +197,12 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
+		// 如果传的是url而没有本地图片
+		if (shareData.getImagePath() == null && shareData.getImageUrl() != null) {
+			String url = shareData.getImageUrl();
+			String fileName = url.substring(url.lastIndexOf("/"));
+			shareData.setImagePath(Environment.getExternalStorageDirectory() + YoutuiConstants.FILE_SAVE_PATH + fileName);
+		}
 		if (adapterView == pagerOne_gridView) {
 			switch (position) {
 			// 新浪微博

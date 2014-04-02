@@ -62,7 +62,9 @@ public class YouTuiAcceptor {
 	}
 	
 	/* 获取设备信息 */
+	@SuppressWarnings("deprecation")
 	private  static void readPhoneInfo(Context context){
+		@SuppressWarnings("static-access")
 		TelephonyManager tm = (TelephonyManager) context.getSystemService(context.TELEPHONY_SERVICE);
 		if(tm != null){
 			imei = tm.getDeviceId(); /* 获取imei号 */
@@ -132,6 +134,7 @@ public class YouTuiAcceptor {
 					// 扫描apk 安装包中后缀为yt.apk 且包含appName的文件名
 					// 格式为appName_邀请码_yt.apk，如tuoche_100041_yt.apk
 					if (fileName.endsWith("yt.apk")&& fileName.contains(appName)) {
+						@SuppressWarnings("unused")
 						int l = appName.length();
 						inviteNum = fileName.substring(fileName.indexOf("_")+1, fileName.lastIndexOf("_")).toString();
 						flag = true;
@@ -161,6 +164,7 @@ public class YouTuiAcceptor {
 		try {
 			// Your DATA
 			httppost.setEntity(new UrlEncodedFormEntity(params));
+			@SuppressWarnings("unused")
 			HttpResponse response;
 			response = httpclient.execute(httppost);
 		} catch (ClientProtocolException e) {

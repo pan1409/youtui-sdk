@@ -2,19 +2,16 @@ package cn.bidaround.youtui.social;
 
 import java.text.SimpleDateFormat;
 
-import cn.bidaround.youtui.R;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.KeyEvent;
-import android.widget.Toast;
 
 /**
  * Description: created by qyj on January 7, 2014
@@ -85,12 +82,14 @@ public class SinaWeiboSSOActivity extends Activity {
 	 */
 	class AuthListener implements WeiboAuthListener {
 
+		@SuppressLint("SimpleDateFormat")
 		@Override
 		public void onComplete(Bundle values) {
 			// 从 Bundle 中解析 Token
 			mAccessToken = Oauth2AccessToken.parseAccessToken(values);
 			if (mAccessToken.isSessionValid()) {
 				// 显示获取Token正常
+				@SuppressWarnings("unused")
 				String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
 						.format(new java.util.Date(mAccessToken
 								.getExpiresTime()));

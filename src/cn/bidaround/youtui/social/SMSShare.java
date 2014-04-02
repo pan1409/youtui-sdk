@@ -3,12 +3,11 @@ package cn.bidaround.youtui.social;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.bidaround.youtui.helper.AppHelper;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.widget.Toast;
+import cn.bidaround.youtui.helper.AppHelper;
 
 /**
  * Description: created by qyj on January 7, 2014

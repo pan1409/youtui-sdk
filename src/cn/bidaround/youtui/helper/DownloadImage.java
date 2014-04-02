@@ -72,6 +72,7 @@ public class DownloadImage {
 		}
 		util.creatSDDir(path);
 		File file = util.creatSDFile(path + filename);// 保存的文件名
+		@SuppressWarnings("resource")
 		FileOutputStream fos = new FileOutputStream(file);
 
 		// 把数据存入路径+文件名
