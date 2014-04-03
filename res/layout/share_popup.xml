@@ -5,24 +5,27 @@
     android:layout_height="350dp"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/sharepopup_indicator_linelay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/share_popup_textlinearlayout" >
+        android:layout_height="10dp"
+        android:layout_below="@+id/share_viewpager"
+        android:gravity="center" >
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/share_viewpager"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/sharepopup_zero_iv"
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/guide_dot_white" />
 
-        <com.viewpagerindicator.CirclePageIndicator
-            android:id="@+id/indicator"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:padding="10dip" />
-    </RelativeLayout>
+        <ImageView
+            android:id="@+id/sharepopup_one_iv"
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/guide_dot_black" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/share_popup_textlinearlayout"
@@ -61,5 +64,13 @@
         android:background="@drawable/btn_style_alert_dialog_cancel_normal"
         android:gravity="center"
         android:text="取消" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/share_viewpager"
+        android:layout_width="wrap_content"
+        android:layout_height="260dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+    </android.support.v4.view.ViewPager>
 
 </RelativeLayout>

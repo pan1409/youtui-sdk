@@ -33,6 +33,9 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		pointArr = getIntent().getExtras().getIntArray("pointArr");
+		if(pointArr==null){
+			Log.i("--pointArr shareactivity--", "null");
+		}
 		iWeiboShareAPI = WeiboShareSDK.createWeiboAPI(this, YoutuiConstants.SINA_WEIBO_APP_ID);
 		// 判断需要分享的媒体
 		from = getIntent().getExtras().getString("from");

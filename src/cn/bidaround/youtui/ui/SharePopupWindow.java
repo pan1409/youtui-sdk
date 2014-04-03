@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,23 +34,20 @@ import cn.bidaround.youtui.util.DensityUtil;
 import cn.bidaround.youtui.util.ShareList;
 import cn.bidaround.youtui.util.TitleAndLogo;
 import cn.bidaround.youtui.wxapi.WXEntryActivity;
-
-import com.viewpagerindicator.CirclePageIndicator;
-
 /**
  * author:gaopan time:2014/3/25
  */
-public class SharePopupWindow extends PopupWindow implements OnClickListener, OnItemClickListener {
+public class SharePopupWindow extends PopupWindow implements OnClickListener, OnItemClickListener,OnPageChangeListener {
 
 	private String message;
 	private Activity act;
-	private GridView pagerOne_gridView;
-	private GridView pagerTwo_gridView;
+	private GridView pagerOne_gridView,pagerTwo_gridView;
 	private ShareGridAdapter pagerOne_gridAdapter;
 	private YtPoint point;
 	private ShareData shareData;
 	private int showStyle = -1;
 	private Handler mHandler = new Handler();
+	private ImageView zeroIamge,oneIamge;
 
 	public SharePopupWindow() {
 	}
@@ -84,6 +83,8 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	}
 
 	void initButton(View view) {
+		zeroIamge = (ImageView) view.findViewById(R.id.sharepopup_zero_iv);
+		oneIamge = (ImageView) view.findViewById(R.id.sharepopup_one_iv);
 		TextView know = (TextView) view.findViewById(R.id.share_popup_knowtv);
 		TextView check = (TextView) view.findViewById(R.id.share_popup_checktv);
 		// 在style变化时改变背景和文字颜色
@@ -136,10 +137,10 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		pagerList.add(pagerOne);
 		pagerList.add(pagerTwo);
 		SharePagerAdapter PagerAdapter = new SharePagerAdapter(pagerList);
+		viewPager.setOnPageChangeListener(this);
 		viewPager.setAdapter(PagerAdapter);
 		// 添加滑动下标
-		CirclePageIndicator indicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
-		indicator.setViewPager(viewPager);
+
 
 	}
 
@@ -246,6 +247,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				Intent qqIt = new Intent(act, ShareActivity.class);
 				qqIt.putExtra("shareData", shareData);
 				qqIt.putExtra("from", "QQ");
+				qqIt.putExtra("pointArr", point.getPoint());
 				act.startActivityForResult(qqIt, ShareList.QQ);
 				break;
 			// QQ空间
@@ -253,6 +255,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				Intent qzoneIt = new Intent(act, ShareActivity.class);
 				qzoneIt.putExtra("shareData", shareData);
 				qzoneIt.putExtra("from", "Qzone");
+				qzoneIt.putExtra("pointArr", point.getPoint());
 				act.startActivityForResult(qzoneIt, ShareList.QQKONGJIAN);
 				break;
 			// 人人
@@ -275,6 +278,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				Intent qqWBIt = new Intent(act, ShareActivity.class);
 				qqWBIt.putExtra("shareData", shareData);
 				qqWBIt.putExtra("from", "QQWB");
+				qqWBIt.putExtra("pointArr", point.getPoint());
 				act.startActivityForResult(qqWBIt, ShareList.TENGXUNWEIBO);
 				break;
 			default:
@@ -288,6 +292,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				Intent renrenIt = new Intent(act, ShareActivity.class);
 				renrenIt.putExtra("from", "renren");
 				renrenIt.putExtra("shareData", shareData);
+				renrenIt.putExtra("pointArr", point.getPoint());
 				act.startActivityForResult(renrenIt, ShareList.RENREN);
 				break;
 
@@ -313,6 +318,37 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 			}
 		}
 
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPageSelected(int index) {
+		// TODO Auto-generated method stub
+		switch (index) {
+		case 0:
+			zeroIamge.setImageDrawable(act.getResources().getDrawable(R.drawable.guide_dot_white));
+			oneIamge.setImageDrawable(act.getResources().getDrawable(R.drawable.guide_dot_black));
+			break;
+		case 1:
+			zeroIamge.setImageDrawable(act.getResources().getDrawable(R.drawable.guide_dot_black));
+			oneIamge.setImageDrawable(act.getResources().getDrawable(R.drawable.guide_dot_white));
+			break;
+
+		default:
+			break;
+		}
+		
 	}
 
 }
