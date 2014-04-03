@@ -20,11 +20,11 @@ import android.widget.GridView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.bidaround.point.YtPoint;
 import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.YouTui;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.helper.AppHelper;
+import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.OtherShare;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
@@ -69,6 +69,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	 */
 	@SuppressWarnings("deprecation")
 	public void show() {
+		YtPoint.getInstance(act).refresh(act);
 		new YouTui().autoDownImage(shareData);
 		View view = LayoutInflater.from(act).inflate(R.layout.share_popup, null);
 		initButton(view);
@@ -230,6 +231,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				if (AppHelper.isWeixinExisted(act)) {
 					Intent wxIt = new Intent(act, WXEntryActivity.class);
 					wxIt.putExtra("wx", true);
+					wxIt.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 					wxIt.putExtra("pointArr", point.getPoint());
 					wxIt.putExtra("fromshare", true);
 					wxIt.putExtra("shareData", shareData);

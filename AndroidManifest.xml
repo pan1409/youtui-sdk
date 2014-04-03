@@ -85,7 +85,8 @@
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:theme="@android:style/Theme.Translucent" />
+            android:theme="@android:style/Theme.Translucent" > 
+        </activity>
         <!-- qq回调需要注册该activity -->
         <activity
             android:name="com.tencent.connect.common.AssistActivity"

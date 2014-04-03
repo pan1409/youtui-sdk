@@ -3,7 +3,6 @@ package cn.bidaround.youtui.wxapi;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -16,16 +15,17 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
-import cn.bidaround.point.ChannelId;
-import cn.bidaround.point.YtPoint;
 import cn.bidaround.youtui.R;
+import cn.bidaround.youtui.point.ChannelId;
+import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
-
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
+import com.tencent.mm.sdk.openapi.ConstantsAPI;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.sdk.openapi.SendAuth;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
@@ -57,26 +57,25 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
+		// SendAuth.Resp
 		// 判断是否为朋友圈
 		isPyq = getIntent().getExtras().getBoolean("pyq");
 		pointArr = getIntent().getExtras().getIntArray("pointArr");
-		Log.i("---wxpointarr---", pointArr.toString());
+		mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this, YoutuiConstants.WEIXIN_APP_ID, false);
 		loadingBar();
 		new Thread() {
 			@Override
 			public void run() {
 				if (getIntent().getExtras().getBoolean("fromshare")) {
 					shareData = (ShareData) getIntent().getExtras().getSerializable("shareData");
-					mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this, YoutuiConstants.WEIXIN_APP_ID, false);
 					mIWXAPI.handleIntent(getIntent(), WXEntryActivity.this);
 					mIWXAPI.registerApp(YoutuiConstants.WEIXIN_APP_ID);
-
 					WXMediaMessage msg = new WXMediaMessage();
 					try {
 						if (shareData.getImagePath() != null) {
 							bitmap = BitmapFactory.decodeFile(shareData.getImagePath());
 						} else {
-							//一般情况下不会执行该方法，如果用户网络较差，进行分享时网络图片没有下载完时调用
+							// 一般情况下不会执行该方法，如果用户网络较差，进行分享时网络图片没有下载完时调用
 							if (shareData.getImageUrl() != null) {
 								bitmap = BitmapFactory.decodeStream(new URL(shareData.getImageUrl()).openStream());
 							}
@@ -123,9 +122,11 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 			}
 		}.start();
 	}
+	
 
 	@Override
 	protected void onNewIntent(Intent intent) {
+		Log.i("--onNewIntent--", "--onNewIntent--");
 		super.onNewIntent(intent);
 		setIntent(intent);
 		// 监听分享后的返回结果
@@ -163,6 +164,13 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	private String buildTransaction(final String type) {
 		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
 	}
+	
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		finish();
+		super.onRestart();
+	}
 
 	/**
 	 * 监听请求
@@ -176,34 +184,54 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 	 */
 	@Override
 	public void onResp(BaseResp response) {
-		switch (response.errCode) {
-		case BaseResp.ErrCode.ERR_OK:
-			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
-			// 在有积分的情况下分享成功后会向服务器发送通知获得积分
-			if ((!isPyq && wxPoint != 0) || (isPyq && pyqPoint != 0)) {
-				if (isPyq) {
-					Log.i("--wxshare--", "share to wx friend");
-					YtPoint.sharePoint(this, "10023", ChannelId.WECHATFRIEND, pointArr);
-					YtPoint.getInstance(this).refresh(this);
-				} else {
-					Log.i("--wxshare--", "share to wx");
-					YtPoint.sharePoint(this, "10023", ChannelId.WECHAT, pointArr);
-					YtPoint.getInstance(this).refresh(this);
-				}
+		switch (response.getType()) {
+		case ConstantsAPI.COMMAND_SENDAUTH:
+			switch (response.errCode) {
+				case BaseResp.ErrCode.ERR_USER_CANCEL:
+				Toast.makeText(this, "取消分享", Toast.LENGTH_SHORT).show();
+				finish();
+				break;
 			}
 
 			break;
-		case BaseResp.ErrCode.ERR_SENT_FAILED:
-			Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();
+		case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:
+			switch (response.errCode) {
+			case BaseResp.ErrCode.ERR_OK:
+				Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
+				// 在有积分的情况下分享成功后会向服务器发送通知获得积分
+				if ((!isPyq && wxPoint != 0) || (isPyq && pyqPoint != 0)) {
+					if (isPyq) {
+						Log.i("--wxshare--", "share to wx friend");
+						YtPoint.sharePoint(this, "10023", ChannelId.WECHATFRIEND, pointArr);
+					} else {
+						Log.i("--wxshare--", "share to wx");
+						YtPoint.sharePoint(this, "10023", ChannelId.WECHAT, pointArr);
+					}
+					YtPoint.getInstance(this).refresh(this);
+				}
+
+				break;
+			case BaseResp.ErrCode.ERR_SENT_FAILED:
+				Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();
+				break;
+			case BaseResp.ErrCode.ERR_COMM:
+				Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();
+				break;
+			case BaseResp.ErrCode.ERR_USER_CANCEL:
+				Toast.makeText(this, "取消分享", Toast.LENGTH_SHORT).show();
+			case BaseResp.ErrCode.ERR_AUTH_DENIED:
+				break;
+			default:
+				break;
+
+			}
+			finish();
 			break;
-		case BaseResp.ErrCode.ERR_COMM:
-			Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();
-			break;
-		case BaseResp.ErrCode.ERR_USER_CANCEL:
-			Toast.makeText(this, "取消分享", Toast.LENGTH_SHORT).show();
+
 		default:
 			break;
 		}
-		finish();
+
 	}
+
 }

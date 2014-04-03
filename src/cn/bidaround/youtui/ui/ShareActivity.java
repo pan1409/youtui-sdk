@@ -4,8 +4,9 @@ import com.sina.weibo.sdk.api.share.IWeiboHandler;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
 import com.sina.weibo.sdk.api.share.WeiboShareSDK;
 import com.sina.weibo.sdk.constant.WBConstants;
-import cn.bidaround.point.ChannelId;
-import cn.bidaround.point.YtPoint;
+
+import cn.bidaround.youtui.point.ChannelId;
+import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.QQOpenShare;
 import cn.bidaround.youtui.social.RennShare;
 import cn.bidaround.youtui.social.SinaShare;
