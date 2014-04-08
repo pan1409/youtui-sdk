@@ -19,6 +19,10 @@ public class YouTui {
 	public static void init(Activity act) {
 		YtPoint.getInstance(act);
 	}
+	
+	public static void destroy(){
+		YtPoint.release();
+	}
 	/**
 	 * 调用该方法调出友推sdk的分享界面
 	 *act:调用界面实例

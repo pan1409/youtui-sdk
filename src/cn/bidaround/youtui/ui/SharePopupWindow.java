@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
@@ -22,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.YouTui;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.helper.AppHelper;
@@ -48,6 +48,8 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	private int showStyle = -1;
 	private Handler mHandler = new Handler();
 	private ImageView zeroIamge,oneIamge;
+	private  Resources res;
+	private String packName;
 
 	public SharePopupWindow() {
 	}
@@ -70,7 +72,11 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	public void show() {
 		YtPoint.getInstance(act).refresh(act);
 		new YouTui().autoDownImage(shareData);
-		View view = LayoutInflater.from(act).inflate(R.layout.share_popup, null);
+		
+		res = act.getResources();
+		packName = act.getPackageName();
+		
+		View view = LayoutInflater.from(act).inflate(res.getIdentifier("share_popup", "layout", packName), null);
 		initButton(view);
 		initViewPager(view);
 		// 设置popupwindow的属性
@@ -79,14 +85,16 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		setContentView(view);
 		setWidth(act.getWindowManager().getDefaultDisplay().getWidth());
 		setHeight(DensityUtil.dip2px(act, 350));
-		showAtLocation(act.findViewById(R.id.popup_bt), Gravity.BOTTOM, 0, 0);
+		
+		showAtLocation(getContentView(), Gravity.BOTTOM, 0, 0);
 	}
 
 	void initButton(View view) {
-		zeroIamge = (ImageView) view.findViewById(R.id.sharepopup_zero_iv);
-		oneIamge = (ImageView) view.findViewById(R.id.sharepopup_one_iv);
-		TextView know = (TextView) view.findViewById(R.id.share_popup_knowtv);
-		TextView check = (TextView) view.findViewById(R.id.share_popup_checktv);
+		
+		zeroIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_zero_iv", "id", packName));
+		oneIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_one_iv", "id", packName));
+		TextView know = (TextView) view.findViewById(res.getIdentifier("share_popup_knowtv", "id", packName));
+		TextView check = (TextView) view.findViewById(res.getIdentifier("share_popup_checktv", "id", packName));
 		// 在style变化时改变背景和文字颜色
 		if (showStyle == 1) {
 			view.setBackgroundColor(0xffffffff);
@@ -96,7 +104,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		know.setOnClickListener(this);
 		check.setOnClickListener(this);
 		// 消失按钮点击事件
-		Button cancelBt = (Button) view.findViewById(R.id.cancel_bt);
+		Button cancelBt = (Button) view.findViewById(res.getIdentifier("cancel_bt", "id", packName));
 		cancelBt.setOnClickListener(this);
 	}
 
@@ -104,11 +112,11 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	 * 初始化viewpager
 	 */
 	void initViewPager(View view) {
-		ViewPager viewPager = (ViewPager) view.findViewById(R.id.share_viewpager);
+		ViewPager viewPager = (ViewPager) view.findViewById(res.getIdentifier("share_viewpager", "id", packName));
 		ArrayList<View> pagerList = new ArrayList<View>();
 		// 初始化第一页
-		View pagerOne = LayoutInflater.from(act).inflate(R.layout.share_fragment, null);
-		pagerOne_gridView = (GridView) pagerOne.findViewById(R.id.sharepager_grid);
+		View pagerOne = LayoutInflater.from(act).inflate(res.getIdentifier("share_pager", "layout", packName), null);
+		pagerOne_gridView = (GridView) pagerOne.findViewById(res.getIdentifier("sharepager_grid", "id", packName));
 		ArrayList<TitleAndLogo> logoList_pagerOne = new ArrayList<TitleAndLogo>();
 		logoList_pagerOne.add(ShareList.weiXin);
 		logoList_pagerOne.add(ShareList.wxPYQ);
@@ -128,8 +136,8 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		//logoList_pagerTwo.add(ShareList.erWeiMa);
 		//logoList_pagerTwo.add(ShareList.copyLink);
 
-		View pagerTwo = LayoutInflater.from(act).inflate(R.layout.share_fragment, null);
-		pagerTwo_gridView = (GridView) pagerTwo.findViewById(R.id.sharepager_grid);
+		View pagerTwo = LayoutInflater.from(act).inflate(res.getIdentifier("share_pager", "layout", packName), null);
+		pagerTwo_gridView = (GridView) pagerTwo.findViewById(res.getIdentifier("sharepager_grid", "id", packName));
 		ShareGridAdapter pagerTwo_gridAdapter = new ShareGridAdapter(act, logoList_pagerTwo, showStyle, point.getPoint());
 		pagerTwo_gridView.setAdapter(pagerTwo_gridAdapter);
 		pagerTwo_gridView.setOnItemClickListener(this);
@@ -146,23 +154,19 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.cancel_bt:
-			dismiss();
-			break;
-		case R.id.share_popup_knowtv:
+
+		
+		if(v.getId()==res.getIdentifier("cancel_bt", "id", packName)){			
+			dismiss();			
+		}else if(v.getId()==res.getIdentifier("share_popup_knowtv", "id", packName)){
 			Intent knowIt = new Intent(act, CheckPointActivity.class);
 			knowIt.putExtra("from", "know");
 			act.startActivity(knowIt);
-			break;
-		case R.id.share_popup_checktv:
+			
+		}else if(v.getId()==res.getIdentifier("share_popup_checktv", "id", packName)){
 			Intent checkIt = new Intent(act, CheckPointActivity.class);
 			checkIt.putExtra("from", "check");
-			act.startActivity(checkIt);
-			break;
-
-		default:
-			break;
+			act.startActivity(checkIt);		
 		}
 
 	}
@@ -337,12 +341,12 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		// TODO Auto-generated method stub
 		switch (index) {
 		case 0:
-			zeroIamge.setImageDrawable(act.getResources().getDrawable(R.drawable.guide_dot_white));
-			oneIamge.setImageDrawable(act.getResources().getDrawable(R.drawable.guide_dot_black));
+			zeroIamge.setImageDrawable(act.getResources().getDrawable(res.getIdentifier("guide_dot_white", "drawable", packName)));
+			oneIamge.setImageDrawable(act.getResources().getDrawable(res.getIdentifier("guide_dot_black", "drawable", packName)));
 			break;
 		case 1:
-			zeroIamge.setImageDrawable(act.getResources().getDrawable(R.drawable.guide_dot_black));
-			oneIamge.setImageDrawable(act.getResources().getDrawable(R.drawable.guide_dot_white));
+			zeroIamge.setImageDrawable(act.getResources().getDrawable(res.getIdentifier("guide_dot_black", "drawable", packName)));
+			oneIamge.setImageDrawable(act.getResources().getDrawable(res.getIdentifier("guide_dot_white", "drawable", packName)));
 			break;
 
 		default:

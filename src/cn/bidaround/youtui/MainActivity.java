@@ -38,7 +38,12 @@ public class MainActivity extends Activity implements OnClickListener {
 		}.run();
 	}
 
-
+@Override
+protected void onDestroy() {
+	// TODO Auto-generated method stub
+	YouTui.destroy();
+	super.onDestroy();
+}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,12 +53,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.popup_bt:
+		if(v.getId()==R.id.popup_bt){
 			YouTui.show(this, shareData);
-			break;
-		default:
-			break;
 		}
 	}
 

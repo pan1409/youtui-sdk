@@ -57,4 +57,6 @@ public class YoutuiConstants {
 	//显示样式
 	public static final int BLACK_STYLE = 0;
 	public static final int WHITE_STYLE = 1;
+	
+	public static final String YT_URL = "http://192.168.2.106";
 }
