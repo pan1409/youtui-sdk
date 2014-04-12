@@ -9,25 +9,26 @@ public class YoutuiConstants {
 	public static final String FILE_SAVE_PATH = "/youtui/";
 
 	// 新浪微博的参数
-	public static final String SINA_WEIBO_APP_ID = "2502314449";
-	public static final String SINA_WEIBO_REDIRECT_URL = "http://youtui.mobi/weiboResponse";
+	//public static final String SINA_WEIBO_APP_ID = "2502314449";
+	//public static final String SINA_WEIBO_APP_ID = KeyInfo.SinaWeibo_AppKey;
+	//public static final String SINA_WEIBO_REDIRECT_URL = KeyInfo.SinaWeibo_RedirectUrl;
 	public static final String SINA_WEIBO_SCOPE = "email,direct_messages_read,direct_messages_write,"
 			+ "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
 			+ "follow_app_official_microblog," + "invitation_write";
 
 	// 腾讯的参数(包括腾讯微博、QQ空间、定向分享)
-	public static final String TENCENT_APP_ID = "1101255276";
+	//public static final String TENCENT_APP_ID = "1101255276";
 	public static final String TENCENT_SCOPE = "all";
 
 	// 微信的参数
-	public static final String WEIXIN_APP_ID = "wxbc9e6010cf85c3e4";
+	//public static final String WEIXIN_APP_ID = "wxbc9e6010cf85c3e4";
 	public static final int WEIXIN_TIMELINE_SUPPORTED_VERSION = 0x21020001;// 微信4.2以上支持分享至朋友圈
 	
 
 	// 人人的参数
-	public static final String RENREN_APP_ID = "244110";
-	public static final String RENREN_API_KEY = "b1a80ac1aa694090bfb9aa3a590f2161";
-	public static final String RENREN_SECRET_KEY = "506ccdbda36046d197801e79c4ebba23";
+	//public static final String RENREN_APP_ID = "244110";
+	//public static final String RENREN_API_KEY = "b1a80ac1aa694090bfb9aa3a590f2161";
+	//public static final String RENREN_SECRET_KEY = "506ccdbda36046d197801e79c4ebba23";
 	public static final String RENREN_SCOPE = "read_user_blog read_user_photo read_user_status read_user_album read_user_comment read_user_share publish_blog publish_share send_notification photo_upload status_update create_album publish_comment publish_feed";
 
 	// package name
@@ -58,5 +59,5 @@ public class YoutuiConstants {
 	public static final int BLACK_STYLE = 0;
 	public static final int WHITE_STYLE = 1;
 	
-	public static final String YT_URL = "http://192.168.2.106";
+	public static final String YT_URL = "http://youtui.mobi/";
 }

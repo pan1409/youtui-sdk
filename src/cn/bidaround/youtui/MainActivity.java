@@ -2,11 +2,11 @@ package cn.bidaround.youtui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import cn.bidaround.youtui.helper.DownloadImage;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
 
@@ -27,15 +27,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		shareData.setText("default share");
 		shareData.setTitle("标题");
 		shareData.setTarget_url("http://www.baidu.com");
-		//shareData.setImageUrl("http://b.hiphotos.baidu.com/image/w%3D2048/sign=88209a66544e9258a63481eea8bad158/4610b912c8fcc3ce42febb319045d688d43f20f1.jpg");
-		//shareData.setImagePath(Environment.getExternalStorageDirectory()+YoutuiConstants.FILE_SAVE_PATH+"326.jpg");
+		shareData.setImageUrl("http://b.hiphotos.baidu.com/image/w%3D2048/sign=88209a66544e9258a63481eea8bad158/4610b912c8fcc3ce42febb319045d688d43f20f1.jpg");
+		shareData.setImagePath(Environment.getExternalStorageDirectory()+YoutuiConstants.FILE_SAVE_PATH+"326.jpg");
 		popupBt = (Button) findViewById(R.id.popup_bt);
 		popupBt.setOnClickListener(this);
-		new Runnable() {
-			public void run() {
-				DownloadImage.downloadImage(shareData.getImageUrl(), YoutuiConstants.FILE_SAVE_PATH, "326.jpg");
-			}
-		}.run();
 	}
 
 @Override
