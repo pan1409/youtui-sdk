@@ -37,6 +37,7 @@
 
     <application
         android:allowBackup="true"
+        android:name="cn.bidaround.youtui.MyApplication"
         android:icon="@drawable/logo_tui_108"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >

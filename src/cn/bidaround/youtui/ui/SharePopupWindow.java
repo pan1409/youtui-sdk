@@ -15,6 +15,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.YouTui;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.helper.AppHelper;
@@ -43,6 +45,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	private Activity act;
 	private GridView pagerOne_gridView, pagerTwo_gridView;
 	private ShareGridAdapter pagerOne_gridAdapter, pagerTwo_gridAdapter;
+	private View sharepopup_indicator_linelay;
 	private YtPoint point;
 	private ShareData shareData;
 	private int showStyle = -1;
@@ -92,7 +95,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	}
 
 	void initButton(View view) {
-
+		sharepopup_indicator_linelay = view.findViewById(R.id.sharepopup_indicator_linelay);
 		zeroIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_zero_iv", "id", packName));
 		oneIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_one_iv", "id", packName));
 		TextView know = (TextView) view.findViewById(res.getIdentifier("share_popup_knowtv", "id", packName));
@@ -126,6 +129,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 			pagerOne_gridView = (GridView) pagerOne.findViewById(res.getIdentifier("sharepager_grid", "id", packName));
 			pagerOne_gridAdapter = new ShareGridAdapter(act, enList, showStyle, point.getPoint());
 			pagerOne_gridView.setAdapter(pagerOne_gridAdapter);
+			pagerOne_gridView.setOnItemClickListener(this);
 			pagerList.add(pagerOne);
 		} else if (enList.size() > 6 && enList.size() <= 12) {
 			// 分享数量在7~12之间,放置两页
@@ -159,6 +163,8 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		getIndex();
 		if (enList.size() > 6 && enList.size() <= 12) {
 			viewPager.setOnPageChangeListener(this);
+		}else if(enList.size() <= 6){
+			sharepopup_indicator_linelay.setVisibility(View.INVISIBLE);
 		}
 	}
 

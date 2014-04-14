@@ -1,6 +1,8 @@
 package cn.bidaround.youtui.social;
 
 import java.io.Serializable;
+
+import cn.bidaround.youtui.MyApplication;
 /**
  * author:gaopan
  * 该类为分享数据类，有些平台有分享限制
@@ -13,9 +15,9 @@ public class ShareData implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	private String text = "分享";
+	private String text = "分享内容";
 	private String imagePath;
-	private String description = "";
+	private String description = "分享描述";
 	private String title = "分享";
 	private String imageUrl;
 	private String target_url ;
