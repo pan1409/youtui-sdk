@@ -1,6 +1,7 @@
 package cn.bidaround.youtui.ui;
 
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -15,7 +16,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -26,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.YouTui;
-import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.helper.AppHelper;
 import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
@@ -160,10 +159,11 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 
 		SharePagerAdapter pagerAdapter = new SharePagerAdapter(pagerList);
 		viewPager.setAdapter(pagerAdapter);
+		viewPager.setOffscreenPageLimit(2);
 		getIndex();
 		if (enList.size() > 6 && enList.size() <= 12) {
 			viewPager.setOnPageChangeListener(this);
-		}else if(enList.size() <= 6){
+		} else if (enList.size() <= 6) {
 			sharepopup_indicator_linelay.setVisibility(View.INVISIBLE);
 		}
 	}
@@ -186,12 +186,12 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		if (v.getId() == res.getIdentifier("cancel_bt", "id", packName)) {
 			dismiss();
 		} else if (v.getId() == res.getIdentifier("share_popup_knowtv", "id", packName)) {
-			Intent knowIt = new Intent(act, CheckPointActivity.class);
+			Intent knowIt = new Intent(act, ShareActivity.class);
 			knowIt.putExtra("from", "know");
 			act.startActivity(knowIt);
 
 		} else if (v.getId() == res.getIdentifier("share_popup_checktv", "id", packName)) {
-			Intent checkIt = new Intent(act, CheckPointActivity.class);
+			Intent checkIt = new Intent(act, ShareActivity.class);
 			checkIt.putExtra("from", "check");
 			act.startActivity(checkIt);
 		}
@@ -237,27 +237,19 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 			shareData.setImagePath(Environment.getExternalStorageDirectory() + YoutuiConstants.FILE_SAVE_PATH + fileName);
 		}
 		if (adapterView == pagerOne_gridView) {
-			//新浪微博
+			// 新浪微博
 			if (position == sinaWeiboIndex % 6 && sinaWeiboIndex / 6 == 0) {
 				if (AppHelper.isSinaWeiboExisted(act)) {
-					if (!AccessTokenKeeper.readAccessToken(act).isSessionValid()) {
-						Toast.makeText(act, "请先授权登录", Toast.LENGTH_SHORT).show();
-						Intent shareAuthIt = new Intent(act, ShareAuthActivity.class);
-						shareAuthIt.putExtra("shareData", shareData);
-						shareAuthIt.putExtra("from", "sina");
-						act.startActivity(shareAuthIt);
-					} else {
-						Intent shareIt = new Intent(act, ShareActivity.class);
-						shareIt.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-						shareIt.putExtra("shareData", shareData);
-						shareIt.putExtra("from", "sina");
-						shareIt.putExtra("pointArr", point.getPoint());
-						act.startActivityForResult(shareIt, sinaWeiboIndex);
-					}
+					Intent shareIt = new Intent(act, ShareActivity.class);
+					shareIt.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					shareIt.putExtra("shareData", shareData);
+					shareIt.putExtra("from", "sina");
+					shareIt.putExtra("pointArr", point.getPoint());
+					act.startActivityForResult(shareIt, sinaWeiboIndex);
 				} else {
 					Toast.makeText(act, "未安装新浪微博", Toast.LENGTH_SHORT).show();
 				}
-				//微信
+				// 微信
 			} else if (position == weChatIndex && weChatIndex / 6 == 0) {
 				if (AppHelper.isWeixinExisted(act)) {
 					Intent wxIt = new Intent(act, WXEntryActivity.class);
@@ -270,21 +262,21 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				} else {
 					Toast.makeText(act, "未安装微信", Toast.LENGTH_SHORT).show();
 				}
-				//QQ
+				// QQ
 			} else if (position == qQIndex && qQIndex / 6 == 0) {
 				Intent qqIt = new Intent(act, ShareActivity.class);
 				qqIt.putExtra("shareData", shareData);
 				qqIt.putExtra("from", "QQ");
 				qqIt.putExtra("pointArr", point.getPoint());
 				act.startActivityForResult(qqIt, qQIndex);
-				//QQ空间
+				// QQ空间
 			} else if (position == qZoneIndex && qZoneIndex / 6 == 0) {
 				Intent qzoneIt = new Intent(act, ShareActivity.class);
 				qzoneIt.putExtra("shareData", shareData);
 				qzoneIt.putExtra("from", "Qzone");
 				qzoneIt.putExtra("pointArr", point.getPoint());
 				act.startActivityForResult(qzoneIt, qZoneIndex);
-				//微信朋友圈
+				// 微信朋友圈
 			} else if (position == wechatMomentsIndex && wechatMomentsIndex / 6 == 0) {
 				if (AppHelper.isWeixinExisted(act)) {
 					Intent wxIt = new Intent(act, WXEntryActivity.class);
@@ -296,15 +288,15 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				} else {
 					Toast.makeText(act, "未安装微信", Toast.LENGTH_SHORT).show();
 				}
-				//腾讯微博
+				// 腾讯微博
 			} else if (position == tencentWeiboIndex && tencentWeiboIndex / 6 == 0) {
 				Intent qqWBIt = new Intent(act, ShareActivity.class);
 				qqWBIt.putExtra("shareData", shareData);
 				qqWBIt.putExtra("from", "QQWB");
 				qqWBIt.putExtra("pointArr", point.getPoint());
 				act.startActivityForResult(qqWBIt, tencentWeiboIndex);
-				//人人网
-			} else if (position == renrenIndex % 6&&renrenIndex/6==0) {
+				// 人人网
+			} else if (position == renrenIndex % 6 && renrenIndex / 6 == 0) {
 				if (AppHelper.isRenrenExisted(act)) {
 					Intent renrenIt = new Intent(act, ShareActivity.class);
 					renrenIt.putExtra("from", "renren");
@@ -314,19 +306,17 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				} else {
 					Toast.makeText(act, "未安装人人网客户端", Toast.LENGTH_SHORT).show();
 				}
-				//短信
-			} else if (position == shortMessageIndex % 6&&shortMessageIndex/6==0) {
+				// 短信
+			} else if (position == shortMessageIndex % 6 && shortMessageIndex / 6 == 0) {
 				new OtherShare(act).sendSMS(shareData.getText());
-				//邮件
-			} else if (position == emailIndex % 6&&emailIndex/6==0) {
+				// 邮件
+			} else if (position == emailIndex % 6 && emailIndex / 6 == 0) {
 				new OtherShare(act).sendMail(shareData.getText());
 			}
-			
-			
 
 		} else if (adapterView == pagerTwo_gridView) {
-			//人人网
-			if (position == renrenIndex % 6&&renrenIndex/6==1) {
+			// 人人网
+			if (position == renrenIndex % 6 && renrenIndex / 6 == 1) {
 				if (AppHelper.isRenrenExisted(act)) {
 					Intent renrenIt = new Intent(act, ShareActivity.class);
 					renrenIt.putExtra("from", "renren");
@@ -336,11 +326,11 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 				} else {
 					Toast.makeText(act, "未安装人人网客户端", Toast.LENGTH_SHORT).show();
 				}
-				//短信
-			} else if (position == shortMessageIndex % 6&&shortMessageIndex/6==1) {
+				// 短信
+			} else if (position == shortMessageIndex % 6 && shortMessageIndex / 6 == 1) {
 				new OtherShare(act).sendSMS(shareData.getText());
-				//邮件
-			} else if (position == emailIndex % 6&&emailIndex/6==1) {
+				// 邮件
+			} else if (position == emailIndex % 6 && emailIndex / 6 == 1) {
 				new OtherShare(act).sendMail(shareData.getText());
 			}
 		}
@@ -355,10 +345,10 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	public void onPageScrolled(int arg0, float arg1, int arg2) {
 
 	}
-	
+
 	@Override
 	public void onPageSelected(int index) {
-		//viewpager下标
+		// viewpager下标
 		switch (index) {
 		case 0:
 			zeroIamge.setImageDrawable(act.getResources().getDrawable(res.getIdentifier("guide_dot_white", "drawable", packName)));

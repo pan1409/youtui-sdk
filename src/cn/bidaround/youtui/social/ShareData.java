@@ -1,8 +1,6 @@
 package cn.bidaround.youtui.social;
 
 import java.io.Serializable;
-
-import cn.bidaround.youtui.MyApplication;
 /**
  * author:gaopan
  * 该类为分享数据类，有些平台有分享限制
