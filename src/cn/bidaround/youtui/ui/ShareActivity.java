@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.component.MyProgressDialog;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.point.ChannelId;
@@ -32,7 +32,6 @@ import cn.bidaround.youtui.social.RennShare;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.SinaShare;
 import cn.bidaround.youtui.social.YoutuiConstants;
-
 import com.sina.weibo.sdk.api.share.BaseResponse;
 import com.sina.weibo.sdk.api.share.IWeiboHandler;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
@@ -53,6 +52,8 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 	private EditText shareedit_sharetext_edit;
 	private ImageView shareeidt_shareimage_image;
 	private WebView webView;
+	private Resources res;
+	private String packName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,19 +104,21 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 	 * @param title
 	 */
 	private void initView(String title) {
-		View rennView = LayoutInflater.from(this).inflate(R.layout.shareedit_activity, null);
+		res = getResources();
+		packName = getPackageName();
+		View rennView = LayoutInflater.from(this).inflate(res.getIdentifier("shareedit_activity", "layout", packName), null);
 		setContentView(rennView);
-		shareedit_back_linelay = rennView.findViewById(R.id.shareedit_back_linelay);
+		shareedit_back_linelay = rennView.findViewById(res.getIdentifier("shareedit_back_linelay", "id", packName));
 		shareedit_back_linelay.setOnClickListener(this);
-		shareedit_share_bt = rennView.findViewById(R.id.shareedit_share_bt);
+		shareedit_share_bt = rennView.findViewById(res.getIdentifier("shareedit_share_bt", "id", packName));
 		shareedit_share_bt.setOnClickListener(this);
-		shareedit_title_text = (TextView) rennView.findViewById(R.id.shareedit_title_text);
+		shareedit_title_text = (TextView) rennView.findViewById(res.getIdentifier("shareedit_title_text", "id", packName));
 		shareedit_title_text.setText(title);
-		shareedit_sharetitle_text = (TextView) rennView.findViewById(R.id.shareedit_sharetitle_text);
+		shareedit_sharetitle_text = (TextView) rennView.findViewById(res.getIdentifier("shareedit_sharetitle_text", "id", packName));
 		shareedit_sharetitle_text.setText(shareData.getTitle());
-		shareedit_sharetext_edit = (EditText) rennView.findViewById(R.id.shareedit_sharetext_edit);
+		shareedit_sharetext_edit = (EditText) rennView.findViewById(res.getIdentifier("shareedit_sharetext_edit", "id", packName));
 		shareedit_sharetext_edit.setText(shareData.getText());
-		shareeidt_shareimage_image = (ImageView) rennView.findViewById(R.id.shareeidt_shareimage_image);
+		shareeidt_shareimage_image = (ImageView) rennView.findViewById(res.getIdentifier("shareeidt_shareimage_image", "id", packName));
 		Bitmap bitmap = BitmapFactory.decodeFile(shareData.getImagePath());
 		shareeidt_shareimage_image.setImageBitmap(bitmap);
 	}
@@ -233,13 +236,9 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-
-		case R.id.shareedit_back_linelay:
+		if(v.getId() == res.getIdentifier("shareedit_back_linelay", "id", packName)){
 			this.finish();
-			break;
-		// 分享按钮点击事件
-		case R.id.shareedit_share_bt:
+		}else if(v.getId() == res.getIdentifier("shareedit_share_bt", "id", packName)){
 			if ("renren".equals(from)) {
 				new RennShare(this, pointArr).shareToRenn();
 			} else if ("QQWB".equals(from)) {
@@ -256,10 +255,6 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 					};
 				}.start();
 			}
-			break;
-
-		default:
-			break;
 		}
 	}
 

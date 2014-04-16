@@ -1,7 +1,6 @@
 package cn.bidaround.youtui.ui;
 
 import java.util.ArrayList;
-
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;

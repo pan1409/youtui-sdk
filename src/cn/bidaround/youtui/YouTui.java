@@ -2,9 +2,7 @@ package cn.bidaround.youtui;
 
 import java.io.File;
 import java.io.IOException;
-
 import org.xmlpull.v1.XmlPullParserException;
-
 import android.app.Activity;
 import android.os.Environment;
 import cn.bidaround.youtui.helper.DownloadImage;
@@ -25,10 +23,8 @@ public class YouTui {
 			KeyInfo.parseXML(act);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

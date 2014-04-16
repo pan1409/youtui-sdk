@@ -1,7 +1,6 @@
 package cn.bidaround.youtui.helper;
 
 import java.util.List;
-
 import cn.bidaround.youtui.social.YoutuiConstants;
 import android.content.Context;
 import android.content.Intent;

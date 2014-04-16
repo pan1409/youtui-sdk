@@ -6,15 +6,14 @@ package cn.bidaround.youtui.ui;
  */
 
 import java.util.ArrayList;
-
 import android.app.Activity;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.util.ShareList;
 
 public class ShareGridAdapter extends BaseAdapter {
@@ -22,12 +21,16 @@ public class ShareGridAdapter extends BaseAdapter {
 	private ArrayList<String> list;
 	private int showStyle;
 	private int[] pointArr;
+	private Resources res;
+	private String packName;
 
 	public ShareGridAdapter(Activity act, ArrayList<String> list, int showStyle, int[] pointArr) {
 		this.act = act;
 		this.list = list;
 		this.showStyle = showStyle;
 		this.pointArr = pointArr;
+		res = act.getResources();
+		packName = act.getPackageName();
 	}
 
 	@Override
@@ -48,15 +51,15 @@ public class ShareGridAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup arg2) {
 		if (convertView == null) {
-			View view = LayoutInflater.from(act).inflate(R.layout.pagergrid_item, null);
-			ImageView imageView = (ImageView) view.findViewById(R.id.logo_imageview);
+			View view = LayoutInflater.from(act).inflate(res.getIdentifier("pagergrid_item", "layout", packName), null);
+			ImageView imageView = (ImageView) view.findViewById(res.getIdentifier("logo_imageview", "id", packName));
 			imageView.setImageResource(ShareList.getLogo(list.get(position),act));
-			TextView textView = (TextView) view.findViewById(R.id.logo_textview);
+			TextView textView = (TextView) view.findViewById(res.getIdentifier("logo_textview", "id", packName));
 			textView.setText(ShareList.getTitle(list.get(position)));
 			if (showStyle == 1) {
 				textView.setTextColor(0xff6c7471);
 			}
-			TextView pointText = (TextView) view.findViewById(R.id.griditem_point_tv);
+			TextView pointText = (TextView) view.findViewById(res.getIdentifier("griditem_point_tv", "id", packName));
 			if (ShareList.SINAWEIBO.equals(list.get(position))) {
 				 if(pointArr[0]==0){
 				 pointText.setVisibility(View.GONE);

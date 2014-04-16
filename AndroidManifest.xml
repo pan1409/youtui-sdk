@@ -36,9 +36,8 @@
     <!-- 用于人人SSO登陆 -->
 
     <application
-        android:name="cn.bidaround.youtui.MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/logo_tui_108"
+        android:icon="@drawable/demo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
@@ -51,6 +50,7 @@
         <!-- main界面 -->
         <activity
             android:name="cn.bidaround.youtui.MainActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

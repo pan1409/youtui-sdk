@@ -1,7 +1,6 @@
 package cn.bidaround.youtui.ui;
 
 import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.bidaround.youtui.R;
 import cn.bidaround.youtui.YouTui;
 import cn.bidaround.youtui.helper.AppHelper;
 import cn.bidaround.youtui.point.YtPoint;
@@ -53,6 +50,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	private Resources res;
 	private String packName, message;
 	private ArrayList<String> enList;
+	private ShareViewPager viewPager;
 	private static int weChatIndex, wechatMomentsIndex, sinaWeiboIndex, qQIndex, qZoneIndex, tencentWeiboIndex, renrenIndex, shortMessageIndex, emailIndex;
 
 	public SharePopupWindow() {
@@ -94,7 +92,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	}
 
 	void initButton(View view) {
-		sharepopup_indicator_linelay = view.findViewById(R.id.sharepopup_indicator_linelay);
 		zeroIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_zero_iv", "id", packName));
 		oneIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_one_iv", "id", packName));
 		TextView know = (TextView) view.findViewById(res.getIdentifier("share_popup_knowtv", "id", packName));
@@ -116,7 +113,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	 * 初始化viewpager
 	 */
 	void initViewPager(View view) {
-		ViewPager viewPager = (ViewPager) view.findViewById(res.getIdentifier("share_viewpager", "id", packName));
+		viewPager = (ShareViewPager) view.findViewById(res.getIdentifier("share_viewpager", "id", packName));
 		ArrayList<View> pagerList = new ArrayList<View>();
 
 		enList = KeyInfo.enList;
@@ -364,5 +361,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		}
 
 	}
+
+
 
 }
