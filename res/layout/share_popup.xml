@@ -9,7 +9,7 @@
         android:id="@+id/sharepopup_indicator_linelay"
         android:layout_width="match_parent"
         android:layout_height="10dp"
-        android:layout_below="@+id/share_viewpager"
+        android:layout_above="@+id/share_popup_textlinearlayout"
         android:gravity="center" >
 
         <ImageView
@@ -27,10 +27,32 @@
             android:src="@drawable/guide_dot_black" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/cancel_bt"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/btn_style_alert_dialog_cancel_normal"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:text="取消" />
+
+    <cn.bidaround.youtui.ui.ShareViewPager
+        android:id="@+id/share_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/sharepopup_indicator_linelay"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+    </cn.bidaround.youtui.ui.ShareViewPager>
+
     <LinearLayout
+        android:layout_marginBottom="3dp"
         android:id="@+id/share_popup_textlinearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_above="@+id/cancel_bt"
         android:orientation="horizontal" >
 
@@ -54,24 +76,5 @@
             android:text="查看我的积分"
             android:textColor="#ffffff" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/cancel_bt"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/btn_style_alert_dialog_cancel_normal"
-        android:gravity="center"
-        android:textColor="#ffffff"
-        android:text="取消" />
-
-    <cn.bidaround.youtui.ui.ShareViewPager
-        android:id="@+id/share_viewpager"
-        android:layout_width="wrap_content"
-        android:layout_height="260dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
-    </cn.bidaround.youtui.ui.ShareViewPager>
 
 </RelativeLayout>

@@ -10,10 +10,10 @@ import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
+import cn.bidaround.youtui.ui.ShareListPopup;
 import cn.bidaround.youtui.ui.SharePopupWindow;
 
 public class YouTui {
-
 	/**
 	 * 开发者应该在程序开始调用该方法初始化友推sdk，友推sdk的其他操作都依赖于此
 	 */
@@ -32,15 +32,18 @@ public class YouTui {
 
 	}
 
-	public static void destroy() {
-		YtPoint.release();
-	}
 
 	/**
 	 * 调用该方法调出友推sdk的分享界面 act:调用界面实例 shareData:需要分享的数据
 	 */
-	public static void show(Activity act, ShareData shareData) {
-		new SharePopupWindow(act, shareData, YouTuiViewType.BLANK_FULL, YtPoint.getInstance(act)).show();
+	public static void show(Activity act, ShareData shareData, int style) {
+		if (style == YouTuiViewType.BLACK_POPUP) {
+			new SharePopupWindow(act, shareData, style, YtPoint.getInstance(act)).show();
+
+		} else if (style == YouTuiViewType.WHITE_LIST) {
+			new ShareListPopup(act, shareData, style, YtPoint.getInstance(act)).show();
+
+		}
 	}
 
 	/**

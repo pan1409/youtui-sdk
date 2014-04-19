@@ -32,6 +32,7 @@ import cn.bidaround.youtui.social.RennShare;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.SinaShare;
 import cn.bidaround.youtui.social.YoutuiConstants;
+
 import com.sina.weibo.sdk.api.share.BaseResponse;
 import com.sina.weibo.sdk.api.share.IWeiboHandler;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
@@ -67,9 +68,10 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 		// 判断分享的媒体
 		from = getIntent().getExtras().getString("from");
 		if ("sina".equals(from)) {
-			MyProgressDialog.loadingBar(this);
+			MyProgressDialog.loadingBar(this, "分享中。。。");
 			initView("新浪微博");
 			if (AccessTokenKeeper.readAccessToken(this).isSessionValid()) {
+				// 如果已经授权直接分享
 				new Thread() {
 					public void run() {
 						sinaShare = new SinaShare(ShareActivity.this, shareData);
@@ -77,6 +79,7 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 					};
 				}.start();
 			} else {
+				// 如果没有授权，先授权
 				sinaShare = new SinaShare(this, shareData);
 				sinaShare.sinaAuth();
 			}
@@ -86,21 +89,22 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 		} else if ("QQWB".equals(from)) {
 			initView("腾讯微博");
 		} else if ("QQ".equals(from)) {
-			MyProgressDialog.loadingBar(this);
+			MyProgressDialog.loadingBar(this, "分享中...");
 			initView("QQ");
 			new QQOpenShare(this, pointArr, "QQ").shareToQQ();
 		} else if ("Qzone".equals(from)) {
-			MyProgressDialog.loadingBar(this);
+			MyProgressDialog.loadingBar(this, "分享中...");
 			initView("QQ空间");
 			new QQOpenShare(this, pointArr, "Qzone").shareToQzone();
-		}else if("know".equals(from)||"check".equals(from)){
-			MyProgressDialog.loadingBar(this);
+		} else if ("know".equals(from) || "check".equals(from)) {
+			MyProgressDialog.loadingBar(this, "分享中。。。");
 			initPointView();
 		}
 	}
 
 	/**
 	 * 初始化分享界面
+	 * 
 	 * @param title
 	 */
 	private void initView(String title) {
@@ -108,25 +112,32 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 		packName = getPackageName();
 		View rennView = LayoutInflater.from(this).inflate(res.getIdentifier("shareedit_activity", "layout", packName), null);
 		setContentView(rennView);
+		// 返回按钮
 		shareedit_back_linelay = rennView.findViewById(res.getIdentifier("shareedit_back_linelay", "id", packName));
 		shareedit_back_linelay.setOnClickListener(this);
+		// 分享按钮
 		shareedit_share_bt = rennView.findViewById(res.getIdentifier("shareedit_share_bt", "id", packName));
 		shareedit_share_bt.setOnClickListener(this);
+		// 设置标题
 		shareedit_title_text = (TextView) rennView.findViewById(res.getIdentifier("shareedit_title_text", "id", packName));
 		shareedit_title_text.setText(title);
+		// 设置分享的标题
 		shareedit_sharetitle_text = (TextView) rennView.findViewById(res.getIdentifier("shareedit_sharetitle_text", "id", packName));
 		shareedit_sharetitle_text.setText(shareData.getTitle());
+		// 分享的文字
 		shareedit_sharetext_edit = (EditText) rennView.findViewById(res.getIdentifier("shareedit_sharetext_edit", "id", packName));
 		shareedit_sharetext_edit.setText(shareData.getText());
+		// 分享的图片
 		shareeidt_shareimage_image = (ImageView) rennView.findViewById(res.getIdentifier("shareeidt_shareimage_image", "id", packName));
 		Bitmap bitmap = BitmapFactory.decodeFile(shareData.getImagePath());
 		shareeidt_shareimage_image.setImageBitmap(bitmap);
 	}
+
 	/**
 	 * 初始化查看和了解积分界面
 	 */
 	@SuppressLint("SetJavaScriptEnabled")
-	private void initPointView(){
+	private void initPointView() {
 		webView = new WebView(this);
 		webView.setWebViewClient(new WebViewClient());
 		// WebSettings 几乎浏览器的所有设置都在该类中进行
@@ -143,17 +154,21 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 		TelephonyManager teleMan = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 		webView.setWebChromeClient(new MyWebChromeClient());
 		//
-		if("check".equals(from)){
-			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/mypoints" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + teleMan.getSimSerialNumber()+"&imei="+teleMan.getDeviceId());
-		}else if("know".equals(from)){
-			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/actIntroduce" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + teleMan.getSimSerialNumber()+"&imei="+teleMan.getDeviceId());
+		if ("check".equals(from)) {
+			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/mypoints" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + teleMan.getSimSerialNumber() + "&imei=" + teleMan.getDeviceId());
+		} else if ("know".equals(from)) {
+			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/actIntroduce" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + teleMan.getSimSerialNumber() + "&imei=" + teleMan.getDeviceId());
 		}
-		
+
 		setContentView(webView);
 	}
-	
-	
 
+	/**
+	 * 加载到80%结束进度条
+	 * 
+	 * @author gaopan
+	 * 
+	 */
 	final class MyWebChromeClient extends WebChromeClient {
 		@Override
 		public void onProgressChanged(WebView view, int progress) {
@@ -182,13 +197,19 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 		super.onNewIntent(intent);
 	}
 
+	/**
+	 * Activity摧毁前结束ProgressDialog,避免窗体泄露
+	 */
+
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
 		MyProgressDialog.dismiss();
 		super.onDestroy();
 	}
 
+	/**
+	 * 新浪微博授权的回调
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if ("sina".equals(from) && sinaShare != null) {
@@ -197,9 +218,12 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	/**
+	 * 分享或授权完成后不需要再跳回分享界面，所以在这里将Activity结束掉
+	 * 不能设置flag_no_history，这样虽然也能不跳回分享界面，但是接收不到授权和分享的回调
+	 */
 	@Override
 	protected void onRestart() {
-		// TODO Auto-generated method stub
 		MyProgressDialog.dismiss();
 		finish();
 		super.onRestart();
@@ -213,9 +237,8 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 		switch (baseResp.errCode) {
 
 		case WBConstants.ErrorCode.ERR_OK:
-			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
 			YtPoint.sharePoint(this, KeyInfo.YouTui_AppKey, ChannelId.SINACHANNEL, pointArr);
-			YtPoint.getInstance(this).refresh(this);
 			break;
 
 		case WBConstants.ErrorCode.ERR_CANCEL:
@@ -236,12 +259,16 @@ public class ShareActivity extends Activity implements IWeiboHandler.Response, O
 
 	@Override
 	public void onClick(View v) {
-		if(v.getId() == res.getIdentifier("shareedit_back_linelay", "id", packName)){
+		// 返回
+		if (v.getId() == res.getIdentifier("shareedit_back_linelay", "id", packName)) {
 			this.finish();
-		}else if(v.getId() == res.getIdentifier("shareedit_share_bt", "id", packName)){
+		} else if (v.getId() == res.getIdentifier("shareedit_share_bt", "id", packName)) {
+			// 分享
 			if ("renren".equals(from)) {
+				MyProgressDialog.loadingBar(this, "分享中...");
 				new RennShare(this, pointArr).shareToRenn();
 			} else if ("QQWB".equals(from)) {
+				MyProgressDialog.loadingBar(this, "分享中...");
 				new QQOpenShare(ShareActivity.this, pointArr, "QQWB").shareToQQWB();
 			} else if ("QQ".equals(from)) {
 				new QQOpenShare(this, pointArr, "QQ").shareToQQ();

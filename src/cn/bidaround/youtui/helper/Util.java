@@ -1,5 +1,6 @@
 package cn.bidaround.youtui.helper;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,6 +25,12 @@ public class Util {
 
 	private static Dialog mProgressDialog;
 	private static Toast mToast;
+	
+	public static void addArr(int[] fromArr,int[] toArr ){
+		for(int i=0;i<toArr.length;i++){
+			toArr[i] = fromArr[i];
+		}
+	}
 
 	/*
 	 * Convert byte[] to hex
@@ -56,6 +63,7 @@ public class Util {
 	 *            the hex string
 	 * @return byte[]
 	 */
+	@SuppressLint("DefaultLocale")
 	public static byte[] hexStringToBytes(String hexString) {
 		if (hexString == null || hexString.equals("")) {
 			return null;

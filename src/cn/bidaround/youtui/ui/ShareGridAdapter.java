@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import cn.bidaround.youtui.YouTuiViewType;
+import cn.bidaround.youtui.point.ChannelId;
+import cn.bidaround.youtui.util.DensityUtil;
 import cn.bidaround.youtui.util.ShareList;
 
 public class ShareGridAdapter extends BaseAdapter {
@@ -47,86 +50,78 @@ public class ShareGridAdapter extends BaseAdapter {
 	public long getItemId(int arg0) {
 		return 0;
 	}
-
+	
 	@Override
-	public View getView(int position, View convertView, ViewGroup arg2) {
+	public View getView(int position, View convertView, ViewGroup arg2) {	
+		//使用convertView优化listview
 		if (convertView == null) {
-			View view = LayoutInflater.from(act).inflate(res.getIdentifier("pagergrid_item", "layout", packName), null);
-			ImageView imageView = (ImageView) view.findViewById(res.getIdentifier("logo_imageview", "id", packName));
-			imageView.setImageResource(ShareList.getLogo(list.get(position),act));
-			TextView textView = (TextView) view.findViewById(res.getIdentifier("logo_textview", "id", packName));
-			textView.setText(ShareList.getTitle(list.get(position)));
-			if (showStyle == 1) {
-				textView.setTextColor(0xff6c7471);
-			}
-			TextView pointText = (TextView) view.findViewById(res.getIdentifier("griditem_point_tv", "id", packName));
-			if (ShareList.SINAWEIBO.equals(list.get(position))) {
-				 if(pointArr[0]==0){
-				 pointText.setVisibility(View.GONE);
-				 }else{
-				 pointText.setText("+"+pointArr[0]);
-				 }
-				 
-			} else if (ShareList.EMAIL.equals(list.get(position))) {
-				 if(pointArr[8]==0){
-				 pointText.setVisibility(View.GONE);
-				 }else{
-				 pointText.setText("+"+pointArr[8]);
-				 }
-
-			} else if (ShareList.QQ.equals(list.get(position))) {
-				 if(pointArr[5]==0){
-				 pointText.setVisibility(View.GONE);
-				 }else{
-				 pointText.setText("+"+pointArr[5]);
-				 }
-
-			} else if (ShareList.QZONE.equals(list.get(position))) {
-				 if(pointArr[2]==0){
-				 pointText.setVisibility(View.GONE);
-				 }else{
-				 pointText.setText("+"+pointArr[2]);
-				 }
-
-			} else if (ShareList.RENREN.equals(list.get(position))) {
-				 if(pointArr[4]==0){
-				 pointText.setVisibility(View.GONE);
-				 }else{
-				 pointText.setText("+"+pointArr[4]);
-				 }
-
-			} else if (ShareList.SHORTMESSAGE.equals(list.get(position))) {
-				 if(pointArr[7]==0){
-				 pointText.setVisibility(View.GONE);
-				 }else{
-				 pointText.setText("+"+pointArr[7]);
-				 }
-
-			} else if (ShareList.TENCENTWEIBO.equals(list.get(position))) {
-				 if(pointArr[1]==0){
-				 pointText.setVisibility(View.GONE);
-				 }else{
-				 pointText.setText("+"+pointArr[1]);
-				 }
-
-			} else if (ShareList.WECHAT.equals(list.get(position))) {
-				 if(pointArr[3]==0){
-				 pointText.setVisibility(View.GONE);
-				 }else{
-				 pointText.setText("+"+pointArr[3]);
-				 }
-
-			} else if (ShareList.WECHATMOMENTS.equals(list.get(position))) {
-				 if(pointArr[10]==0){
-				 pointText.setVisibility(View.GONE);
-				 }else{
-				 pointText.setText("+"+pointArr[10]);
-				 }
-				 
-			}
+			View view = null;
+			if(showStyle==YouTuiViewType.BLACK_POPUP){
+				view = LayoutInflater.from(act).inflate(res.getIdentifier("pagergrid_item", "layout", packName), null);			
+			}else if(showStyle==YouTuiViewType.WHITE_LIST){
+				view = LayoutInflater.from(act).inflate(res.getIdentifier("sharelist_item", "layout", packName), null);
+			}	
 			convertView = view;
 		}
+		
+		TextView pointText = null;
+		if(showStyle==YouTuiViewType.BLACK_POPUP){
+			ImageView imageView = (ImageView) convertView.findViewById(res.getIdentifier("logo_imageview", "id", packName));
+			TextView textView = (TextView) convertView.findViewById(res.getIdentifier("logo_textview", "id", packName));
+			// 设置社交平台logo 
+			imageView.setImageResource(ShareList.getLogo(list.get(position), act));
+			// 积分textview
+			textView.setText(ShareList.getTitle(list.get(position)));
+			pointText = (TextView) convertView.findViewById(res.getIdentifier("griditem_point_tv", "id", packName));
+		}else if(showStyle==YouTuiViewType.WHITE_LIST){
+			ImageView imageView = (ImageView) convertView.findViewById(res.getIdentifier("sharelistitem_logo_image", "id", packName));
+			TextView textView = (TextView) convertView.findViewById(res.getIdentifier("sharelistitem_platform_text", "id", packName));
+			// 设置社交平台logo
+			imageView.setImageResource(ShareList.getLogo(list.get(position), act));
+			// 积分textview
+			textView.setText(ShareList.getTitle(list.get(position)));
+			pointText = (TextView) convertView.findViewById(res.getIdentifier("sharelistitem_point_text", "id", packName));
+		}
+
+		// 显示积分
+		if (ShareList.SINAWEIBO.equals(list.get(position))) {
+			showPoint(pointText, ChannelId.SINACHANNEL);
+		} else if (ShareList.EMAIL.equals(list.get(position))) {
+			showPoint(pointText, ChannelId.EMAIL);
+		} else if (ShareList.QQ.equals(list.get(position))) {
+			showPoint(pointText, ChannelId.QQ);
+		} else if (ShareList.QZONE.equals(list.get(position))) {
+			showPoint(pointText, ChannelId.QQZONE);
+		} else if (ShareList.RENREN.equals(list.get(position))) {
+			showPoint(pointText, ChannelId.RENN);
+		} else if (ShareList.SHORTMESSAGE.equals(list.get(position))) {
+			showPoint(pointText, ChannelId.MESSAGE);
+		} else if (ShareList.TENCENTWEIBO.equals(list.get(position))) {
+			showPoint(pointText, ChannelId.QQWBCHANNEL);
+		} else if (ShareList.WECHAT.equals(list.get(position))) {
+			showPoint(pointText, ChannelId.WECHAT);
+		} else if (ShareList.WECHATMOMENTS.equals(list.get(position))) {
+			showPoint(pointText, ChannelId.WECHATFRIEND);
+		}
 		return convertView;
+	}
+
+	/**
+	 * 显示积分
+	 * 
+	 * @param pointText
+	 * @param channelId
+	 */
+	private void showPoint(TextView pointText, int channelId) {
+		if (pointArr[channelId] >= 10) {
+			pointText.getLayoutParams().width = DensityUtil.dip2px(act, 40);
+		}
+		if (pointArr[channelId] == 0) {
+			pointText.setVisibility(View.GONE);
+		} else {
+			pointText.setText("+" + pointArr[channelId]);
+		}
+
 	}
 
 }

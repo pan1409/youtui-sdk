@@ -32,9 +32,9 @@
 
         <TextView
             android:id="@+id/griditem_point_tv"
-            android:background="@drawable/reddot"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:background="@drawable/list_newmessage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="right"
             android:gravity="center"
             android:text="+5"
