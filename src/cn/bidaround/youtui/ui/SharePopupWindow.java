@@ -2,14 +2,9 @@ package cn.bidaround.youtui.ui;
 
 import java.util.ArrayList;
 
-import android.R.integer;
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,74 +15,38 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.bidaround.youtui.R;
-import cn.bidaround.youtui.YouTui;
-import cn.bidaround.youtui.component.PointToast;
-import cn.bidaround.youtui.helper.AppHelper;
 import cn.bidaround.youtui.helper.Util;
+import cn.bidaround.youtui.net.NetUtil;
+import cn.bidaround.youtui.net.YTShare;
 import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
-import cn.bidaround.youtui.social.OtherShare;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
 import cn.bidaround.youtui.util.DensityUtil;
-import cn.bidaround.youtui.util.ShareList;
-import cn.bidaround.youtui.wxapi.WXEntryActivity;
 
 /**
  * author:gaopan time:2014/3/25
  */
-public class SharePopupWindow extends PopupWindow implements OnClickListener, OnItemClickListener, OnPageChangeListener {
+public class SharePopupWindow extends YTPopupWindow implements OnClickListener, OnItemClickListener, OnPageChangeListener {
 
-	private static Activity act;
 	private GridView pagerOne_gridView, pagerTwo_gridView;
 	private ShareGridAdapter pagerOne_gridAdapter, pagerTwo_gridAdapter;
 	private View sharepopup_indicator_linelay;
-	private YtPoint point;
-	private ShareData shareData;
-	private static SharePopupWindow instance;
-	private int showStyle = -1;
-	public static final int GET_POINT = 0,SHARED_HAS_POINT=1;
-	public static Handler mHandler = new Handler(){
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			//刷新积分显示
-			case GET_POINT:
-				int[] arr = (int[])msg.obj;
-				instance.refresh(arr);
-				break;
-			case SHARED_HAS_POINT:
-				if((Integer)msg.obj == 0){
-					Toast.makeText(act,"分享成功,积分+"+msg.obj, Toast.LENGTH_SHORT).show();
-				}
-				
-				//new PointToast(act).show("+"+msg.obj);
-			default:
-				break;
-			}
-		};
-	};
 	private ImageView zeroIamge, oneIamge;
-	private Resources res;
-	private String packName, message;
 	private ArrayList<String> enList;
 	private ShareViewPager viewPager;
 	private int[] pointArr = new int[YoutuiConstants.SHARE_SIZE];
-	private static int weChatIndex, wechatMomentsIndex, sinaWeiboIndex, qQIndex, qZoneIndex, tencentWeiboIndex, renrenIndex, shortMessageIndex, emailIndex;
-
-	public SharePopupWindow(Context context) {
-	}
 
 	public SharePopupWindow(Activity act, ShareData shareData, int showStyle, YtPoint point) {
 		super(act);
-		SharePopupWindow.act = act;
 		this.shareData = shareData;
 		this.showStyle = showStyle;
 		this.point = point;
 		instance = this;
+		initData();
 	}
 
 	/**
@@ -95,11 +54,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	 */
 	@SuppressWarnings("deprecation")
 	public void show() {
-		YtPoint.getInstance(act).refresh(act);
-		new YouTui().autoDownImage(shareData);
-		res = act.getResources();
-		packName = act.getPackageName();
-
 		View view = LayoutInflater.from(act).inflate(res.getIdentifier("share_popup", "layout", packName), null);
 		initButton(view);
 		initViewPager(view);
@@ -110,7 +64,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		setWidth(act.getWindowManager().getDefaultDisplay().getWidth());
 		setHeight(DensityUtil.dip2px(act, 350));
 		setAnimationStyle(R.style.SharePopupAnim);
-		update();
 		showAtLocation(getContentView(), Gravity.BOTTOM, 0, 0);
 	}
 	
@@ -119,7 +72,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	 * @param view
 	 */
 
-	void initButton(View view) {
+	private void initButton(View view) {
 		zeroIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_zero_iv", "id", packName));
 		oneIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_one_iv", "id", packName));
 		TextView know = (TextView) view.findViewById(res.getIdentifier("share_popup_knowtv", "id", packName));
@@ -140,7 +93,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	/**
 	 * 初始化viewpager
 	 */
-	void initViewPager(View view) {
+	private void initViewPager(View view) {
 		viewPager = (ShareViewPager) view.findViewById(res.getIdentifier("share_viewpager", "id", packName));
 		ArrayList<View> pagerList = new ArrayList<View>();
 		Util.addArr(point.getPoint(), pointArr);
@@ -185,7 +138,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		SharePagerAdapter pagerAdapter = new SharePagerAdapter(pagerList);
 		viewPager.setAdapter(pagerAdapter);
 		viewPager.setOffscreenPageLimit(2);
-		getIndex();
 		// 设置滑动下标
 		if (enList.size() > 6 && enList.size() <= 12) {
 			viewPager.setOnPageChangeListener(this);
@@ -194,20 +146,7 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		}
 	}
 
-	/**
-	 * 获得各个社交平台在enList中的位置，-1则表示不分享到该平台
-	 */
-	private void getIndex() {
-		weChatIndex = enList.indexOf(ShareList.WECHAT);
-		wechatMomentsIndex = enList.indexOf(ShareList.WECHATMOMENTS);
-		sinaWeiboIndex = enList.indexOf(ShareList.SINAWEIBO);
-		qQIndex = enList.indexOf(ShareList.QQ);
-		qZoneIndex = enList.indexOf(ShareList.QZONE);
-		tencentWeiboIndex = enList.indexOf(ShareList.TENCENTWEIBO);
-		renrenIndex = enList.indexOf(ShareList.RENREN);
-		shortMessageIndex = enList.indexOf(ShareList.SHORTMESSAGE);
-		emailIndex = enList.indexOf(ShareList.EMAIL);
-	}
+
 	/**
 	 * 消失和查看积分，了解积分按钮事件
 	 */
@@ -215,7 +154,6 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 	public void onClick(View v) {
 
 		if (v.getId() == res.getIdentifier("cancel_bt", "id", packName)) {
-			new PointToast(act).show("+8");
 			dismiss();
 		} else if (v.getId() == res.getIdentifier("share_popup_knowtv", "id", packName)) {
 			Intent knowIt = new Intent(act, ShareActivity.class);
@@ -229,155 +167,36 @@ public class SharePopupWindow extends PopupWindow implements OnClickListener, On
 		}
 
 	}
-
-	/**
-	 * 复制链接 API 11之前用android.text.ClipboardManager; API
-	 * 11之后用android.content.ClipboardManager
-	 * 
-	 */
-	@SuppressWarnings("unused")
-	private void copyLink() {
-		mHandler.post(new Runnable() {
-			@SuppressWarnings("deprecation")
-			@SuppressLint("NewApi")
-			public void run() {
-				if (android.os.Build.VERSION.SDK_INT >= 11) {
-					android.content.ClipboardManager clip = (android.content.ClipboardManager) act.getSystemService(Context.CLIPBOARD_SERVICE);
-					clip.setPrimaryClip(android.content.ClipData.newPlainText("link", message));
-					if (clip.hasPrimaryClip()) {
-						Toast.makeText(act, "复制成功", Toast.LENGTH_SHORT).show();
-					} else {
-						Toast.makeText(act, "复制失败，请手动复制", Toast.LENGTH_SHORT).show();
-					}
-				} else {
-					android.text.ClipboardManager clip = (android.text.ClipboardManager) act.getSystemService(Context.CLIPBOARD_SERVICE);
-					clip.setText(message);
-					if (clip.hasText()) {
-						Toast.makeText(act, "复制成功", Toast.LENGTH_SHORT).show();
-					} else {
-						Toast.makeText(act, "复制失败，请手动复制", Toast.LENGTH_SHORT).show();
-					}
-				}
-			}
-		});
-	}
 	/**
 	 * 分享按钮点击事件
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
-		//此处应该添加一个网络判断
-		// 如果传的是url而没有本地图片
-		if (shareData.getImagePath() == null && shareData.getImageUrl() != null) {
-			String url = shareData.getImageUrl();
-			String fileName = url.substring(url.lastIndexOf("/"));
-			shareData.setImagePath(Environment.getExternalStorageDirectory() + YoutuiConstants.FILE_SAVE_PATH + fileName);
+		//先判断网络连接
+		if(NetUtil.isNetworkConnected(act)){
+			// 如果传的是url而没有本地图片，先将网络图片存入sd卡，并将地址赋给shareData的ImagePath
+			if (shareData.getImagePath() == null && shareData.getImageUrl() != null) {
+				String url = shareData.getImageUrl();
+				String fileName = url.substring(url.lastIndexOf("/"));
+				shareData.setImagePath(Environment.getExternalStorageDirectory() + YoutuiConstants.FILE_SAVE_PATH + fileName);
+			}
+			if (adapterView == pagerOne_gridView) {
+				new YTShare().doShare(act, position, 0, point, shareData);
+				
+			} else if (adapterView == pagerTwo_gridView) {
+				new YTShare().doShare(act, position, 1, point, shareData);
+			}
+		}else{
+			Toast.makeText(act, "无网络连接，请查看您的网络情况", Toast.LENGTH_SHORT).show();
 		}
-		if (adapterView == pagerOne_gridView) {
-			doShare(position, 0);
-		} else if (adapterView == pagerTwo_gridView) {
-			doShare(position, 1);
-		}
+
 	}
 
-	/**
-	 * 判断平台所处的页面和在页面的位置设置点击分享事件
-	 * 
-	 * @param position
-	 * @param pageIndex
-	 */
-	private void doShare(int position, int pageIndex) {
-		// 新浪微博，
-		if (position == sinaWeiboIndex % 6 && sinaWeiboIndex / 6 == pageIndex) {
-			if (AppHelper.isSinaWeiboExisted(act)) {
-				Intent shareIt = new Intent(act, ShareActivity.class);
-				shareIt.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				shareIt.putExtra("shareData", shareData);
-				shareIt.putExtra("from", "sina");
-				shareIt.putExtra("pointArr", point.getPoint());
-				act.startActivityForResult(shareIt, sinaWeiboIndex);
-			} else {
-				Toast.makeText(act, "未安装新浪微博", Toast.LENGTH_SHORT).show();
-			}
-			// 微信
-		} else if (position == weChatIndex && weChatIndex / 6 == pageIndex) {
-			if (AppHelper.isWeixinExisted(act)) {
-				Intent wxIt = new Intent(act, WXEntryActivity.class);
-				wxIt.putExtra("wx", true);
-				wxIt.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				wxIt.putExtra("pointArr", point.getPoint());
-				wxIt.putExtra("fromshare", true);
-				wxIt.putExtra("shareData", shareData);
-				act.startActivityForResult(wxIt, weChatIndex);
-			} else {
-				Toast.makeText(act, "未安装微信", Toast.LENGTH_SHORT).show();
-			}
-			// QQ
-		} else if (position == qQIndex && qQIndex / 6 == pageIndex) {
-			if (AppHelper.isTencentQQExisted(act)) {
-				Intent qqIt = new Intent(act, ShareActivity.class);
-				qqIt.putExtra("shareData", shareData);
-				qqIt.putExtra("from", "QQ");
-				qqIt.putExtra("pointArr", point.getPoint());
-				act.startActivityForResult(qqIt, qQIndex);
-			} else {
-				Toast.makeText(act, "未安装QQ", Toast.LENGTH_SHORT).show();
-			}
 
-			// QQ空间
-		} else if (position == qZoneIndex && qZoneIndex / 6 == pageIndex) {
-			if (AppHelper.isTencentQQExisted(act)) {
-				Intent qzoneIt = new Intent(act, ShareActivity.class);
-				qzoneIt.putExtra("shareData", shareData);
-				qzoneIt.putExtra("from", "Qzone");
-				qzoneIt.putExtra("pointArr", point.getPoint());
-				act.startActivityForResult(qzoneIt, qZoneIndex);
-
-			} else {
-				Toast.makeText(act, "未安装QQ", Toast.LENGTH_SHORT).show();
-			}
-
-			// 微信朋友圈
-		} else if (position == wechatMomentsIndex && wechatMomentsIndex / 6 == pageIndex) {
-			if (AppHelper.isWeixinExisted(act)) {
-				Intent wxIt = new Intent(act, WXEntryActivity.class);
-				wxIt.putExtra("pyq", true);
-				wxIt.putExtra("fromshare", true);
-				wxIt.putExtra("shareData", shareData);
-				wxIt.putExtra("pointArr", point.getPoint());
-				act.startActivityForResult(wxIt, wechatMomentsIndex);
-			} else {
-				Toast.makeText(act, "未安装微信", Toast.LENGTH_SHORT).show();
-			}
-			// 腾讯微博
-		} else if (position == tencentWeiboIndex && tencentWeiboIndex / 6 == pageIndex) {
-			Intent qqWBIt = new Intent(act, ShareActivity.class);
-			qqWBIt.putExtra("shareData", shareData);
-			qqWBIt.putExtra("from", "QQWB");
-			qqWBIt.putExtra("pointArr", point.getPoint());
-			act.startActivityForResult(qqWBIt, tencentWeiboIndex);
-			// 人人网
-		} else if (position == renrenIndex % 6 && renrenIndex / 6 == pageIndex) {
-			if (AppHelper.isRenrenExisted(act)) {
-				Intent renrenIt = new Intent(act, ShareActivity.class);
-				renrenIt.putExtra("from", "renren");
-				renrenIt.putExtra("shareData", shareData);
-				renrenIt.putExtra("pointArr", point.getPoint());
-				act.startActivityForResult(renrenIt, renrenIndex);
-			} else {
-				Toast.makeText(act, "未安装人人网客户端", Toast.LENGTH_SHORT).show();
-			}
-			// 短信
-		} else if (position == shortMessageIndex % 6 && shortMessageIndex / 6 == pageIndex) {
-			new OtherShare(act).sendSMS(shareData.getText());
-			// 邮件
-		} else if (position == emailIndex % 6 && emailIndex / 6 == pageIndex) {
-			new OtherShare(act).sendMail(shareData.getText());
-		}
-	}
 	/**
 	 * 刷新显示积分
 	 */
+	@Override
 	public void refresh(int[] arr) {
 		//将传入的积分数组赋值给pointArr
 		for(int i=0;i<pointArr.length;i++){

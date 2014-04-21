@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+
 import org.apache.http.client.ClientProtocolException;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -24,7 +26,7 @@ public class DownloadImage {
 			public void run() {
 				try {
 					down_file(url, savePath, filename);
-					// 下载文件，参数：第一个URL，第二个存放路径
+					//Log.i("DownloadImage", "complete");
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
 				} catch (IOException e) {

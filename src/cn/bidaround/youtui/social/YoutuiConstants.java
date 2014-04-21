@@ -46,8 +46,9 @@ public class YoutuiConstants {
 	public static final int BLACK_STYLE = 0;
 	public static final int WHITE_STYLE = 1;
 	
-	//public static final String YT_URL = "http://youtui.mobi";
-	public static final String YT_URL = "http://192.168.2.106";
+	public static final String YT_URL = "http://youtui.mobi";
+	//public static final String YT_URL = "http://192.168.2.109";
+	//public static final String YT_URL = "http://192.168.2.106";
 	//友推支持的平台个数
 	public static final int SHARE_SIZE = 11;
 }

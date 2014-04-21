@@ -9,6 +9,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -30,6 +31,39 @@ public class Util {
 		for(int i=0;i<toArr.length;i++){
 			toArr[i] = fromArr[i];
 		}
+	}
+	/**
+	 * 复制链接
+	 * 复制链接 API 11之前用android.text.ClipboardManager; 
+	 * API 11之后用android.content.ClipboardManager
+	 * @param mHandler
+	 * @param act
+	 * @param message
+	 */
+	public void copyLink(Handler mHandler,final Context act,final String message) {
+		mHandler.post(new Runnable() {
+			@SuppressWarnings("deprecation")
+			@SuppressLint("NewApi")
+			public void run() {
+				if (android.os.Build.VERSION.SDK_INT >= 11) {
+					android.content.ClipboardManager clip = (android.content.ClipboardManager) act.getSystemService(Context.CLIPBOARD_SERVICE);
+					clip.setPrimaryClip(android.content.ClipData.newPlainText("link", message));
+					if (clip.hasPrimaryClip()) {
+						Toast.makeText(act, "复制成功", Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(act, "复制失败，请手动复制", Toast.LENGTH_SHORT).show();
+					}
+				} else {
+					android.text.ClipboardManager clip = (android.text.ClipboardManager) act.getSystemService(Context.CLIPBOARD_SERVICE);
+					clip.setText(message);
+					if (clip.hasText()) {
+						Toast.makeText(act, "复制成功", Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(act, "复制失败，请手动复制", Toast.LENGTH_SHORT).show();
+					}
+				}
+			}
+		});
 	}
 
 	/*

@@ -85,19 +85,19 @@ public class ShareGridAdapter extends BaseAdapter {
 
 		// 显示积分
 		if (ShareList.SINAWEIBO.equals(list.get(position))) {
-			showPoint(pointText, ChannelId.SINACHANNEL);
+			showPoint(pointText, ChannelId.SINAWEIBO);
 		} else if (ShareList.EMAIL.equals(list.get(position))) {
 			showPoint(pointText, ChannelId.EMAIL);
 		} else if (ShareList.QQ.equals(list.get(position))) {
 			showPoint(pointText, ChannelId.QQ);
 		} else if (ShareList.QZONE.equals(list.get(position))) {
-			showPoint(pointText, ChannelId.QQZONE);
+			showPoint(pointText, ChannelId.QZONE);
 		} else if (ShareList.RENREN.equals(list.get(position))) {
 			showPoint(pointText, ChannelId.RENN);
 		} else if (ShareList.SHORTMESSAGE.equals(list.get(position))) {
 			showPoint(pointText, ChannelId.MESSAGE);
 		} else if (ShareList.TENCENTWEIBO.equals(list.get(position))) {
-			showPoint(pointText, ChannelId.QQWBCHANNEL);
+			showPoint(pointText, ChannelId.TENCENTWEIBO);
 		} else if (ShareList.WECHAT.equals(list.get(position))) {
 			showPoint(pointText, ChannelId.WECHAT);
 		} else if (ShareList.WECHATMOMENTS.equals(list.get(position))) {
@@ -113,12 +113,17 @@ public class ShareGridAdapter extends BaseAdapter {
 	 * @param channelId
 	 */
 	private void showPoint(TextView pointText, int channelId) {
-		if (pointArr[channelId] >= 10) {
-			pointText.getLayoutParams().width = DensityUtil.dip2px(act, 40);
+		//黑色樣式下積分大於10時，要將積分TextView加寬才能顯示完全
+		if(showStyle==YouTuiViewType.BLACK_POPUP){
+			if (pointArr[channelId] >= 10) {
+				pointText.getLayoutParams().width = DensityUtil.dip2px(act, 40);
+			}
 		}
+		//積分爲0時不顯示
 		if (pointArr[channelId] == 0) {
-			pointText.setVisibility(View.GONE);
+			pointText.setVisibility(View.INVISIBLE);
 		} else {
+			pointText.setVisibility(View.VISIBLE);
 			pointText.setText("+" + pointArr[channelId]);
 		}
 

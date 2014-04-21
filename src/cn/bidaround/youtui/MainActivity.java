@@ -10,7 +10,7 @@ import android.widget.Button;
 import cn.bidaround.youtui.social.ShareData;
 
 public class MainActivity extends Activity implements OnClickListener {
-	private Button popupBt;
+	private Button popupBt,listBt;
 	private ShareData shareData = new ShareData();
 
 	@Override
@@ -33,6 +33,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 		popupBt = (Button) findViewById(R.id.popup_bt);
 		popupBt.setOnClickListener(this);
+		
+		listBt = (Button) findViewById(R.id.list_bt);
+		listBt.setOnClickListener(this);
 	}
 
 	@Override
@@ -42,15 +45,14 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 	
 	@Override
-	protected void onRestart() {
-		super.onRestart();
-	}
-	
-
-	@Override
 	public void onClick(View v) {
+//		if(shareData==null){
+//			Log.i("--MainActivity shareData--", "null");
+//		}
 		if(v.getId()==R.id.popup_bt){
 			YouTui.show(this, shareData,YouTuiViewType.BLACK_POPUP);
+		}else if(v.getId()==R.id.list_bt){
+			YouTui.show(this, shareData,YouTuiViewType.WHITE_LIST);
 		}
 	}
 

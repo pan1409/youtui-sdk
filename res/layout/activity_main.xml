@@ -8,12 +8,22 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <Button
-        android:id="@+id/popup_bt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="友推分享" />
+      <Button
+          android:id="@+id/list_bt"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentTop="true"
+          android:layout_centerHorizontal="true"
+          android:layout_marginTop="70dp"
+          android:text="友推分享-白色列表" />
 
-
+      <Button
+          android:id="@+id/popup_bt"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@+id/list_bt"
+          android:layout_alignParentTop="true"
+          android:layout_marginTop="18dp"
+          android:text="友推分享-黑色网格" />
 
 </RelativeLayout>
