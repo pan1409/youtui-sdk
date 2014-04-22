@@ -6,14 +6,15 @@ package cn.bidaround.youtui.ui;
  */
 
 import java.util.ArrayList;
+
 import android.app.Activity;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import cn.bidaround.youtui.YouTuiAcceptor;
 import cn.bidaround.youtui.YouTuiViewType;
 import cn.bidaround.youtui.point.ChannelId;
 import cn.bidaround.youtui.util.DensityUtil;
@@ -24,16 +25,12 @@ public class ShareGridAdapter extends BaseAdapter {
 	private ArrayList<String> list;
 	private int showStyle;
 	private int[] pointArr;
-	private Resources res;
-	private String packName;
 
 	public ShareGridAdapter(Activity act, ArrayList<String> list, int showStyle, int[] pointArr) {
 		this.act = act;
 		this.list = list;
 		this.showStyle = showStyle;
 		this.pointArr = pointArr;
-		res = act.getResources();
-		packName = act.getPackageName();
 	}
 
 	@Override
@@ -57,30 +54,30 @@ public class ShareGridAdapter extends BaseAdapter {
 		if (convertView == null) {
 			View view = null;
 			if(showStyle==YouTuiViewType.BLACK_POPUP){
-				view = LayoutInflater.from(act).inflate(res.getIdentifier("pagergrid_item", "layout", packName), null);			
+				view = LayoutInflater.from(act).inflate(YouTuiAcceptor.res.getIdentifier("pagergrid_item", "layout", YouTuiAcceptor.packName), null);			
 			}else if(showStyle==YouTuiViewType.WHITE_LIST){
-				view = LayoutInflater.from(act).inflate(res.getIdentifier("sharelist_item", "layout", packName), null);
+				view = LayoutInflater.from(act).inflate(YouTuiAcceptor.res.getIdentifier("sharelist_item", "layout", YouTuiAcceptor.packName), null);
 			}	
 			convertView = view;
 		}
 		
 		TextView pointText = null;
 		if(showStyle==YouTuiViewType.BLACK_POPUP){
-			ImageView imageView = (ImageView) convertView.findViewById(res.getIdentifier("logo_imageview", "id", packName));
-			TextView textView = (TextView) convertView.findViewById(res.getIdentifier("logo_textview", "id", packName));
+			ImageView imageView = (ImageView) convertView.findViewById(YouTuiAcceptor.res.getIdentifier("logo_imageview", "id", YouTuiAcceptor.packName));
+			TextView textView = (TextView) convertView.findViewById(YouTuiAcceptor.res.getIdentifier("logo_textview", "id", YouTuiAcceptor.packName));
 			// 设置社交平台logo 
 			imageView.setImageResource(ShareList.getLogo(list.get(position), act));
 			// 积分textview
 			textView.setText(ShareList.getTitle(list.get(position)));
-			pointText = (TextView) convertView.findViewById(res.getIdentifier("griditem_point_tv", "id", packName));
+			pointText = (TextView) convertView.findViewById(YouTuiAcceptor.res.getIdentifier("griditem_point_tv", "id", YouTuiAcceptor.packName));
 		}else if(showStyle==YouTuiViewType.WHITE_LIST){
-			ImageView imageView = (ImageView) convertView.findViewById(res.getIdentifier("sharelistitem_logo_image", "id", packName));
-			TextView textView = (TextView) convertView.findViewById(res.getIdentifier("sharelistitem_platform_text", "id", packName));
+			ImageView imageView = (ImageView) convertView.findViewById(YouTuiAcceptor.res.getIdentifier("sharelistitem_logo_image", "id", YouTuiAcceptor.packName));
+			TextView textView = (TextView) convertView.findViewById(YouTuiAcceptor.res.getIdentifier("sharelistitem_platform_text", "id", YouTuiAcceptor.packName));
 			// 设置社交平台logo
 			imageView.setImageResource(ShareList.getLogo(list.get(position), act));
 			// 积分textview
 			textView.setText(ShareList.getTitle(list.get(position)));
-			pointText = (TextView) convertView.findViewById(res.getIdentifier("sharelistitem_point_text", "id", packName));
+			pointText = (TextView) convertView.findViewById(YouTuiAcceptor.res.getIdentifier("sharelistitem_point_text", "id", YouTuiAcceptor.packName));
 		}
 
 		// 显示积分

@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.bidaround.youtui.R;
+import cn.bidaround.youtui.YouTuiAcceptor;
 import cn.bidaround.youtui.helper.Util;
 import cn.bidaround.youtui.net.NetUtil;
 import cn.bidaround.youtui.net.YTShare;
@@ -54,7 +55,7 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 	 */
 	@SuppressWarnings("deprecation")
 	public void show() {
-		View view = LayoutInflater.from(act).inflate(res.getIdentifier("share_popup", "layout", packName), null);
+		View view = LayoutInflater.from(act).inflate(YouTuiAcceptor.res.getIdentifier("share_popup", "layout", YouTuiAcceptor.packName), null);
 		initButton(view);
 		initViewPager(view);
 		// 设置popupwindow的属性
@@ -73,10 +74,10 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 	 */
 
 	private void initButton(View view) {
-		zeroIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_zero_iv", "id", packName));
-		oneIamge = (ImageView) view.findViewById(res.getIdentifier("sharepopup_one_iv", "id", packName));
-		TextView know = (TextView) view.findViewById(res.getIdentifier("share_popup_knowtv", "id", packName));
-		TextView check = (TextView) view.findViewById(res.getIdentifier("share_popup_checktv", "id", packName));
+		zeroIamge = (ImageView) view.findViewById(YouTuiAcceptor.res.getIdentifier("sharepopup_zero_iv", "id", YouTuiAcceptor.packName));
+		oneIamge = (ImageView) view.findViewById(YouTuiAcceptor.res.getIdentifier("sharepopup_one_iv", "id", YouTuiAcceptor.packName));
+		TextView know = (TextView) view.findViewById(YouTuiAcceptor.res.getIdentifier("share_popup_knowtv", "id", YouTuiAcceptor.packName));
+		TextView check = (TextView) view.findViewById(YouTuiAcceptor.res.getIdentifier("share_popup_checktv", "id", YouTuiAcceptor.packName));
 		// 在style变化时改变背景和文字颜色
 		if (showStyle == 1) {
 			view.setBackgroundColor(0xffffffff);
@@ -86,7 +87,7 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 		know.setOnClickListener(this);
 		check.setOnClickListener(this);
 		// 消失按钮点击事件
-		Button cancelBt = (Button) view.findViewById(res.getIdentifier("cancel_bt", "id", packName));
+		Button cancelBt = (Button) view.findViewById(YouTuiAcceptor.res.getIdentifier("cancel_bt", "id", YouTuiAcceptor.packName));
 		cancelBt.setOnClickListener(this);
 	}
 
@@ -94,7 +95,7 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 	 * 初始化viewpager
 	 */
 	private void initViewPager(View view) {
-		viewPager = (ShareViewPager) view.findViewById(res.getIdentifier("share_viewpager", "id", packName));
+		viewPager = (ShareViewPager) view.findViewById(YouTuiAcceptor.res.getIdentifier("share_viewpager", "id", YouTuiAcceptor.packName));
 		ArrayList<View> pagerList = new ArrayList<View>();
 		Util.addArr(point.getPoint(), pointArr);
 		enList = KeyInfo.enList;
@@ -102,8 +103,8 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 
 		// 如果分享的数量<=6，只放置一页
 		if (enList.size() <= 6) {
-			View pagerOne = LayoutInflater.from(act).inflate(res.getIdentifier("share_pager", "layout", packName), null);
-			pagerOne_gridView = (GridView) pagerOne.findViewById(res.getIdentifier("sharepager_grid", "id", packName));
+			View pagerOne = LayoutInflater.from(act).inflate(YouTuiAcceptor.res.getIdentifier("share_pager", "layout", YouTuiAcceptor.packName), null);
+			pagerOne_gridView = (GridView) pagerOne.findViewById(YouTuiAcceptor.res.getIdentifier("sharepager_grid", "id", YouTuiAcceptor.packName));
 			pagerOne_gridAdapter = new ShareGridAdapter(act, enList, showStyle, pointArr);
 			pagerOne_gridView.setAdapter(pagerOne_gridAdapter);
 			pagerOne_gridView.setOnItemClickListener(this);
@@ -115,8 +116,8 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 				pagerOneList.add(enList.get(i));
 			}
 			// 初始化第一页
-			View pagerOne = LayoutInflater.from(act).inflate(res.getIdentifier("share_pager", "layout", packName), null);
-			pagerOne_gridView = (GridView) pagerOne.findViewById(res.getIdentifier("sharepager_grid", "id", packName));
+			View pagerOne = LayoutInflater.from(act).inflate(YouTuiAcceptor.res.getIdentifier("share_pager", "layout", YouTuiAcceptor.packName), null);
+			pagerOne_gridView = (GridView) pagerOne.findViewById(YouTuiAcceptor.res.getIdentifier("sharepager_grid", "id", YouTuiAcceptor.packName));
 			pagerOne_gridAdapter = new ShareGridAdapter(act, pagerOneList, showStyle, pointArr);
 			pagerOne_gridView.setAdapter(pagerOne_gridAdapter);
 			pagerOne_gridView.setOnItemClickListener(this);
@@ -127,8 +128,8 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 				pagerTwoList.add(enList.get(i));
 			}
 			// 初始化第二页
-			View pagerTwo = LayoutInflater.from(act).inflate(res.getIdentifier("share_pager", "layout", packName), null);
-			pagerTwo_gridView = (GridView) pagerTwo.findViewById(res.getIdentifier("sharepager_grid", "id", packName));
+			View pagerTwo = LayoutInflater.from(act).inflate(YouTuiAcceptor.res.getIdentifier("share_pager", "layout", YouTuiAcceptor.packName), null);
+			pagerTwo_gridView = (GridView) pagerTwo.findViewById(YouTuiAcceptor.res.getIdentifier("sharepager_grid", "id", YouTuiAcceptor.packName));
 			pagerTwo_gridAdapter = new ShareGridAdapter(act, pagerTwoList, showStyle, pointArr);
 			pagerTwo_gridView.setAdapter(pagerTwo_gridAdapter);
 			pagerTwo_gridView.setOnItemClickListener(this);
@@ -153,14 +154,14 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 	@Override
 	public void onClick(View v) {
 
-		if (v.getId() == res.getIdentifier("cancel_bt", "id", packName)) {
+		if (v.getId() == YouTuiAcceptor.res.getIdentifier("cancel_bt", "id", YouTuiAcceptor.packName)) {
 			dismiss();
-		} else if (v.getId() == res.getIdentifier("share_popup_knowtv", "id", packName)) {
+		} else if (v.getId() == YouTuiAcceptor.res.getIdentifier("share_popup_knowtv", "id", YouTuiAcceptor.packName)) {
 			Intent knowIt = new Intent(act, ShareActivity.class);
 			knowIt.putExtra("from", "know");
 			act.startActivity(knowIt);
 
-		} else if (v.getId() == res.getIdentifier("share_popup_checktv", "id", packName)) {
+		} else if (v.getId() == YouTuiAcceptor.res.getIdentifier("share_popup_checktv", "id", YouTuiAcceptor.packName)) {
 			Intent checkIt = new Intent(act, ShareActivity.class);
 			checkIt.putExtra("from", "check");
 			act.startActivity(checkIt);
@@ -231,12 +232,12 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 		// viewpager下标
 		switch (index) {
 		case 0:
-			zeroIamge.setImageDrawable(act.getResources().getDrawable(res.getIdentifier("guide_dot_white", "drawable", packName)));
-			oneIamge.setImageDrawable(act.getResources().getDrawable(res.getIdentifier("guide_dot_black", "drawable", packName)));
+			zeroIamge.setImageDrawable(act.getResources().getDrawable(YouTuiAcceptor.res.getIdentifier("guide_dot_white", "drawable", YouTuiAcceptor.packName)));
+			oneIamge.setImageDrawable(act.getResources().getDrawable(YouTuiAcceptor.res.getIdentifier("guide_dot_black", "drawable", YouTuiAcceptor.packName)));
 			break;
 		case 1:
-			zeroIamge.setImageDrawable(act.getResources().getDrawable(res.getIdentifier("guide_dot_black", "drawable", packName)));
-			oneIamge.setImageDrawable(act.getResources().getDrawable(res.getIdentifier("guide_dot_white", "drawable", packName)));
+			zeroIamge.setImageDrawable(act.getResources().getDrawable(YouTuiAcceptor.res.getIdentifier("guide_dot_black", "drawable", YouTuiAcceptor.packName)));
+			oneIamge.setImageDrawable(act.getResources().getDrawable(YouTuiAcceptor.res.getIdentifier("guide_dot_white", "drawable", YouTuiAcceptor.packName)));
 			break;
 
 		default:

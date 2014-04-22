@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -13,6 +15,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import cn.bidaround.youtui.YouTuiAcceptor;
 import cn.bidaround.youtui.component.MyProgressDialog;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.net.NetUtil;
@@ -41,6 +44,7 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 	private IWeiboShareAPI iWeiboShareAPI;
 	private int[] pointArr;
 	private WebView webView;
+	private View pointweb_back_linelay; 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -92,7 +96,12 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 	 */
 	@SuppressLint("SetJavaScriptEnabled")
 	private void initPointView() {
-		webView = new WebView(this);
+		View view = LayoutInflater.from(this).inflate(YouTuiAcceptor.res.getIdentifier("point_webview", "layout", YouTuiAcceptor.packName), null);
+		//返回键R.id.pointweb_back_linelay
+		pointweb_back_linelay = view.findViewById(YouTuiAcceptor.res.getIdentifier("pointweb_back_linelay", "id", YouTuiAcceptor.packName));
+		pointweb_back_linelay.setOnClickListener(this);
+		//webview
+		webView = (WebView) view.findViewById(YouTuiAcceptor.res.getIdentifier("pointweb_webview", "id", YouTuiAcceptor.packName));
 		webView.setWebViewClient(new WebViewClient());
 		// WebSettings 几乎浏览器的所有设置都在该类中进行
 		WebSettings webSettings = webView.getSettings();
@@ -107,14 +116,38 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 		// 重新弹出框
 		TelephonyManager teleMan = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 		webView.setWebChromeClient(new MyWebChromeClient());
-		//
+		webView.setOnKeyListener(new WebViewOnKayListener());
+		//查看和了解积分
 		if ("check".equals(from)) {
 			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/mypoints" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + teleMan.getSimSerialNumber() + "&imei=" + teleMan.getDeviceId());
 		} else if ("know".equals(from)) {
 			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/actIntroduce" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + teleMan.getSimSerialNumber() + "&imei=" + teleMan.getDeviceId());
 		}
 
-		setContentView(webView);
+		setContentView(view);
+	}
+	
+	class WebViewOnKayListener implements View.OnKeyListener{
+
+		@Override
+		public boolean onKey(View v, int keyCode, KeyEvent event) {
+			if(event.getAction()==KeyEvent.ACTION_DOWN){
+				if(keyCode==KeyEvent.KEYCODE_BACK){
+					//Log.i("--webview--", "KEYCODE_BACK");
+					if(webView.canGoBack()){
+						//Log.i("--webview--", "cangoback");
+						webView.goBack();
+						return true;
+					}else{
+						//Log.i("--webview--", "cannotgoback");
+						ShareActivity.this.finish();
+						return true;
+					}	
+				}
+			}
+			return false;
+		}
+		
 	}
 
 	/**
@@ -189,15 +222,18 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 		finish();
 
 	}
+	
+	
+	
 	/**
 	 * 分享和返回监听
 	 */
 	@Override
 	public void onClick(View v) {
 		// 返回
-		if (v.getId() == res.getIdentifier("shareedit_back_linelay", "id", packName)) {
+		if (v.getId() == YouTuiAcceptor.res.getIdentifier("shareedit_back_linelay", "id", YouTuiAcceptor.packName)) {
 			this.finish();
-		} else if (v.getId() == res.getIdentifier("shareedit_share_bt", "id", packName)) {
+		} else if (v.getId() == YouTuiAcceptor.res.getIdentifier("shareedit_share_bt", "id", YouTuiAcceptor.packName)) {
 			// 分享,先判断网络连接是否可用
 			if (NetUtil.isNetworkConnected(this)) {
 				if ("renren".equals(from)) {
@@ -221,6 +257,8 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 			} else {
 				Toast.makeText(this, "无网络连接，请查看您的网络情况", Toast.LENGTH_SHORT).show();
 			}
+		}else if(v.getId()==YouTuiAcceptor.res.getIdentifier("pointweb_back_linelay", "id", YouTuiAcceptor.packName)){
+			finish();
 		}
 	}
 

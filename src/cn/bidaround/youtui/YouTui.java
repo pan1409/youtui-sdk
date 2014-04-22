@@ -1,9 +1,7 @@
 package cn.bidaround.youtui;
 
 import java.io.IOException;
-
 import org.xmlpull.v1.XmlPullParserException;
-
 import android.app.Activity;
 import cn.bidaround.youtui.helper.DownloadImage;
 import cn.bidaround.youtui.point.YtPoint;
@@ -27,9 +25,7 @@ public class YouTui {
 		} catch (XmlPullParserException e) {
 			e.printStackTrace();
 		}
-
-		YtPoint.getInstance(act);
-
+		YouTuiAcceptor.init(act);
 	}
 
 	/**

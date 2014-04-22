@@ -12,40 +12,35 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+
+import cn.bidaround.youtui.point.YtPoint;
+import cn.bidaround.youtui.social.KeyInfo;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
-
+/**
+ * 读取res,packageName,cardNum,imei等信息以便于后续使用
+ * @author Administrator
+ *
+ */
 public class YouTuiAcceptor {
-
-	/* 应用appkey */
-	private static String appId;
 	/* 邀请码 */
 	private static String inviteNum;
 	/* 应用的名称 */
 	private static String appName;
 	/* 设备信息 */
-	private  static String imei,sdk,model,sys;
+	public static String imei,sdk,model,sys;
+	/*应用资源*/
+	public static Resources res;
+	/*应用包名*/
+	public static String packName;
+	/*SIM卡号*/
+	public static String cardNum;
 	/* 用于判断是否已找到所要的apk */
 	private static boolean flag;
-	
-
-	/* 获得应用的appId */
-	private static void initAppId(Context context) {
-		ApplicationInfo info;
-		try {
-			PackageManager packageManager = context.getPackageManager(); 
-			info = packageManager.getApplicationInfo(context.getPackageName(),
-					PackageManager.GET_META_DATA);
-			int msg = info.metaData.getInt("YOUTUI_APPKEY");
-			msg = msg + 0;
-			appId = String.valueOf(msg);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	/* 获取友推渠道号(格式：appName_yt)，以获得appName */
 	private static void getYoutuiChannel(Context context) {
@@ -64,8 +59,7 @@ public class YouTuiAcceptor {
 	/* 获取设备信息 */
 	@SuppressWarnings("deprecation")
 	private  static void readPhoneInfo(Context context){
-		@SuppressWarnings("static-access")
-		TelephonyManager tm = (TelephonyManager) context.getSystemService(context.TELEPHONY_SERVICE);
+		TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 		if(tm != null){
 			imei = tm.getDeviceId(); /* 获取imei号 */
 		}
@@ -73,12 +67,30 @@ public class YouTuiAcceptor {
 		model = android.os.Build.MODEL;   // 手机型号
 		sys = android.os.Build.VERSION.RELEASE;  // android系统版本号
 	}
+	/**
+	 * 获取应用资源
+	 * @param context
+	 */
+	private static void getRes(Context context){
+		res = context.getResources();
+	}
+	
+	private static void getPackName(Context context){
+		packName = context.getPackageName();
+	}
+	
+	private static void getCardNum(Context context){
+		TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+		if(tm!=null){
+			cardNum = tm.getSimSerialNumber();
+		}
+	}
 
 	/* 把相关信息（设备信息、appId、邀请码等）发送到服务器 */
 	public static void doPost() {
 		String actionUrl = "http://youtui.mobi/activity/checkCode";
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
-		params.add(new BasicNameValuePair("appId", appId));
+		params.add(new BasicNameValuePair("appId", KeyInfo.YouTui_AppKey));
 		params.add(new BasicNameValuePair("inviteCode", inviteNum));
 		params.add(new BasicNameValuePair("imei", imei));
 		params.add(new BasicNameValuePair("sdkVersion", sdk));
@@ -97,7 +109,7 @@ public class YouTuiAcceptor {
 	public static void toPost() {
 		String actionUrl = "http://youtui.mobi/activity/closeApp";
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
-		params.add(new BasicNameValuePair("appId", appId));		
+		params.add(new BasicNameValuePair("appId", KeyInfo.YouTui_AppKey));		
 		params.add(new BasicNameValuePair("imei", imei));
 		try {
 			post(actionUrl, params);
@@ -182,8 +194,12 @@ public class YouTuiAcceptor {
 		/* 新开一个线程 */
 		new Thread() {
 			 public void run() {
-				 /* 获取应用的appId */
-				 initAppId(context);
+				 /*获得应用包名*/
+				 getPackName(context);
+				 /*获得资源*/
+				 getRes(context);
+				 /* 获取SIM卡号 */
+				 getCardNum(context);
 				 /* 获取应用的渠道号 */
 				 getYoutuiChannel(context);
 				 /* 获取邀请码 */
@@ -192,6 +208,8 @@ public class YouTuiAcceptor {
 				 readPhoneInfo(context);
 				 /* 发送到服务器 */
 				 doPost();
+				 //初始化友推积分
+				 YtPoint.getInstance(context);
 			 }
 		}.start();
 	}
@@ -201,8 +219,6 @@ public class YouTuiAcceptor {
 	 * @param context
 	 */
 	public static void close(final Context context) {
-		/* 获取应用的appId */
-		 initAppId(context);
 		 /* 获取手机信息 */
 		 readPhoneInfo(context);
 		 /* 发送到服务器 */
