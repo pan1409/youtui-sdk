@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -13,14 +14,14 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import cn.bidaround.youtui.point.YtPoint;
-import cn.bidaround.youtui.social.KeyInfo;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
+import cn.bidaround.youtui.point.YtPoint;
+import cn.bidaround.youtui.social.KeyInfo;
 /**
  * 读取res,packageName,cardNum,imei等信息以便于后续使用
  * @author Administrator
@@ -186,6 +187,8 @@ public class YouTuiAcceptor {
 		}
 	}
 	
+
+	
 	/**
 	 * 此方法用于邀请码等的自动上传，必须放在用户应用的初始化函数里
 	 * @param context
@@ -206,6 +209,8 @@ public class YouTuiAcceptor {
 				 getInviteNum();
 				 /* 获取手机信息 */
 				 readPhoneInfo(context);
+				 /**/
+				 YtPoint.getAppInfo();
 				 /* 发送到服务器 */
 				 doPost();
 				 //初始化友推积分

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,6 +64,7 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 				// 如果已经授权直接分享
 				new Thread() {
 					public void run() {
+						Log.i("--shareactivity--", "isSessionValid");
 						sinaShare = new SinaShare(ShareActivity.this, shareData);
 						sinaShare.shareToSina();
 					};
@@ -133,13 +135,10 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 		public boolean onKey(View v, int keyCode, KeyEvent event) {
 			if(event.getAction()==KeyEvent.ACTION_DOWN){
 				if(keyCode==KeyEvent.KEYCODE_BACK){
-					//Log.i("--webview--", "KEYCODE_BACK");
 					if(webView.canGoBack()){
-						//Log.i("--webview--", "cangoback");
 						webView.goBack();
 						return true;
 					}else{
-						//Log.i("--webview--", "cannotgoback");
 						ShareActivity.this.finish();
 						return true;
 					}	

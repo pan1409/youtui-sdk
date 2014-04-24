@@ -36,7 +36,6 @@ public class YouTui {
 			new SharePopupWindow(act, shareData, style, YtPoint.getInstance(act)).show();
 		} else if (style == YouTuiViewType.WHITE_LIST) {
 			new ShareListPopup(act, shareData, style, YtPoint.getInstance(act)).show();
-
 		}
 	}
 
@@ -60,5 +59,4 @@ public class YouTui {
 			e.printStackTrace();
 		}
 	}
-
 }

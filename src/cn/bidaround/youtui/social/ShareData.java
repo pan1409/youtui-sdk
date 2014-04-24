@@ -12,10 +12,11 @@ import java.io.Serializable;
 public class ShareData implements Serializable{
 
 	private static final long serialVersionUID = 1L;
+	public boolean isAppShare = true ;
 	
-	private String text = "联合协调中心总协调人休斯敦当天宣布，决定暂停澳大利亚海军“海洋之盾”号补给舰使用拖曳声波定位仪的搜寻作业，转而使用“蓝鳍金枪鱼-21”自主式水下航行器。“我们已经6天没有任何发现，所以我猜是时候进行水下作业了，”休斯敦说。http://news.163.com/14/0415/02/9PRE4ETA0001121M.html";
+	private String text = "";
 	private String imagePath;
-	private String description = "分享描述";
+	private String description = "描述";
 	private String title = "分享";
 	private String imageUrl;
 	private String target_url ;
