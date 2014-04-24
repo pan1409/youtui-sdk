@@ -21,6 +21,10 @@ public class ShareData implements Serializable{
 	private String imageUrl;
 	private String target_url ;
 	
+	public void setIsAppShare(boolean isAppShare){
+		this.isAppShare = isAppShare;
+	}
+	
 	public String getTarget_url() {
 		return target_url;
 	}

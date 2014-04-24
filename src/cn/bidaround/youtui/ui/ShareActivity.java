@@ -17,6 +17,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 import cn.bidaround.youtui.YouTuiAcceptor;
+
 import cn.bidaround.youtui.component.MyProgressDialog;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.net.NetUtil;
@@ -57,14 +58,15 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 		iWeiboShareAPI = WeiboShareSDK.createWeiboAPI(this, KeyInfo.SinaWeibo_AppKey);
 		// 判断分享的媒体
 		from = getIntent().getExtras().getString("from");
+		
 		if ("sina".equals(from)) {
-			MyProgressDialog.loadingBar(this, "分享中...");
 			initView("新浪微博");
 			if (AccessTokenKeeper.readAccessToken(this).isSessionValid()) {
 				// 如果已经授权直接分享
 				new Thread() {
 					public void run() {
-						Log.i("--shareactivity--", "isSessionValid");
+						//Log.i("--shareactivity--", "isSessionValid");
+						
 						sinaShare = new SinaShare(ShareActivity.this, shareData);
 						sinaShare.shareToSina();
 					};
@@ -128,7 +130,7 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 
 		setContentView(view);
 	}
-	
+		
 	class WebViewOnKayListener implements View.OnKeyListener{
 
 		@Override
@@ -171,7 +173,6 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 	 */
 	@Override
 	protected void onNewIntent(Intent intent) {
-		MyProgressDialog.dismiss();
 		//Log.i("onNewIntent", "onNewIntent");
 		setIntent(intent);
 		if ("sina".equals(from)) {
@@ -179,9 +180,7 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 		}
 		super.onNewIntent(intent);
 	}
-
-
-
+	
 	/**
 	 * 新浪微博授权的回调
 	 */
@@ -211,7 +210,12 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 			break;
 
 		case WBConstants.ErrorCode.ERR_FAIL:
-			Toast.makeText(this, "分享失败", Toast.LENGTH_SHORT).show();
+			Log.i("--shareactivity--", baseResp.errMsg);
+			if("auth faild!!!!".equals(baseResp.errMsg)){
+				Toast.makeText(this, "新浪微博授权失败，请重新获取授权", Toast.LENGTH_SHORT).show();
+			}else{
+				Toast.makeText(this, "分享失败", Toast.LENGTH_SHORT).show();
+			}				
 			break;
 
 		default:
@@ -258,6 +262,8 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 			}
 		}else if(v.getId()==YouTuiAcceptor.res.getIdentifier("pointweb_back_linelay", "id", YouTuiAcceptor.packName)){
 			finish();
+		}else if(v.getId()==YouTuiAcceptor.res.getIdentifier("shareedit_attention_bt", "id", YouTuiAcceptor.packName)){
+			Toast.makeText(this, "关注列表", Toast.LENGTH_SHORT).show();
 		}
 	}
 
