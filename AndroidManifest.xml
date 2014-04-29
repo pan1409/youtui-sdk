@@ -102,9 +102,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="cn.bidaround.youtui.ui.ShareAuthActivity" >
-
+        <activity android:name="cn.bidaround.youtui.login.AuthActivity" >
         </activity>
+        <activity android:name="cn.bidaround.youtui.social.TencentWbAuth"/>"
+        
     </application>
 
 </manifest>

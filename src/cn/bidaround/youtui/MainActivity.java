@@ -2,15 +2,19 @@ package cn.bidaround.youtui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+
+import cn.bidaround.youtui.login.AuthLogin;
 import cn.bidaround.youtui.social.ShareData;
 
 public class MainActivity extends Activity implements OnClickListener {
 	private Button popupBt, listBt;
+	private View main_sina_imageview, main_qq_imageview, main_tencentwb_imageview;
 	private ShareData shareData = new ShareData();
 
 	@Override
@@ -37,6 +41,13 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		listBt = (Button) findViewById(R.id.list_bt);
 		listBt.setOnClickListener(this);
+
+		main_sina_imageview = findViewById(R.id.main_sina_imageview);
+		main_sina_imageview.setOnClickListener(this);
+		main_qq_imageview = findViewById(R.id.main_qq_imageview);
+		main_qq_imageview.setOnClickListener(this);
+		main_tencentwb_imageview = findViewById(R.id.main_tencentwb_imageview);
+		main_tencentwb_imageview.setOnClickListener(this);
 	}
 
 	@Override
@@ -54,6 +65,32 @@ public class MainActivity extends Activity implements OnClickListener {
 			YouTui.show(this, shareData, YouTuiViewType.BLACK_POPUP);
 		} else if (v.getId() == R.id.list_bt) {
 			YouTui.show(this, shareData, YouTuiViewType.WHITE_LIST);
+		} else if (v.getId() == R.id.main_sina_imageview) {
+			AuthLogin sinaLogin = new AuthLogin() {
+				@Override
+				public void onAuthComplete() {
+					Log.i("--MainActivity--", "onAuthComplete");
+				};
+			};
+			sinaLogin.sinaAuth(this);
+		} else if (v.getId() == R.id.main_qq_imageview) {
+			AuthLogin qqLogin = new AuthLogin() {
+				@Override
+				public void onAuthComplete() {
+					Log.i("--MainActivity qq onAuthComplete--", "onAuthComplete");
+				}
+			};
+			qqLogin.qqAuth(this);
+
+		} else if (v.getId() == R.id.main_tencentwb_imageview) {
+			AuthLogin tencentWbLogin = new AuthLogin() {
+				@Override
+				public void onAuthComplete() {
+					Log.i("--MainActivity--", "onAuthComplete");
+				};
+
+			};
+			tencentWbLogin.tencentWbAuth(this);
 		}
 	}
 

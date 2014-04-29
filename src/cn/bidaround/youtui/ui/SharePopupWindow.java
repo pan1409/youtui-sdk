@@ -42,12 +42,11 @@ public class SharePopupWindow extends YTPopupWindow implements OnClickListener, 
 	private int[] pointArr = new int[YoutuiConstants.SHARE_SIZE];
 
 	public SharePopupWindow(Activity act, ShareData shareData, int showStyle, YtPoint point) {
-		super(act);
+		super(act,shareData);
 		this.shareData = shareData;
 		this.showStyle = showStyle;
 		this.point = point;
 		instance = this;
-		initData();
 	}
 
 	/**

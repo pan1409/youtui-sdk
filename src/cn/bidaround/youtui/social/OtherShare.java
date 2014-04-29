@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 /**
  * author:gaopan
+ * 该类实现邮件和短信分享
  */
 public class OtherShare {
 	private Activity act;

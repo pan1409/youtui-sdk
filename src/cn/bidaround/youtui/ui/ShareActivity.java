@@ -1,11 +1,8 @@
 package cn.bidaround.youtui.ui;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +14,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 import cn.bidaround.youtui.YouTuiAcceptor;
-
 import cn.bidaround.youtui.component.MyProgressDialog;
 import cn.bidaround.youtui.helper.AccessTokenKeeper;
 import cn.bidaround.youtui.net.NetUtil;
@@ -28,6 +24,7 @@ import cn.bidaround.youtui.social.QQOpenShare;
 import cn.bidaround.youtui.social.RennShare;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.SinaShare;
+import cn.bidaround.youtui.social.TencentWbShare;
 import cn.bidaround.youtui.social.YoutuiConstants;
 
 import com.sina.weibo.sdk.api.share.BaseResponse;
@@ -67,13 +64,13 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 					public void run() {
 						//Log.i("--shareactivity--", "isSessionValid");
 						
-						sinaShare = new SinaShare(ShareActivity.this, shareData);
-						sinaShare.shareToSina();
+						sinaShare = new SinaShare(ShareActivity.this);
+						sinaShare.shareToSina(shareData);
 					};
 				}.start();
 			} else {
 				// 如果没有授权，先授权
-				sinaShare = new SinaShare(this, shareData);
+				sinaShare = new SinaShare(this);
 				sinaShare.sinaAuth();
 			}
 
@@ -118,14 +115,13 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 		webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 		webSettings.setDatabaseEnabled(true);
 		// 重新弹出框
-		TelephonyManager teleMan = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 		webView.setWebChromeClient(new MyWebChromeClient());
 		webView.setOnKeyListener(new WebViewOnKayListener());
 		//查看和了解积分
 		if ("check".equals(from)) {
-			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/mypoints" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + teleMan.getSimSerialNumber() + "&imei=" + teleMan.getDeviceId());
+			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/mypoints" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + YouTuiAcceptor.cardNum + "&imei=" + YouTuiAcceptor.imei);
 		} else if ("know".equals(from)) {
-			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/actIntroduce" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + teleMan.getSimSerialNumber() + "&imei=" + teleMan.getDeviceId());
+			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/actIntroduce" + "?appId=" + KeyInfo.YouTui_AppKey + "&cardNum=" + YouTuiAcceptor.cardNum + "&imei=" + YouTuiAcceptor.imei);
 		}
 
 		setContentView(view);
@@ -210,7 +206,7 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 			break;
 
 		case WBConstants.ErrorCode.ERR_FAIL:
-			Log.i("--shareactivity--", baseResp.errMsg);
+			//Log.i("--shareactivity--", baseResp.errMsg);
 			if("auth faild!!!!".equals(baseResp.errMsg)){
 				Toast.makeText(this, "新浪微博授权失败，请重新获取授权", Toast.LENGTH_SHORT).show();
 			}else{
@@ -244,7 +240,8 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 					new RennShare(this, pointArr).shareToRenn();
 				} else if ("QQWB".equals(from)) {
 					MyProgressDialog.loadingBar(this, "分享中...");
-					new QQOpenShare(ShareActivity.this, pointArr, "QQWB").shareToQQWB();
+					//new QQOpenShare(ShareActivity.this, pointArr, "QQWB").shareToQQWB();
+					new TencentWbShare(this).shareToTencentWb();
 				} else if ("QQ".equals(from)) {
 					new QQOpenShare(this, pointArr, "QQ").shareToQQ();
 				} else if ("Qzone".equals(from)) {
@@ -252,8 +249,8 @@ public class ShareActivity extends YTShareActivity implements IWeiboHandler.Resp
 				} else if ("sina".equals(from)) {
 					new Thread() {
 						public void run() {
-							sinaShare = new SinaShare(ShareActivity.this, shareData);
-							sinaShare.shareToSina();
+							sinaShare = new SinaShare(ShareActivity.this);
+							sinaShare.shareToSina(shareData);
 						};
 					}.start();
 				}

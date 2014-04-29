@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -13,7 +12,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -23,9 +21,8 @@ import android.telephony.TelephonyManager;
 import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
 /**
- * 读取res,packageName,cardNum,imei等信息以便于后续使用
  * @author Administrator
- *
+ * 读取res,packageName,cardNum,imei等信息以便于后续使用
  */
 public class YouTuiAcceptor {
 	/* 邀请码 */
@@ -72,11 +69,11 @@ public class YouTuiAcceptor {
 	 * 获取应用资源
 	 * @param context
 	 */
-	private static void getRes(Context context){
+	private static void setRes(Context context){
 		res = context.getResources();
 	}
 	
-	private static void getPackName(Context context){
+	private static void setPackName(Context context){
 		packName = context.getPackageName();
 	}
 	
@@ -198,9 +195,9 @@ public class YouTuiAcceptor {
 		new Thread() {
 			 public void run() {
 				 /*获得应用包名*/
-				 getPackName(context);
+				 setPackName(context);
 				 /*获得资源*/
-				 getRes(context);
+				 setRes(context);
 				 /* 获取SIM卡号 */
 				 getCardNum(context);
 				 /* 获取应用的渠道号 */
@@ -214,7 +211,7 @@ public class YouTuiAcceptor {
 				 /* 发送到服务器 */
 				 doPost();
 				 //初始化友推积分
-				 YtPoint.getInstance(context);
+				// YtPoint.getInstance(context);
 			 }
 		}.start();
 	}
