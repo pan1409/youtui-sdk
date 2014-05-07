@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-
+/**
+ * @author gaopan
+ * @since 14/5/4
+ * viewpager适配,用于ViewPagerPopup
+ */
 public class SharePagerAdapter extends PagerAdapter {
 	private ArrayList<View> list;
 

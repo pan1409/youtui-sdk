@@ -1,28 +1,16 @@
-/*
- * Copyright (C) 2010-2013 The SINA WEIBO Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package cn.bidaround.youtui.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
 /**
- * 该类定义了微博授权时所需要的参数。
+ * @author gaopan
+ * @since 14/3/25
+ * 该类定义了AccessToken相关的操作
  */
 public class AccessTokenKeeper {
     private static final String PREFERENCES_NAME = "com_weibo_sdk_android";
@@ -55,6 +43,9 @@ public class AccessTokenKeeper {
     	SharedPreferences sp = context.getSharedPreferences("tencent_open_access", 0);
 		return sp.getString(KEY_OPENID, null);
     }
+    
+    
+    
     
     /**
      * 保存 Token 对象到 SharedPreferences。
@@ -110,6 +101,25 @@ public class AccessTokenKeeper {
         editor.clear();
         editor.commit();
     }
+    /**
+     * 判断腾讯微博授权是否过期
+     */
+    public static boolean isTencentWbAuthExpired(Context context){
+		boolean expired = true;
+		SharedPreferences preference = context.getSharedPreferences("ANDROID_SDK", 0);
+		String authorizeTimeStr = preference.getString("AUTHORIZETIME", null);
+		String expiresTime = preference.getString( "EXPIRES_IN",null);
+		long currentTime = System.currentTimeMillis() / 1000;
+		//Toast.makeText(context, currentTime+"", Toast.LENGTH_LONG).show();
+		//System.out.println( currentTime+"");
+		if (expiresTime != null&&expiresTime!="" && authorizeTimeStr != null&&authorizeTimeStr!="") {
+			//Log.i("--AccessTokenKeeper--", "has ANDROID_SDK.xml");
+			if ((Long.valueOf(authorizeTimeStr) + Long.valueOf(expiresTime)) > currentTime) {
+				expired = false;
+			}
+		}
+		return expired;
+    } 
     
     
 }

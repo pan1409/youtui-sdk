@@ -7,8 +7,8 @@ import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
-import cn.bidaround.youtui.ui.ShareListPopup;
-import cn.bidaround.youtui.ui.SharePopupWindow;
+import cn.bidaround.youtui.ui.ListPopup;
+import cn.bidaround.youtui.ui.ViewPagerPopup;
 /**
  * @author Administrator
  *	该类进行sdk的初始化
@@ -34,9 +34,9 @@ public class YouTui {
 	 */
 	public static void show(Activity act, ShareData shareData, int style) {
 		if (style == YouTuiViewType.BLACK_POPUP) {
-			new SharePopupWindow(act, shareData, style, YtPoint.getInstance(act)).show();
+			new ViewPagerPopup(act, shareData, style, YtPoint.getInstance(act)).show();
 		} else if (style == YouTuiViewType.WHITE_LIST) {
-			new ShareListPopup(act, shareData, style, YtPoint.getInstance(act)).show();
+			new ListPopup(act, shareData, style, YtPoint.getInstance(act)).show();
 		}
 	}
 	/**

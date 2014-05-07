@@ -1,12 +1,16 @@
 package cn.bidaround.youtui.social;
 
 /**
- * Description: created by qyj on January 7, 2014
+ * @author gaopan
+ * @since 14/3/25
+ * 友推sdk所需要的部分常量
  */
 public class YoutuiConstants {
 
 	// 文件保存路径
 	public static final String FILE_SAVE_PATH = "/youtui/";
+	
+	public static final String YOUTUI_LINK_URL = "http://youtui.mobi/link/";
 
 	public static final String SINA_WEIBO_SCOPE = "email,direct_messages_read,direct_messages_write,"
 			+ "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
@@ -46,9 +50,9 @@ public class YoutuiConstants {
 	public static final int BLACK_STYLE = 0;
 	public static final int WHITE_STYLE = 1;
 	
-	public static final String YT_URL = "http://youtui.mobi";
+	//public static final String YT_URL = "http://youtui.mobi";
 	//public static final String YT_URL = "http://192.168.2.109";
-	//public static final String YT_URL = "http://192.168.2.106";
+	public static final String YT_URL = "http://192.168.2.106";
 	//友推支持的平台个数
 	public static final int SHARE_SIZE = 11;
 }

@@ -11,16 +11,18 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Toast;
 import cn.bidaround.youtui.YouTuiAcceptor;
-import cn.bidaround.youtui.component.MyProgressDialog;
+import cn.bidaround.youtui.helper.Util;
+import cn.bidaround.youtui.net.NetUtil;
 import cn.bidaround.youtui.point.ChannelId;
 import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
 import cn.bidaround.youtui.social.ShareData;
-import cn.bidaround.youtui.ui.YTShareActivity;
+import cn.bidaround.youtui.social.YoutuiConstants;
+import cn.bidaround.youtui.ui.YTBaseShareActivity;
 
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
@@ -31,19 +33,23 @@ import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
-
-public class WXEntryActivity extends YTShareActivity implements IWXAPIEventHandler, OnClickListener {
+/**
+ * @author gaopan
+ * @since 14/5/4
+ * 微信分享activity
+ */
+public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventHandler, OnClickListener {
 	private IWXAPI mIWXAPI;
 	private Bitmap bitmap;
 	private Bitmap bmpThum;
 	private boolean isPyq,isAppShare;
 	private int[] pointArr = new int[11];
-
+	private String uniqueCode;
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			if (msg.what == 0) {
-				MyProgressDialog.dismiss();
+				Util.dismissDialog();
 				return;
 			}
 			super.handleMessage(msg);
@@ -55,11 +61,9 @@ public class WXEntryActivity extends YTShareActivity implements IWXAPIEventHandl
 		requestWindowFeature(Window.FEATURE_NO_TITLE);	
 		super.onCreate(savedInstanceState);
 		shareData = (ShareData) getIntent().getExtras().getSerializable("shareData");
-		
 		initView("微信");
 		// 判断是否为朋友圈
 		isPyq = getIntent().getExtras().getBoolean("pyq");
-		
 //		for (int i : pointArr) {
 //			Log.i("------", i+"");
 //		}		
@@ -77,7 +81,7 @@ public class WXEntryActivity extends YTShareActivity implements IWXAPIEventHandl
 		}
 		mIWXAPI.handleIntent(getIntent(), WXEntryActivity.this);
 
-		MyProgressDialog.loadingBar(this, "加载中...");
+		Util.showProgressDialog(this,"加载中...");
 		shareToWx();
 	}
 
@@ -87,6 +91,7 @@ public class WXEntryActivity extends YTShareActivity implements IWXAPIEventHandl
 	 * 此时在shareToWx不需要做操作
 	 */
 	private void shareToWx() {
+		uniqueCode = NetUtil.getBase64Code();
 		if (shareData != null) {
 			isAppShare = shareData.isAppShare;
 			new Thread() {
@@ -125,7 +130,7 @@ public class WXEntryActivity extends YTShareActivity implements IWXAPIEventHandl
 							pageObject.webpageUrl =  YtPoint.setDownloadUrl(ChannelId.WECHATFRIEND);
 						}
 					}else{
-						pageObject.webpageUrl = shareData.getTarget_url();
+						pageObject.webpageUrl = YoutuiConstants.YOUTUI_LINK_URL+uniqueCode;
 					}
 					msg.mediaObject = pageObject;
 					SendMessageToWX.Req req = new SendMessageToWX.Req();
@@ -143,7 +148,7 @@ public class WXEntryActivity extends YTShareActivity implements IWXAPIEventHandl
 			}.start();
 		}
 	}
-
+	//微信在这里监听分享结果
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -191,9 +196,9 @@ public class WXEntryActivity extends YTShareActivity implements IWXAPIEventHandl
 			case BaseResp.ErrCode.ERR_OK:
 				//Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
 				if (isPyq) {
-					YtPoint.sharePoint(this, KeyInfo.YouTui_AppKey, ChannelId.WECHATFRIEND, pointArr);
+					YtPoint.sharePoint(this, KeyInfo.YouTui_AppKey, ChannelId.WECHATFRIEND, pointArr,shareData.getTarget_url(),!shareData.isAppShare,uniqueCode);
 				} else {
-					YtPoint.sharePoint(this, KeyInfo.YouTui_AppKey, ChannelId.WECHAT, pointArr);
+					YtPoint.sharePoint(this, KeyInfo.YouTui_AppKey, ChannelId.WECHAT, pointArr,shareData.getTarget_url(),!shareData.isAppShare,uniqueCode);
 				}
 				break;
 			case BaseResp.ErrCode.ERR_SENT_FAILED:
@@ -230,5 +235,4 @@ public class WXEntryActivity extends YTShareActivity implements IWXAPIEventHandl
 			shareToWx();
 		}
 	}
-
 }

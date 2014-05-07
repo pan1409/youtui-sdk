@@ -3,6 +3,7 @@ package cn.bidaround.youtui.ui;
 /**
  * author:gaopan
  * time:2014/3/25
+ * GridView适配器，用于ViewPagerPopup中的GridView
  */
 
 import java.util.ArrayList;

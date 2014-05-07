@@ -1,46 +1,56 @@
 package cn.bidaround.youtui.helper;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
-import junit.framework.Assert;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import junit.framework.Assert;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
+
+/**
+ * @author gaopan
+ * @since 14/5/4
+ */
 public class Util {
 
 	private static final String TAG = "SDK_Sample.Util";
 
-	private static Dialog mProgressDialog;
+	private static ProgressDialog mProgressDialog;
 	private static Toast mToast;
-	
-	public static void addArr(int[] fromArr,int[] toArr ){
-		for(int i=0;i<toArr.length;i++){
+
+	public static void addArr(int[] fromArr, int[] toArr) {
+		for (int i = 0; i < toArr.length; i++) {
 			toArr[i] = fromArr[i];
 		}
 	}
+
 	/**
-	 * 复制链接
-	 * 复制链接 API 11之前用android.text.ClipboardManager; 
-	 * API 11之后用android.content.ClipboardManager
+	 * 复制链接 复制链接 API 11之前用android.text.ClipboardManager; API
+	 * 11之后用android.content.ClipboardManager
+	 * 
 	 * @param mHandler
 	 * @param act
 	 * @param message
 	 */
-	public void copyLink(Handler mHandler,final Context act,final String message) {
+	public void copyLink(Handler mHandler, final Context act, final String message) {
 		mHandler.post(new Runnable() {
 			@SuppressWarnings("deprecation")
 			@SuppressLint("NewApi")
@@ -152,8 +162,7 @@ public class Util {
 		byte[] baKeyword = new byte[s.length() / 2];
 		for (int i = 0; i < baKeyword.length; i++) {
 			try {
-				baKeyword[i] = (byte) (0xff & Integer.parseInt(
-						s.substring(i * 2, i * 2 + 2), 16));
+				baKeyword[i] = (byte) (0xff & Integer.parseInt(s.substring(i * 2, i * 2 + 2), 16));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -167,8 +176,7 @@ public class Util {
 		return s;
 	}
 
-	public static byte[] bmpToByteArray(final Bitmap bmp,
-			final boolean needRecycle) {
+	public static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		bmp.compress(CompressFormat.PNG, 100, output);
 		if (needRecycle) {
@@ -238,8 +246,7 @@ public class Util {
 			len = (int) file.length();
 		}
 
-		Log.d(TAG, "readFromFile : offset = " + offset + " len = " + len
-				+ " offset + len = " + (offset + len));
+		Log.d(TAG, "readFromFile : offset = " + offset + " len = " + len + " offset + len = " + (offset + len));
 
 		if (offset < 0) {
 			Log.e(TAG, "readFromFile invalid offset:" + offset);
@@ -346,8 +353,7 @@ public class Util {
 	 */
 	public static Bitmap readBitmap(final String path) {
 		try {
-			FileInputStream stream = new FileInputStream(new File(path
-					+ "test.jpg"));
+			FileInputStream stream = new FileInputStream(new File(path + "test.jpg"));
 			BitmapFactory.Options opts = new BitmapFactory.Options();
 			opts.inSampleSize = 8;
 			opts.inPurgeable = true;
@@ -361,10 +367,8 @@ public class Util {
 
 	private static final int MAX_DECODE_PICTURE_SIZE = 1920 * 1440;
 
-	public static Bitmap extractThumbNail(final String path, final int height,
-			final int width, final boolean crop) {
-		Assert.assertTrue(path != null && !path.equals("") && height > 0
-				&& width > 0);
+	public static Bitmap extractThumbNail(final String path, final int height, final int width, final boolean crop) {
+		Assert.assertTrue(path != null && !path.equals("") && height > 0 && width > 0);
 
 		BitmapFactory.Options options = new BitmapFactory.Options();
 
@@ -376,14 +380,11 @@ public class Util {
 				tmp = null;
 			}
 
-			Log.d(TAG, "extractThumbNail: round=" + width + "x" + height
-					+ ", crop=" + crop);
+			Log.d(TAG, "extractThumbNail: round=" + width + "x" + height + ", crop=" + crop);
 			final double beY = options.outHeight * 1.0 / height;
 			final double beX = options.outWidth * 1.0 / width;
-			Log.d(TAG, "extractThumbNail: extract beX = " + beX + ", beY = "
-					+ beY);
-			options.inSampleSize = (int) (crop ? (beY > beX ? beX : beY)
-					: (beY < beX ? beX : beY));
+			Log.d(TAG, "extractThumbNail: extract beX = " + beX + ", beY = " + beY);
+			options.inSampleSize = (int) (crop ? (beY > beX ? beX : beY) : (beY < beX ? beX : beY));
 			if (options.inSampleSize <= 1) {
 				options.inSampleSize = 1;
 			}
@@ -411,38 +412,29 @@ public class Util {
 
 			options.inJustDecodeBounds = false;
 
-			Log.i(TAG, "bitmap required size=" + newWidth + "x" + newHeight
-					+ ", orig=" + options.outWidth + "x" + options.outHeight
-					+ ", sample=" + options.inSampleSize);
+			Log.i(TAG, "bitmap required size=" + newWidth + "x" + newHeight + ", orig=" + options.outWidth + "x" + options.outHeight + ", sample=" + options.inSampleSize);
 			Bitmap bm = BitmapFactory.decodeFile(path, options);
 			if (bm == null) {
 				Log.e(TAG, "bitmap decode failed");
 				return null;
 			}
 
-			Log.i(TAG,
-					"bitmap decoded size=" + bm.getWidth() + "x"
-							+ bm.getHeight());
-			final Bitmap scale = Bitmap.createScaledBitmap(bm, newWidth,
-					newHeight, true);
+			Log.i(TAG, "bitmap decoded size=" + bm.getWidth() + "x" + bm.getHeight());
+			final Bitmap scale = Bitmap.createScaledBitmap(bm, newWidth, newHeight, true);
 			if (scale != null) {
 				bm.recycle();
 				bm = scale;
 			}
 
 			if (crop) {
-				final Bitmap cropped = Bitmap.createBitmap(bm,
-						(bm.getWidth() - width) >> 1,
-						(bm.getHeight() - height) >> 1, width, height);
+				final Bitmap cropped = Bitmap.createBitmap(bm, (bm.getWidth() - width) >> 1, (bm.getHeight() - height) >> 1, width, height);
 				if (cropped == null) {
 					return bm;
 				}
 
 				bm.recycle();
 				bm = cropped;
-				Log.i(TAG,
-						"bitmap croped size=" + bm.getWidth() + "x"
-								+ bm.getHeight());
+				Log.i(TAG, "bitmap croped size=" + bm.getWidth() + "x" + bm.getHeight());
 			}
 			return bm;
 
@@ -454,26 +446,33 @@ public class Util {
 		return null;
 	}
 
-	public static final void showResultDialog(Context context, String msg,
-			String title) {
+	public static final void showResultDialog(Context context, String msg, String title) {
 		if (msg == null)
 			return;
 		String rmsg = msg.replace(",", "\n");
 		Log.d("Util", rmsg);
-		new AlertDialog.Builder(context).setTitle(title).setMessage(rmsg)
-				.setNegativeButton("知道了", null).create().show();
+		new AlertDialog.Builder(context).setTitle(title).setMessage(rmsg).setNegativeButton("知道了", null).create().show();
 	}
 
-	public static final void showProgressDialog(Context context, String title,
-			String message) {
+	public static final void showProgressDialog(final Activity act, String message) {
 		dismissDialog();
-		if (TextUtils.isEmpty(title)) {
-			title = "请稍候";
-		}
-		if (TextUtils.isEmpty(message)) {
-			message = "正在加载...";
-		}
-		mProgressDialog = ProgressDialog.show(context, title, message);
+		mProgressDialog = new ProgressDialog(act);
+		// 设置进度条风格，风格为圆形，旋转的
+		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		// 设置ProgressDialog 提示信息
+		mProgressDialog.setMessage(message);
+		// 设置ProgressDialog 的进度条是否不明确
+		mProgressDialog.setIndeterminate(false);
+		// 设置ProgressDialog 是否可以按退回按键取消
+		mProgressDialog.setCancelable(true);
+		mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				act.finish();
+			}
+		});
+		mProgressDialog.show();
 	}
 
 	public static final void dismissDialog() {
@@ -491,8 +490,7 @@ public class Util {
 	 * @param logLevel
 	 *            填d, w, e分别代表debug, warn, error; 默认是debug
 	 */
-	public static final void toastMessage(final Activity activity,
-			final String message, String logLevel) {
+	public static final void toastMessage(final Activity activity, final String message, String logLevel) {
 		if ("w".equals(logLevel)) {
 			Log.w("sdkDemo", message);
 		} else if ("e".equals(logLevel)) {
@@ -522,8 +520,7 @@ public class Util {
 	 * @param logLevel
 	 *            填d, w, e分别代表debug, warn, error; 默认是debug
 	 */
-	public static final void toastMessage(final Activity activity,
-			final String message) {
+	public static final void toastMessage(final Activity activity, final String message) {
 		toastMessage(activity, message, null);
 	}
 
@@ -540,8 +537,7 @@ public class Util {
 		Bitmap bitmap = null;
 		try {
 			URL myFileUrl = new URL(imageUri);
-			HttpURLConnection conn = (HttpURLConnection) myFileUrl
-					.openConnection();
+			HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
 			conn.setDoInput(true);
 			conn.connect();
 			InputStream is = conn.getInputStream();
@@ -556,4 +552,5 @@ public class Util {
 		}
 		return bitmap;
 	}
+
 }

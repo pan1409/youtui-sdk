@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="15" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 检测网络状态 -->
@@ -102,10 +102,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="cn.bidaround.youtui.login.AuthActivity" >
-        </activity>
-        <activity android:name="cn.bidaround.youtui.social.TencentWbAuth"/>"
-        
+        <activity android:name="cn.bidaround.youtui.login.AuthActivity" />
+        <activity android:name="cn.bidaround.youtui.login.WebAuth" />
     </application>
 
 </manifest>

@@ -21,7 +21,7 @@ import android.telephony.TelephonyManager;
 import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
 /**
- * @author Administrator
+ * @author gaopan
  * 读取res,packageName,cardNum,imei等信息以便于后续使用
  */
 public class YouTuiAcceptor {
