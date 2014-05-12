@@ -208,9 +208,10 @@ public class YouTuiAcceptor {
 				readPhoneInfo(context);
 				/* 获取应用信息 */
 				YtPoint.getAppInfo();
-				MainActivity main = (MainActivity) context;
-				YtPoint.init(main, false);
-				main.mHandler.sendEmptyMessage(MainActivity.MAIN_POINT_INIT);
+				/**演示用，打包时要注销*/
+//				MainActivity main = (MainActivity) context;
+//				YtPoint.init(main, false);
+//				main.mHandler.sendEmptyMessage(MainActivity.MAIN_POINT_INIT);
 				/* 发送到服务器 */
 				doPost();
 				// 初始化友推积分
