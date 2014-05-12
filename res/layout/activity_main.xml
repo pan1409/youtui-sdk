@@ -8,30 +8,54 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <Button
-        android:id="@+id/popup_bt"
+    <FrameLayout
+        android:id="@+id/frameLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/list_bt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="友推分享-白色列表" />
+
+        <TextView
+            android:id="@+id/main_point_tv1"
+            android:visibility="invisible"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right|center"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/reddot"
+            android:gravity="center"
+            android:textColor="#ffffff" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/frameLayout2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/list_bt"
-        android:layout_below="@+id/list_bt"
-        android:text="友推分享-黑色网格" />
+        android:layout_alignLeft="@+id/main_test_bt"
+        android:layout_below="@+id/frameLayout1"
+        android:layout_marginTop="20dp" >
 
-    <Button
-        android:id="@+id/list_bt"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="友推分享-白色列表" />
+        <Button
+            android:id="@+id/popup_bt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="友推分享-黑色网格" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:layout_above="@+id/mian_login_linear"
-        android:layout_alignLeft="@+id/popup_bt"
-        android:gravity="left|center"
-        android:text="第三方登录:" />
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/main_point_tv2"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right|center"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/reddot"
+            android:gravity="center"
+            android:textColor="#ffffff" />
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/mian_login_linear"
@@ -46,16 +70,16 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:src="@drawable/xinlangact" 
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp"
+            android:src="@drawable/xinlangact" />
 
         <ImageView
             android:id="@+id/main_qq_imageview"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:src="@drawable/qqact" 
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp"
+            android:src="@drawable/qqact" />
 
         <ImageView
             android:id="@+id/main_tencentwb_imageview"
@@ -69,8 +93,17 @@
         android:id="@+id/main_test_bt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/popup_bt"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="132dp"
         android:text="测试" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_above="@+id/mian_login_linear"
+        android:layout_alignParentLeft="true"
+        android:gravity="left|center"
+        android:text="第三方登录:" />
 
 </RelativeLayout>

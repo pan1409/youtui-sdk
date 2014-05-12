@@ -1,15 +1,9 @@
 package cn.bidaround.youtui.wxapi;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -26,129 +20,101 @@ import cn.bidaround.youtui.ui.YTBaseShareActivity;
 
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
-import com.tencent.mm.sdk.openapi.ConstantsAPI;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
+
 /**
  * @author gaopan
- * @since 14/5/4
- * 微信分享activity
+ * @since 14/5/4 微信分享activity
  */
 public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventHandler, OnClickListener {
 	private IWXAPI mIWXAPI;
 	private Bitmap bitmap;
 	private Bitmap bmpThum;
-	private boolean isPyq,isAppShare;
-	private int[] pointArr = new int[11];
+	private boolean isPyq, isAppShare;
 	private String uniqueCode;
-	@SuppressLint("HandlerLeak")
-	private Handler mHandler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			if (msg.what == 0) {
-				Util.dismissDialog();
-				return;
-			}
-			super.handleMessage(msg);
-		};
-	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);	
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		shareData = (ShareData) getIntent().getExtras().getSerializable("shareData");
 		initView("微信");
 		// 判断是否为朋友圈
 		isPyq = getIntent().getExtras().getBoolean("pyq");
-//		for (int i : pointArr) {
-//			Log.i("------", i+"");
-//		}		
-		//传入的pointArr不为null时
-		if(getIntent().getExtras().getIntArray("pointArr")!=null){
-			pointArr = getIntent().getExtras().getIntArray("pointArr");
-		}
+		// for (int i : pointArr) {
+		// Log.i("------", i+"");
+		// }
+		// 传入的pointArr不为null时
+
 
 		if (isPyq) {
-			mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this, KeyInfo.WechatMoments_AppId, false);
-			mIWXAPI.registerApp(KeyInfo.WechatMoments_AppId);
+			mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this, KeyInfo.wechatMoments_AppId, false);
+			mIWXAPI.registerApp(KeyInfo.wechatMoments_AppId);
 		} else {
-			mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this, KeyInfo.Wechat_AppId, false);
-			mIWXAPI.registerApp(KeyInfo.Wechat_AppId);
+			mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this, KeyInfo.wechat_AppId, false);
+			mIWXAPI.registerApp(KeyInfo.wechat_AppId);
 		}
 		mIWXAPI.handleIntent(getIntent(), WXEntryActivity.this);
 
-		Util.showProgressDialog(this,"加载中...");
+		Util.showProgressDialog(this, "加载中...");
 		shareToWx();
 	}
 
 	/**
-	 * 分享到微信或朋友圈
-	 * 当微信没有登陆时，分享会先进入登陆界面，登录后再次启动该activity，导致通过Intent传入的shareData和pointArr读取都为null
-	 * 此时在shareToWx不需要做操作
+	 * 分享到微信或朋友圈 当微信没有登陆时，分享会先进入登陆界面，登录后再次启动该activity，
+	 * 导致通过Intent传入的shareData和pointArr读取都为null 此时在shareToWx不需要做操作
 	 */
 	private void shareToWx() {
 		uniqueCode = NetUtil.getBase64Code();
 		if (shareData != null) {
 			isAppShare = shareData.isAppShare;
-			new Thread() {
-				@Override
-				public void run() {
-					WXMediaMessage msg = new WXMediaMessage();
-					try {
-						if (shareData.getImagePath() != null) {
-							bitmap = BitmapFactory.decodeFile(shareData.getImagePath());
-						} else if (shareData.getImageUrl() != null) {
-							// 一般情况下不会执行该方法，如果用户网络较差，进行分享时网络图片没有下载完时调用
-							bitmap = BitmapFactory.decodeStream(new URL(shareData.getImageUrl()).openStream());
-						}
 
-						mHandler.removeMessages(0);
-						mHandler.sendEmptyMessage(0);
-					} catch (MalformedURLException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					msg.title = shareData.getTitle();
-					msg.description = shareData.getText();
-					// bitmap为空时微信分享会没有响应，所以要设置一个默认图片让用户知道
-					if (bitmap != null) {
-						bmpThum = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
-					} else {
-						bmpThum = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), YouTuiAcceptor.res.getIdentifier("loadfail", "drawable", YouTuiAcceptor.packName)), 150, 150, true);
-					}
-					msg.setThumbImage(bmpThum);
-					WXWebpageObject pageObject = new WXWebpageObject();
-					if(isAppShare){
-						if(isPyq){
-							pageObject.webpageUrl = YtPoint.setDownloadUrl(ChannelId.WECHAT);
-						}else{
-							pageObject.webpageUrl =  YtPoint.setDownloadUrl(ChannelId.WECHATFRIEND);
-						}
-					}else{
-						pageObject.webpageUrl = YoutuiConstants.YOUTUI_LINK_URL+uniqueCode;
-					}
-					msg.mediaObject = pageObject;
-					SendMessageToWX.Req req = new SendMessageToWX.Req();
-					req.transaction = buildTransaction("测试");
-					req.message = msg;
+			WXMediaMessage msg = new WXMediaMessage();
 
-					if (isPyq) {
-						req.scene = SendMessageToWX.Req.WXSceneTimeline;
-					} else {
-						req.scene = SendMessageToWX.Req.WXSceneSession;
-					}
-					mIWXAPI.sendReq(req);
+			if (shareData.getImagePath() != null) {
+				bitmap = BitmapFactory.decodeFile(shareData.getImagePath());
+			}
 
+			msg.title = shareData.getTitle();
+			msg.description = shareData.getText();
+			// bitmap为空时微信分享会没有响应，所以要设置一个默认图片让用户知道
+			if (bitmap != null) {
+				bmpThum = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
+			} else {
+				bmpThum = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), YouTuiAcceptor.res.getIdentifier("loadfail", "drawable", YouTuiAcceptor.packName)), 150, 150, true);
+			}
+			msg.setThumbImage(bmpThum);
+			WXWebpageObject pageObject = new WXWebpageObject();
+			if (isAppShare) {
+				if (isPyq) {
+					pageObject.webpageUrl = YtPoint.setDownloadUrl(ChannelId.WECHAT);
+				} else {
+					pageObject.webpageUrl = YtPoint.setDownloadUrl(ChannelId.WECHATFRIEND);
 				}
-			}.start();
+			} else {
+				pageObject.webpageUrl = YoutuiConstants.YOUTUI_LINK_URL + uniqueCode;
+			}
+			msg.mediaObject = pageObject;
+			SendMessageToWX.Req req = new SendMessageToWX.Req();
+			req.transaction = buildTransaction("测试");
+			req.message = msg;
+
+			if (isPyq) {
+				req.scene = SendMessageToWX.Req.WXSceneTimeline;
+			} else {
+				req.scene = SendMessageToWX.Req.WXSceneSession;
+			}
+			mIWXAPI.sendReq(req);
+
 		}
 	}
-	//微信在这里监听分享结果
+
+	// 微信在这里监听分享结果
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -161,14 +127,11 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 		mIWXAPI.handleIntent(intent, this);
 	}
 
-
-
-
 	// 创建唯一标示
 	private String buildTransaction(final String type) {
 		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
 	}
-	
+
 	/**
 	 * 监听请求
 	 */
@@ -181,47 +144,29 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 	 */
 	@Override
 	public void onResp(BaseResp response) {
-		switch (response.getType()) {
-		case ConstantsAPI.COMMAND_SENDAUTH:
-			switch (response.errCode) {
-			case BaseResp.ErrCode.ERR_USER_CANCEL:
-				Toast.makeText(this, "取消授权", Toast.LENGTH_SHORT).show();
-				finish();
-				break;
+		switch (response.errCode) {
+		case BaseResp.ErrCode.ERR_OK:
+			// Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
+			if (isPyq) {
+				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHATFRIEND, shareData.getTarget_url(), !shareData.isAppShare, uniqueCode);
+			} else {
+				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHAT, shareData.getTarget_url(), !shareData.isAppShare, uniqueCode);
 			}
-
 			break;
-		case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:
-			switch (response.errCode) {
-			case BaseResp.ErrCode.ERR_OK:
-				//Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
-				if (isPyq) {
-					YtPoint.sharePoint(this, KeyInfo.YouTui_AppKey, ChannelId.WECHATFRIEND, pointArr,shareData.getTarget_url(),!shareData.isAppShare,uniqueCode);
-				} else {
-					YtPoint.sharePoint(this, KeyInfo.YouTui_AppKey, ChannelId.WECHAT, pointArr,shareData.getTarget_url(),!shareData.isAppShare,uniqueCode);
-				}
-				break;
-			case BaseResp.ErrCode.ERR_SENT_FAILED:
-				Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();
-				break;
-			case BaseResp.ErrCode.ERR_COMM:
-				Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();
-				break;
-			case BaseResp.ErrCode.ERR_USER_CANCEL:
-				Toast.makeText(this, "取消分享", Toast.LENGTH_SHORT).show();
-			case BaseResp.ErrCode.ERR_AUTH_DENIED:
-				break;
-			default:
-				break;
-
-			}
-			finish();
+		case BaseResp.ErrCode.ERR_SENT_FAILED:
+			Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();
 			break;
-
+		case BaseResp.ErrCode.ERR_COMM:
+			Toast.makeText(this, "分享失败，请检查网络情况。。。", Toast.LENGTH_SHORT).show();
+			break;
+		case BaseResp.ErrCode.ERR_USER_CANCEL:
+			Toast.makeText(this, "取消分享", Toast.LENGTH_SHORT).show();
+		case BaseResp.ErrCode.ERR_AUTH_DENIED:
+			break;
 		default:
 			break;
 		}
-
+		finish();
 	}
 
 	/**

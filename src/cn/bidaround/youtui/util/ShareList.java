@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.res.Resources;
 
 /**
- * author:gaopan time:2014/3/25
+ * 局哦去分享平台的logo和名字
+ * @author gaopan 
+ * @since 2014/3/25
  */
 
 public class ShareList {
@@ -17,7 +19,13 @@ public class ShareList {
 	public static String RENREN = "Renren";
 	public static String SHORTMESSAGE = "ShortMessage";
 	public static String EMAIL = "Email";
-
+	public static String MORE_SHARE = "More";
+	/**
+	 * 获取分享平台的lolo
+	 * @param name
+	 * @param context
+	 * @return
+	 */
 	public static int getLogo(String name,Context context){
 		String packName = context.getPackageName();
 		Resources res = context.getResources();
@@ -48,10 +56,17 @@ public class ShareList {
 		}else if(EMAIL.equals(name)){
 			
 			return res.getIdentifier("mailact", "drawable", packName);
+		}else if(MORE_SHARE.equals(name)){
+			
+			return res.getIdentifier("more", "drawable", packName);
 		}
 		return -1;
 	}
-
+	/**
+	 * 获取分享平台的名字
+	 * @param name
+	 * @return
+	 */
 	public static String getTitle(String name) {
 		if(WECHAT.equals(name)){
 			return "微信";
@@ -71,46 +86,9 @@ public class ShareList {
 			return "短信";
 		}else if(EMAIL.equals(name)){
 			return "邮件";
+		}else if(MORE_SHARE.equals(name)){
+			return "更多";
 		}
 		return "";
 	}
-
-	// 保存着分享媒体的信息
-	// public static TitleAndLogo weiXin = new TitleAndLogo(0, "微信",
-	// R.drawable.wxact);
-	// public static TitleAndLogo wxPYQ = new TitleAndLogo(1, "朋友圈",
-	// R.drawable.pyqact);
-	// public static TitleAndLogo sinaWB = new TitleAndLogo(2, "新浪微博",
-	// R.drawable.xinlangact);
-	// public static TitleAndLogo tencentQQ = new TitleAndLogo(3, "QQ",
-	// R.drawable.qqact);
-	// public static TitleAndLogo qqKongJian = new TitleAndLogo(4, "QQ空间",
-	// R.drawable.qqkjact);
-	// public static TitleAndLogo tencentWB = new TitleAndLogo(5, "腾讯微博",
-	// R.drawable.tengxunact);
-	//
-	// public static TitleAndLogo renRen = new TitleAndLogo(6, "人人",
-	// R.drawable.renrenact);
-	// public static TitleAndLogo sms = new TitleAndLogo(7, "短信",
-	// R.drawable.messact);
-	// public static TitleAndLogo email = new TitleAndLogo(8, "邮件",
-	// R.drawable.mailact);
-	// public static TitleAndLogo erWeiMa = new TitleAndLogo(9, "二维码",
-	// R.drawable.erweimaact);
-	// public static TitleAndLogo copyLink = new TitleAndLogo(10, "复制链接",
-	// R.drawable.lianjieact);
-	// pagerone的选项
-	// public static int WEIXIN = 0;
-	// public static int WXPYQ = 1;
-	// public static int XINGLANGWEIBO = 2;
-	// public static int QQ = 3;
-	// public static int QQKONGJIAN = 4;
-	// public static int TENGXUNWEIBO = 5;
-	// //pagertwo的选项
-	// public static int RENREN = 6;
-	// public static int MESSAGE = 7;
-	// public static int EMAIL = 8;
-	// public static int ERWEIMA = 9;
-	// public static int COPYLINK = 10;
-
 }

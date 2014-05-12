@@ -1,12 +1,13 @@
 package cn.bidaround.youtui.helper;
 
 import java.util.List;
-import cn.bidaround.youtui.social.YoutuiConstants;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import cn.bidaround.youtui.social.YoutuiConstants;
 
 /**
  * Description: created by qyj on January 7, 2014

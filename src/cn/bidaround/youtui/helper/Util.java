@@ -35,7 +35,8 @@ public class Util {
 
 	private static ProgressDialog mProgressDialog;
 	private static Toast mToast;
-
+	
+	/**将一个数组的元素填充到另一个数组用来保存元素信息*/
 	public static void addArr(int[] fromArr, int[] toArr) {
 		for (int i = 0; i < toArr.length; i++) {
 			toArr[i] = fromArr[i];

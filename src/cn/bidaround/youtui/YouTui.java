@@ -1,6 +1,8 @@
 package cn.bidaround.youtui;
 import java.io.IOException;
+
 import org.xmlpull.v1.XmlPullParserException;
+
 import android.app.Activity;
 import cn.bidaround.youtui.helper.DownloadImage;
 import cn.bidaround.youtui.point.YtPoint;
@@ -32,11 +34,11 @@ public class YouTui {
 	/**
 	 * 调用该方法调出友推sdk的分享界面 act:调用界面实例 shareData:需要分享的数据
 	 */
-	public static void show(Activity act, ShareData shareData, int style) {
+	public static void show(final Activity act, ShareData shareData, int style) {	
 		if (style == YouTuiViewType.BLACK_POPUP) {
-			new ViewPagerPopup(act, shareData, style, YtPoint.getInstance(act)).show();
+			new ViewPagerPopup(act, shareData, style).show();
 		} else if (style == YouTuiViewType.WHITE_LIST) {
-			new ListPopup(act, shareData, style, YtPoint.getInstance(act)).show();
+			new ListPopup(act, shareData, style).show();
 		}
 	}
 	/**
@@ -51,5 +53,9 @@ public class YouTui {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static boolean hasPoint(){
+		return YtPoint.hasPoint();
 	}
 }

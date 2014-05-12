@@ -3,6 +3,7 @@ package cn.bidaround.youtui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -11,31 +12,49 @@ import android.view.Window;
 import android.widget.Button;
 import cn.bidaround.youtui.login.AuthLogin;
 import cn.bidaround.youtui.login.WebAuth;
+import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.ShareData;
 
 public class MainActivity extends Activity implements OnClickListener {
 	private Button popupBt, listBt,testBt;
-	private View main_sina_imageview, main_qq_imageview, main_tencentwb_imageview;
+	private View main_sina_imageview, main_qq_imageview, main_tencentwb_imageview,main_point_tv1,main_point_tv2;
 	private ShareData shareData = new ShareData();
+	public static final int MAIN_POINT_INIT = 0;
+	public Handler mHandler = new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			
+			switch (msg.what) {
+			case MAIN_POINT_INIT:
+				//Log.i("----", "handleMessage  MAIN_POINT_INIT");
+				if(YtPoint.hasPoint()){
+					main_point_tv1.setVisibility(View.VISIBLE);
+					main_point_tv2.setVisibility(View.VISIBLE);
+				}
+				break;
+
+			default:
+				break;
+			}
+		};
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
-		YouTui.init(this);
 		initView();
-		//Log.i("--main--", "--main--");
+		YouTui.init(this);	
 	}
-
-	void initView() {
+	
+	private void initView() {
 		// 模拟开发者传递数据
-		 shareData.isAppShare = false;
-		 shareData.setDescription("友推积分组件123");
-		 shareData.setTitle("友推分享123");
-		 shareData.setText("通过友推积分组件12345，开发者几行代码就可以为应用添加分享送积分功能，并提供详尽的后台统计数据，除了本身具备的分享功能外，开发者也可将积分功能单独集成在已有分享组件的app上，快来试试吧11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 ");
-		 shareData.setTarget_url("http://www.baidu.com/");
-		 shareData.setImageUrl("http://cdnup.b0.upaiyun.com/media/image/default.png");
+		 shareData.isAppShare = true;
+//		 shareData.setDescription("友推积分组件");
+//		 shareData.setTitle("友推分享");
+//		 shareData.setText("通过友推积分组件，开发者几行代码就可以为应用添加分享送积分功能，并提供详尽的后台统计数据，除了本身具备的分享功能外，开发者也可将积分功能单独集成在已有分享组件的app上，快来试试吧 ");
+//		 shareData.setTarget_url("http://www.baidu.com/");
+//		 shareData.setImageUrl("http://cdnup.b0.upaiyun.com/media/image/default.png");
 		// shareData.setImagePath(Environment.getExternalStorageDirectory()+YoutuiConstants.FILE_SAVE_PATH+"demo.png");
 
 		popupBt = (Button) findViewById(R.id.popup_bt);
@@ -45,7 +64,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		listBt.setOnClickListener(this);
 		
 		testBt = (Button) findViewById(R.id.main_test_bt);
+		testBt.setVisibility(View.INVISIBLE);
 		testBt.setOnClickListener(this);
+		
+		main_point_tv1 = findViewById(R.id.main_point_tv1);
+		main_point_tv2 = findViewById(R.id.main_point_tv2);
 
 		main_sina_imageview = findViewById(R.id.main_sina_imageview);
 		main_sina_imageview.setOnClickListener(this);
@@ -74,7 +97,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			AuthLogin sinaLogin = new AuthLogin() {
 				@Override
 				public void onAuthComplete() {
-					Log.i("--MainActivity sina--", "onAuthComplete");
+					//Log.i("--MainActivity sina--", "onAuthComplete");
 				};
 			};
 			sinaLogin.sinaAuth(this);
@@ -82,7 +105,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			AuthLogin qqLogin = new AuthLogin() {
 				@Override
 				public void onAuthComplete() {
-					Log.i("--MainActivity qq onAuthComplete--", "onAuthComplete");
+					//Log.i("--MainActivity qq onAuthComplete--", "onAuthComplete");
 				}
 			};
 			qqLogin.qqAuth(this);

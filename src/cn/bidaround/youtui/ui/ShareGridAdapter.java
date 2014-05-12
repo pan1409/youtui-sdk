@@ -18,6 +18,7 @@ import android.widget.TextView;
 import cn.bidaround.youtui.YouTuiAcceptor;
 import cn.bidaround.youtui.YouTuiViewType;
 import cn.bidaround.youtui.point.ChannelId;
+import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.util.DensityUtil;
 import cn.bidaround.youtui.util.ShareList;
 
@@ -25,13 +26,11 @@ public class ShareGridAdapter extends BaseAdapter {
 	private Activity act;
 	private ArrayList<String> list;
 	private int showStyle;
-	private int[] pointArr;
 
-	public ShareGridAdapter(Activity act, ArrayList<String> list, int showStyle, int[] pointArr) {
+	public ShareGridAdapter(Activity act, ArrayList<String> list, int showStyle) {
 		this.act = act;
 		this.list = list;
 		this.showStyle = showStyle;
-		this.pointArr = pointArr;
 	}
 
 	@Override
@@ -100,6 +99,8 @@ public class ShareGridAdapter extends BaseAdapter {
 			showPoint(pointText, ChannelId.WECHAT);
 		} else if (ShareList.WECHATMOMENTS.equals(list.get(position))) {
 			showPoint(pointText, ChannelId.WECHATFRIEND);
+		} else{
+			pointText.setVisibility(View.INVISIBLE);
 		}
 		return convertView;
 	}
@@ -113,16 +114,16 @@ public class ShareGridAdapter extends BaseAdapter {
 	private void showPoint(TextView pointText, int channelId) {
 		//黑色樣式下積分大於10時，要將積分TextView加寬才能顯示完全
 		if(showStyle==YouTuiViewType.BLACK_POPUP){
-			if (pointArr[channelId] >= 10) {
+			if (YtPoint.pointArr[channelId] >= 10) {
 				pointText.getLayoutParams().width = DensityUtil.dip2px(act, 40);
 			}
 		}
 		//積分爲0時不顯示
-		if (pointArr[channelId] == 0) {
+		if (YtPoint.pointArr[channelId] == 0) {
 			pointText.setVisibility(View.INVISIBLE);
 		} else {
 			pointText.setVisibility(View.VISIBLE);
-			pointText.setText("+" + pointArr[channelId]);
+			pointText.setText("+" + YtPoint.pointArr[channelId]);
 		}
 
 	}
