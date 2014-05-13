@@ -71,8 +71,8 @@ public class ShareActivity extends YTBaseShareActivity implements IWeiboHandler.
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
-		shareData = (ShareData) getIntent().getExtras().getSerializable("shareData");
 		iWeiboShareAPI = WeiboShareSDK.createWeiboAPI(this, KeyInfo.sinaWeibo_AppKey);
 		// 判断分享的媒体
 		from = getIntent().getExtras().getString("from");
@@ -88,7 +88,7 @@ public class ShareActivity extends YTBaseShareActivity implements IWeiboHandler.
 				// 如果已经授权直接分享
 				// Log.i("--shareactivity--", "isSessionValid");
 				sinaShare = new SinaShare(ShareActivity.this);
-				uniqueCode = sinaShare.shareToSina(shareData);
+				uniqueCode = sinaShare.shareToSina(ShareData.shareData);
 			} else {
 				// 如果没有授权，先授权
 				sinaShare = new SinaShare(this);
@@ -216,7 +216,8 @@ public class ShareActivity extends YTBaseShareActivity implements IWeiboHandler.
 		switch (baseResp.errCode) {
 
 		case WBConstants.ErrorCode.ERR_OK:
-			YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.SINAWEIBO, shareData.getTarget_url(), !shareData.isAppShare, uniqueCode);
+			//Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
+			YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.SINAWEIBO, ShareData.shareData.getTarget_url(), !ShareData.shareData.isAppShare, uniqueCode);
 			break;
 
 		case WBConstants.ErrorCode.ERR_CANCEL:
@@ -263,7 +264,7 @@ public class ShareActivity extends YTBaseShareActivity implements IWeiboHandler.
 					new QQOpenShare(this, "Qzone").shareToQzone();
 				} else if ("sina".equals(from)) {
 					sinaShare = new SinaShare(ShareActivity.this);
-					sinaShare.shareToSina(shareData);
+					sinaShare.shareToSina(ShareData.shareData);
 				}
 			} else {
 				Toast.makeText(this, "无网络连接，请查看您的网络情况", Toast.LENGTH_SHORT).show();

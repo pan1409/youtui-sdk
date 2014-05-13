@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import android.os.Environment;
 
 public class FileUtils {
-	private String SDPATH;
+	public static  String SDPATH = Environment.getExternalStorageDirectory()+ "/";
 
 	public String getSDPATH() {
 		return SDPATH;
@@ -20,7 +20,7 @@ public class FileUtils {
 	 * 得到当前外部存储设备的目录
 	 */
 	public FileUtils() {
-		SDPATH = Environment.getExternalStorageDirectory() + "/";
+		//SDPATH = Environment.getExternalStorageDirectory()+ "/";
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class FileUtils {
 	 * @param fileName
 	 * @return
 	 */
-	public boolean isFileExist(String fileName) {
+	public  boolean isFileExist(String fileName) {
 		File file = new File(SDPATH + fileName);
 		return file.exists();
 	}
@@ -83,5 +83,17 @@ public class FileUtils {
 			}
 		}
 		return file;
+	}
+	
+	
+	/**判断两个文件是否内容相同*/
+	public static boolean isSame(byte[] file1,byte[] file2){
+		int length = file1.length<file2.length? file1.length:file2.length;
+		for(int i=0;i<length;i++){
+			if(file1[i]!=file2[i]){
+				return false;
+			}
+		}	
+		return true;	
 	}
 }

@@ -62,7 +62,8 @@
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent" >
         </activity>
         <!-- qq回调需要注册该activity -->
         <activity
@@ -93,8 +94,8 @@
         <activity
             android:name="cn.bidaround.youtui.ui.ShareActivity"
             android:exported="true"
-            android:launchMode="singleTop" 
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
 
             <!-- 新浪微博分享回调需要设置 -->
             <intent-filter>

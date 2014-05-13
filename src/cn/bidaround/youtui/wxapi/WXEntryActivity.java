@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -17,7 +18,6 @@ import cn.bidaround.youtui.social.KeyInfo;
 import cn.bidaround.youtui.social.ShareData;
 import cn.bidaround.youtui.social.YoutuiConstants;
 import cn.bidaround.youtui.ui.YTBaseShareActivity;
-
 import com.tencent.mm.sdk.openapi.BaseReq;
 import com.tencent.mm.sdk.openapi.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -37,21 +37,21 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 	private Bitmap bmpThum;
 	private boolean isPyq, isAppShare;
 	private String uniqueCode;
+	private boolean fromShare;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
-		shareData = (ShareData) getIntent().getExtras().getSerializable("shareData");
-		initView("微信");
+		// initView("微信");
 		// 判断是否为朋友圈
+
 		isPyq = getIntent().getExtras().getBoolean("pyq");
+		fromShare = getIntent().getExtras().getBoolean("fromShare");
 		// for (int i : pointArr) {
 		// Log.i("------", i+"");
 		// }
 		// 传入的pointArr不为null时
-
-
 		if (isPyq) {
 			mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this, KeyInfo.wechatMoments_AppId, false);
 			mIWXAPI.registerApp(KeyInfo.wechatMoments_AppId);
@@ -67,21 +67,21 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 
 	/**
 	 * 分享到微信或朋友圈 当微信没有登陆时，分享会先进入登陆界面，登录后再次启动该activity，
-	 * 导致通过Intent传入的shareData和pointArr读取都为null 此时在shareToWx不需要做操作
+	 * 导致通过Intent传入的ShareData.shareData和pointArr读取都为null 此时在shareToWx不需要做操作
 	 */
 	private void shareToWx() {
 		uniqueCode = NetUtil.getBase64Code();
-		if (shareData != null) {
-			isAppShare = shareData.isAppShare;
+		if (ShareData.shareData != null) {
+			isAppShare = ShareData.shareData.isAppShare;
 
 			WXMediaMessage msg = new WXMediaMessage();
 
-			if (shareData.getImagePath() != null) {
-				bitmap = BitmapFactory.decodeFile(shareData.getImagePath());
+			if (ShareData.shareData.getImagePath() != null) {
+				bitmap = BitmapFactory.decodeFile(ShareData.shareData.getImagePath());
 			}
 
-			msg.title = shareData.getTitle();
-			msg.description = shareData.getText();
+			msg.title = ShareData.shareData.getTitle();
+			msg.description = ShareData.shareData.getText();
 			// bitmap为空时微信分享会没有响应，所以要设置一个默认图片让用户知道
 			if (bitmap != null) {
 				bmpThum = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
@@ -103,14 +103,15 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 			SendMessageToWX.Req req = new SendMessageToWX.Req();
 			req.transaction = buildTransaction("测试");
 			req.message = msg;
-
-			if (isPyq) {
-				req.scene = SendMessageToWX.Req.WXSceneTimeline;
-			} else {
-				req.scene = SendMessageToWX.Req.WXSceneSession;
+			Log.i("---", String.valueOf(fromShare));
+			if (fromShare) {
+				if (isPyq) {
+					req.scene = SendMessageToWX.Req.WXSceneTimeline;
+				} else if (!isPyq) {
+					req.scene = SendMessageToWX.Req.WXSceneSession;
+				}
+				mIWXAPI.sendReq(req);
 			}
-			mIWXAPI.sendReq(req);
-
 		}
 	}
 
@@ -146,11 +147,11 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 	public void onResp(BaseResp response) {
 		switch (response.errCode) {
 		case BaseResp.ErrCode.ERR_OK:
-			// Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
 			if (isPyq) {
-				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHATFRIEND, shareData.getTarget_url(), !shareData.isAppShare, uniqueCode);
+				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHATFRIEND, ShareData.shareData.getTarget_url(), !ShareData.shareData.isAppShare, uniqueCode);
 			} else {
-				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHAT, shareData.getTarget_url(), !shareData.isAppShare, uniqueCode);
+				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHAT, ShareData.shareData.getTarget_url(), !ShareData.shareData.isAppShare, uniqueCode);
 			}
 			break;
 		case BaseResp.ErrCode.ERR_SENT_FAILED:

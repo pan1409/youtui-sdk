@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,7 +17,7 @@ import cn.bidaround.youtui.social.ShareData;
 public class MainActivity extends Activity implements OnClickListener {
 	private Button popupBt, listBt,testBt;
 	private View main_sina_imageview, main_qq_imageview, main_tencentwb_imageview,main_point_tv1,main_point_tv2;
-	private ShareData shareData = new ShareData();
+	//private ShareData.shareData ShareData.shareData = new ShareData.shareData();
 	public static final int MAIN_POINT_INIT = 0;
 	public Handler mHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
@@ -44,18 +43,24 @@ public class MainActivity extends Activity implements OnClickListener {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		initView();
-		YouTui.init(this);	
+		YouTui.init(this);
+		setData();
+	}
+	
+	private void setData(){
+		 ShareData.shareData.isAppShare = true;
+		 ShareData.shareData.setDescription("友推积分组件");
+		 ShareData.shareData.setTitle("友推分享");
+		 ShareData.shareData.setText("通过友推积分组件，开发者几行代码就可以为应用添加分享送积分功能，并提供详尽的后台统计数据，除了本身具备的分享功能外，开发者也可将积分功能单独集成在已有分享组件的app上，快来试试吧 ");
+		 ShareData.shareData.setTarget_url("http://www.baidu.com/");
+		 ShareData.shareData.setImageUrl("http://cdnup.b0.upaiyun.com/media/image/default.png");
+		// ShareData.shareData.setImagePath(Environment.getExternalStorageDirectory()+YoutuiConstants.FILE_SAVE_PATH+"demo.png");
+		 ShareData.shareData.setImagePath("123");
 	}
 	
 	private void initView() {
 		// 模拟开发者传递数据
-		 shareData.isAppShare = true;
-//		 shareData.setDescription("友推积分组件");
-//		 shareData.setTitle("友推分享");
-//		 shareData.setText("通过友推积分组件，开发者几行代码就可以为应用添加分享送积分功能，并提供详尽的后台统计数据，除了本身具备的分享功能外，开发者也可将积分功能单独集成在已有分享组件的app上，快来试试吧 ");
-//		 shareData.setTarget_url("http://www.baidu.com/");
-//		 shareData.setImageUrl("http://cdnup.b0.upaiyun.com/media/image/default.png");
-		// shareData.setImagePath(Environment.getExternalStorageDirectory()+YoutuiConstants.FILE_SAVE_PATH+"demo.png");
+
 
 		popupBt = (Button) findViewById(R.id.popup_bt);
 		popupBt.setOnClickListener(this);
@@ -86,13 +91,13 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// if(shareData==null){
-		// Log.i("--MainActivity shareData--", "null");
+		// if(ShareData.shareData==null){
+		// Log.i("--MainActivity ShareData.shareData--", "null");
 		// }
 		if (v.getId() == R.id.popup_bt) {
-			YouTui.show(this, shareData, YouTuiViewType.BLACK_POPUP);
+			YouTui.show(this, YouTuiViewType.BLACK_POPUP);
 		} else if (v.getId() == R.id.list_bt) {
-			YouTui.show(this, shareData, YouTuiViewType.WHITE_LIST);
+			YouTui.show(this, YouTuiViewType.WHITE_LIST);
 		} else if (v.getId() == R.id.main_sina_imageview) {
 			AuthLogin sinaLogin = new AuthLogin() {
 				@Override
