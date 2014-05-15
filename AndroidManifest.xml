@@ -49,7 +49,7 @@
 
         <!-- main界面 -->
         <activity
-            android:name="cn.bidaround.youtui.MainActivity"
+            android:name="cn.bidaround.youtui.demo.MainActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
             <intent-filter>
@@ -104,8 +104,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="cn.bidaround.youtui.login.AuthActivity" />
-        <activity android:name="cn.bidaround.youtui.login.WebAuth" />
+        <activity
+            android:name="cn.bidaround.youtui.login.AuthActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        
+        
+        <activity android:name="cn.bidaround.youtui.demo.UserActivity" />
     </application>
 
 </manifest>

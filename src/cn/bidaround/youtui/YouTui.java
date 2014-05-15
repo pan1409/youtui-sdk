@@ -4,7 +4,6 @@ import java.io.IOException;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
-import android.util.Log;
 import cn.bidaround.youtui.helper.DownloadImage;
 import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
@@ -48,15 +47,19 @@ public class YouTui {
 	 * 该方法需要在分享页面弹出时调用，用来将网络图片保存到sdk卡， 这样有些不支持分享网络图片的平台页可以用下载好的本地图片分享
 	 * @throws IOException 
 	 */
-	public void autoDownImage(ShareData shareData) throws IOException {	
-			String url = shareData.getImageUrl();
+	public void autoDownImage() throws IOException {	
+			String url = ShareData.shareData.getImageUrl();
 			if(url!=null){
 				String picPath = url.substring(url.lastIndexOf("/") + 1, url.length());
-				DownloadImage.down_file(shareData.getImageUrl(), YoutuiConstants.FILE_SAVE_PATH, picPath);
+				DownloadImage.down_file(ShareData.shareData.getImageUrl(), YoutuiConstants.FILE_SAVE_PATH, picPath);
 			}
 	}
-	
+	/**判断是否有积分,如果没有积分活动或者今天的积分已经获得则返回false*/
 	public static boolean hasPoint(){
 		return YtPoint.hasPoint();
+	}
+	/**释放静态对象*/
+	public static void release(){
+		ShareData.shareData = null;
 	}
 }

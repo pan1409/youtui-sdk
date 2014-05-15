@@ -139,7 +139,7 @@ public class ShareActivity extends YTBaseShareActivity implements IWeiboHandler.
 		webView.setOnKeyListener(new WebViewOnKayListener());
 		// 查看和了解积分
 		if ("check".equals(from)) {
-			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/mypoints" + "?appId=" + KeyInfo.youTui_AppKey + "&cardNum=" + YouTuiAcceptor.cardNum + "&imei=" + YouTuiAcceptor.imei);
+			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/comExchange" + "?appId=" + KeyInfo.youTui_AppKey + "&cardNum=" + YouTuiAcceptor.cardNum + "&imei=" + YouTuiAcceptor.imei);
 		} else if ("know".equals(from)) {
 			webView.loadUrl(YoutuiConstants.YT_URL + "/activity/actIntroduce" + "?appId=" + KeyInfo.youTui_AppKey + "&cardNum=" + YouTuiAcceptor.cardNum + "&imei=" + YouTuiAcceptor.imei);
 		}
