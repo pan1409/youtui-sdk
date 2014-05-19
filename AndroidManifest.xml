@@ -107,8 +107,8 @@
         <activity
             android:name="cn.bidaround.youtui.login.AuthActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        
-        
+        <!--  -->
+
         <activity android:name="cn.bidaround.youtui.demo.UserActivity" />
     </application>
 
