@@ -1,14 +1,12 @@
 package cn.bidaround.youtui.social;
 
-import java.io.Serializable;
 
 /**
  * author:gaopan 该类为分享数据类，有些平台有分享限制 友推sdk会过滤掉无法分享的内容，只分享能被平台接受的内容
  * 如果需要分享图片，需要设置imageUrl和imagePath中的一项 如果imageUrl和imagePath都被设置，则优先使用imagePath
  */
 
-public class ShareData implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class ShareData  {
 
 	public static ShareData shareData;
 	public boolean isAppShare = true;
@@ -26,6 +24,13 @@ public class ShareData implements Serializable {
 		if (shareData == null) {
 			shareData = new ShareData();
 		}
+	}
+	
+	public static ShareData getInstance(){
+		if (shareData == null) {
+			shareData = new ShareData();
+		}
+		return shareData;
 	}
 
 	public void setIsAppShare(boolean isAppShare) {
