@@ -28,7 +28,9 @@ public class FileUtils {
 	 */
 	public File creatSDFile(String fileName) throws IOException {
 		File file = new File(SDPATH + fileName);
-		file.createNewFile();
+		if(file.exists()){
+			file.createNewFile();
+		}	
 		return file;
 	}
 

@@ -7,18 +7,15 @@ package cn.bidaround.youtui.social;
  */
 public class YoutuiConstants {
 
-	// 文件保存路径
-	public static final String FILE_SAVE_PATH = "/youtui/";
-	
-	public static final String YOUTUI_LINK_URL = "http://youtui.mobi/link/";
+
 
 	public static final String SINA_WEIBO_SCOPE = "email,direct_messages_read,direct_messages_write,"
 			+ "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
 			+ "follow_app_official_microblog," + "invitation_write";
-
+	
 	public static final String TENCENT_SCOPE = "all";
-
-	public static final int WEIXIN_TIMELINE_SUPPORTED_VERSION = 0x21020001;// 微信4.2以上支持分享至朋友圈
+	// 微信4.2以上支持分享至朋友圈
+	public static final int WEIXIN_TIMELINE_SUPPORTED_VERSION = 0x21020001;
 	
 	public static final String RENREN_SCOPE = "read_user_blog read_user_photo read_user_status read_user_album read_user_comment read_user_share publish_blog publish_share send_notification photo_upload status_update create_album publish_comment publish_feed";
 
@@ -37,7 +34,6 @@ public class YoutuiConstants {
 	public static final int RENREN_REQUEST_CODE = 105;
 	public static final int SMS_REQUEST_CODE = 106;
 	public static final int EMAIL_REQUEST_CODE = 107;
-
 	// result
 	public static final int RESULT_SUCCESSFUL = -1;
 	public static final int RESULT_CANCEL = 0;
@@ -46,13 +42,13 @@ public class YoutuiConstants {
 	public static final int APP_NOT_EXIST = 3;
 	public static final int APP_ID_MISSING = 4;
 	
-	//显示样式
-	public static final int BLACK_STYLE = 0;
-	public static final int WHITE_STYLE = 1;
-	
 	public static final String YT_URL = "http://youtui.mobi";
 	//public static final String YT_URL = "http://192.168.2.109";
-	//public static final String YT_URL = "http://192.168.2.106";
+	//public static final String YT_URL = "http://192.168.2.107";
+	// 文件保存路径
+	public static final String FILE_SAVE_PATH = "/youtui/";
+	//链接跳转网页
+	public static final String YOUTUI_LINK_URL = "http://youtui.mobi/link/";
 	//友推支持的平台个数
 	public static final int SHARE_SIZE = 11;
 }

@@ -38,7 +38,7 @@ public class DownloadImage {
 	 * @throws IOException 
 	 */
 	public static void down_file(String url, String path, String filename) throws IOException  {
-		Log.i(TAG, "BEGIN DOWN IMAGE");
+		//Log.i(TAG, "BEGIN DOWN IMAGE");
 		URL myURL = new URL(url);
 		URLConnection conn = myURL.openConnection();
 		conn.connect();
@@ -86,7 +86,7 @@ public class DownloadImage {
 			fos.write(buf, 0, numread);
 		} while (true);		
 			is.close();
-			Log.i(TAG, "END DOWN IMAGE");
+			//Log.i(TAG, "END DOWN IMAGE");
 	}
 	
 	

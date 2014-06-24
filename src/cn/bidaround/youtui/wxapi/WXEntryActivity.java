@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Toast;
 import cn.bidaround.youtui.YouTuiAcceptor;
 import cn.bidaround.youtui.helper.Util;
-import cn.bidaround.youtui.net.NetUtil;
 import cn.bidaround.youtui.point.ChannelId;
 import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
@@ -27,6 +25,7 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
 
+
 /**
  * @author gaopan
  * @since 14/5/4 微信分享activity
@@ -37,20 +36,22 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 	private Bitmap bmpThum;
 	private boolean isPyq, isAppShare;
 	private String uniqueCode;
+	private String realUrl ;
 	private boolean fromShare;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
-		// initView("微信");
+		
+		
+		 //initView("微信");
 		// 判断是否为朋友圈
 
 		isPyq = getIntent().getExtras().getBoolean("pyq");
 		fromShare = getIntent().getExtras().getBoolean("fromShare");
-		// for (int i : pointArr) {
-		// Log.i("------", i+"");
-		// }
+		uniqueCode = getIntent().getExtras().getString("uniqueCode");
+		realUrl = getIntent().getExtras().getString("realUrl");
 		// 传入的pointArr不为null时
 		if (isPyq) {
 			mIWXAPI = WXAPIFactory.createWXAPI(WXEntryActivity.this, KeyInfo.wechatMoments_AppId, false);
@@ -60,7 +61,6 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 			mIWXAPI.registerApp(KeyInfo.wechat_AppId);
 		}
 		mIWXAPI.handleIntent(getIntent(), WXEntryActivity.this);
-
 		Util.showProgressDialog(this, "加载中...");
 		shareToWx();
 	}
@@ -69,8 +69,7 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 	 * 分享到微信或朋友圈 当微信没有登陆时，分享会先进入登陆界面，登录后再次启动该activity，
 	 * 导致通过Intent传入的ShareData.shareData和pointArr读取都为null 此时在shareToWx不需要做操作
 	 */
-	private void shareToWx() {
-		uniqueCode = NetUtil.getBase64Code();
+	protected void shareToWx() {
 		if (ShareData.shareData != null) {
 			isAppShare = ShareData.shareData.isAppShare;
 
@@ -79,9 +78,10 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 			if (ShareData.shareData.getImagePath() != null) {
 				bitmap = BitmapFactory.decodeFile(ShareData.shareData.getImagePath());
 			}
-
 			msg.title = ShareData.shareData.getTitle();
-			msg.description = ShareData.shareData.getText();
+			
+			msg.description = ShareData.shareData.getText();			
+			
 			// bitmap为空时微信分享会没有响应，所以要设置一个默认图片让用户知道
 			if (bitmap != null) {
 				bmpThum = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
@@ -103,7 +103,6 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 			SendMessageToWX.Req req = new SendMessageToWX.Req();
 			req.transaction = buildTransaction("测试");
 			req.message = msg;
-			Log.i("---", String.valueOf(fromShare));
 			if (fromShare) {
 				if (isPyq) {
 					req.scene = SendMessageToWX.Req.WXSceneTimeline;
@@ -112,7 +111,9 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 				}
 				mIWXAPI.sendReq(req);
 			}
+		}else{
 		}
+	
 	}
 
 	// 微信在这里监听分享结果
@@ -129,7 +130,7 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 	}
 
 	// 创建唯一标示
-	private String buildTransaction(final String type) {
+	protected String buildTransaction(final String type) {
 		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
 	}
 
@@ -138,6 +139,7 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 	 */
 	@Override
 	public void onReq(BaseReq req) {
+		
 	}
 
 	/**
@@ -147,11 +149,11 @@ public class WXEntryActivity extends YTBaseShareActivity implements IWXAPIEventH
 	public void onResp(BaseResp response) {
 		switch (response.errCode) {
 		case BaseResp.ErrCode.ERR_OK:
-			Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "分享成功", Toast.LENGTH_SHORT).show();
 			if (isPyq) {
-				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHATFRIEND, ShareData.shareData.getTarget_url(), !ShareData.shareData.isAppShare, uniqueCode);
+				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHATFRIEND,realUrl, !ShareData.shareData.isAppShare, uniqueCode);
 			} else {
-				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHAT, ShareData.shareData.getTarget_url(), !ShareData.shareData.isAppShare, uniqueCode);
+				YtPoint.sharePoint(this, KeyInfo.youTui_AppKey, ChannelId.WECHAT, realUrl, !ShareData.shareData.isAppShare, uniqueCode);
 			}
 			break;
 		case BaseResp.ErrCode.ERR_SENT_FAILED:

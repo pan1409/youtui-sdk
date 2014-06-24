@@ -20,29 +20,31 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
+//import android.util.Log;
 import cn.bidaround.youtui.point.YtPoint;
 import cn.bidaround.youtui.social.KeyInfo;
+import cn.bidaround.youtui.social.YoutuiConstants;
 
 /**
  * @author gaopan 读取res,packageName,cardNum,imei等信息以便于后续使用
  */
 public class YouTuiAcceptor {
-	/* 邀请码 */
+	/** 邀请码 */
 	private static String inviteNum;
-	/* 应用的名称 */
+	/** 应用的名称 */
 	private static String appName;
-	/* 设备信息 */
+	/** 设备信息 */
 	public static String imei, sdk, model, sys;
-	/* 应用资源 */
+	/** 应用资源 */
 	public static Resources res;
-	/* 应用包名 */
+	/** 应用包名 */
 	public static String packName;
-	/* SIM卡号 */
+	/** SIM卡号 */
 	public static String cardNum;
-	/* 用于判断是否已找到所要的apk */
+	/** 用于判断是否已找到所要的apk */
 	private static boolean flag;
 
-	/* 获取友推渠道号(格式：appName_yt)，以获得appName */
+	/** 获取友推渠道号(格式：appName_yt)，以获得appName */
 	private static void getYoutuiChannel(Context context) {
 		ApplicationInfo info;
 		try {
@@ -50,12 +52,13 @@ public class YouTuiAcceptor {
 			info = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
 			String msg = info.metaData.getString("YOUTUI_CHANNEL");
 			appName = msg.substring(0, msg.length() - 3);
+			//Log.i("--appName--", appName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	/* 获取设备信息 */
+	/** 获取设备信息 */
 	@SuppressWarnings("deprecation")
 	private static void readPhoneInfo(Context context) {
 		TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -87,13 +90,14 @@ public class YouTuiAcceptor {
 		}
 	}
 
-	/* 把相关信息（设备信息、appId、邀请码等）发送到服务器 */
+	/** 把相关信息（设备信息、appId、邀请码等）发送到服务器 */
 	public static void doPost() {
-		String actionUrl = "http://youtui.mobi/activity/checkCode";
+		String actionUrl = YoutuiConstants.YT_URL + "/activity/checkCode";
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
 		params.add(new BasicNameValuePair("appId", KeyInfo.youTui_AppKey));
 		params.add(new BasicNameValuePair("inviteCode", inviteNum));
 		params.add(new BasicNameValuePair("imei", imei));
+		params.add(new BasicNameValuePair("cardNum",cardNum));
 		params.add(new BasicNameValuePair("sdkVersion", sdk));
 		params.add(new BasicNameValuePair("phoneType", model));
 		params.add(new BasicNameValuePair("sysVersion", sys));
@@ -107,9 +111,9 @@ public class YouTuiAcceptor {
 		}
 	}
 
-	/* 关闭应用时发送相关信息（appId和IMEI码） */
+	/** 关闭应用时发送相关信息（appId和IMEI码） */
 	public static void toPost() {
-		String actionUrl = "http://youtui.mobi/activity/closeApp";
+		String actionUrl = YoutuiConstants.YT_URL + "/activity/closeApp";
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
 		params.add(new BasicNameValuePair("appId", KeyInfo.youTui_AppKey));
 		params.add(new BasicNameValuePair("imei", imei));
@@ -120,7 +124,7 @@ public class YouTuiAcceptor {
 		}
 	}
 
-	/* 遍历sd卡中的文件，找到对应的apk，从名字中获得邀请码 */
+	/** 遍历sd卡中的文件，找到对应的apk，从名字中获得邀请码 */
 	private static void getInviteNum() {
 		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 			// 获得SD卡父目录的路径，以便还可以遍历外置SD卡
@@ -130,7 +134,7 @@ public class YouTuiAcceptor {
 		}
 	}
 
-	/* 从文件名中读取邀请码 */
+	/** 从文件名中读取邀请码 */
 	private static String getFileName(File[] files) {
 		if (flag != true) {
 			// 先判断目录是否为空，否则会报空指针
@@ -145,10 +149,13 @@ public class YouTuiAcceptor {
 					String fileName = file.getName();
 					// 扫描apk 安装包中后缀为yt.apk 且包含appName的文件名
 					// 格式为appName_邀请码_yt.apk，如tuoche_100041_yt.apk
-					if (fileName.endsWith("yt.apk") && fileName.contains(appName)) {
-						@SuppressWarnings("unused")
-						int l = appName.length();
+					//Log.i("--fileName--", "start search .apk");
+					if (fileName!=null&&fileName.endsWith(".apk") && fileName.contains(appName)) {
+						//@SuppressWarnings("unused")
+						//int l = appName.length();
+						//Log.i("--fileName--", fileName);
 						inviteNum = fileName.substring(fileName.indexOf("_") + 1, fileName.lastIndexOf("_")).toString();
+						//Log.i("--inviteNum--", inviteNum);
 						flag = true;
 						break;
 					}
@@ -174,6 +181,7 @@ public class YouTuiAcceptor {
 
 		try {
 			// Your DATA
+			//Log.i("--post--", actionUrl);
 			httppost.setEntity(new UrlEncodedFormEntity(params));
 			@SuppressWarnings("unused")
 			HttpResponse response;
@@ -206,17 +214,19 @@ public class YouTuiAcceptor {
 				getInviteNum();
 				/* 获取手机信息 */
 				readPhoneInfo(context);
-				/* 获取应用信息 */
-				YtPoint.getAppInfo();
-				/**演示用，打包时要注销*/
-//				MainActivity main = (MainActivity) context;
-//				YtPoint.init(main, false);
-//				main.mHandler.sendEmptyMessage(MainActivity.MAIN_POINT_INIT);
+				/** 演示用，打包时要注销 */
+				// MainActivity main = (MainActivity) context;
+				// YtPoint.init(main, false);
+				// main.mHandler.sendEmptyMessage(MainActivity.MAIN_POINT_INIT);
 				/* 发送到服务器 */
 				doPost();
 				// 初始化友推积分
 				// YtPoint.getInstance(context);
 				// YtPoint.init(context);
+				/* 获取应用信息 */
+				YtPoint.getAppInfo();
+
+
 			}
 		}.start();
 	}
@@ -228,8 +238,23 @@ public class YouTuiAcceptor {
 	 */
 	public static void close(final Context context) {
 		/* 获取手机信息 */
-		readPhoneInfo(context);
+		// readPhoneInfo(context);
 		/* 发送到服务器 */
 		toPost();
 	}
+	
+	
+    public static String getApplicationName(Context context) { 
+        PackageManager packageManager = null; 
+        ApplicationInfo applicationInfo = null; 
+        try { 
+            packageManager = context.getApplicationContext().getPackageManager(); 
+            applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0); 
+        } catch (PackageManager.NameNotFoundException e) { 
+            applicationInfo = null; 
+        } 
+        String applicationName =  
+        (String) packageManager.getApplicationLabel(applicationInfo); 
+        return applicationName; 
+    }
 }

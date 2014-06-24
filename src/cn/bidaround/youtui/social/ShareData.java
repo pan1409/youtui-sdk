@@ -16,7 +16,9 @@ public class ShareData  {
 	private String title = "分享";
 	private String imageUrl;
 	private String target_url;
-
+	//活动是否进行中
+	private boolean isInProgress = false;
+	
 	private ShareData() {
 	}
 
@@ -101,6 +103,14 @@ public class ShareData  {
 	 */
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public boolean isInProgress() {
+		return isInProgress;
+	}
+
+	public void setInProgress(boolean isInProgress) {
+		this.isInProgress = isInProgress;
 	}
 
 }
